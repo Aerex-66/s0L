@@ -26,6 +26,15 @@ import {
   BarChart3,
   CloudUpload,
   ChevronRight,
+  Layers,
+  Users,
+  Contact,
+  Paperclip,
+  Link2,
+  RefreshCw,
+  Wrench,
+  GitBranch,
+  Box,
 } from 'lucide-react'
 
 // Wrapper to match our old API: { size, className } with sensible defaults
@@ -52,6 +61,17 @@ export const EditIcon = wrap(SquarePen, 16)
 export const CloudUploadIcon = wrap(CloudUpload, 12)
 export const FolderOpenIcon = wrap(FolderOpen, 14)
 export const ChevronRightIcon = wrap(ChevronRight, 14)
+export const LayersIcon = wrap(Layers, 24)
+export const UsersIcon = wrap(Users, 24)
+export const ContactIcon = wrap(Contact, 24)
+export const PaperclipIcon = wrap(Paperclip, 18)
+export const ReportChartIcon = wrap(BarChart3, 12)
+export const InterfaceLinkIcon = wrap(Link2, 12)
+export const ConversionSyncIcon = wrap(RefreshCw, 12)
+export const EnhancementWrenchIcon = wrap(Wrench, 12)
+export const FormDocIcon = wrap(FileText, 12)
+export const WorkflowBranchIcon = wrap(GitBranch, 12)
+export const BoxObjectIcon = wrap(Box, 12)
 
 /** Module navigation icons (used by OpportunityDrawer) */
 export const MODULE_ICONS = {

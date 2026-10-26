@@ -1,7 +1,7 @@
 # s0L — How The Interface Looks
 
 *The companion to [UI_ARCHITECTURE.md](UI_ARCHITECTURE.md). That doc explains
-the code layers; this one explains the look. Last updated: 2026-10-21.*
+the code layers; this one explains the look. Last updated: 2026-10-26.*
 
 ---
 
@@ -11,25 +11,26 @@ The app has **one set of tokens** (colors, type, glass, shadows, motion) and
 **three themes** — every surface wears the tokens, and the theme decides what
 the tokens mean. No component ever invents its own value.
 
-This is **seamless glass with IBM roots**: IBM Blue and Plex carry the
-identity; square, outline-free surfaces floating over a living light field
-carry the feel. Nothing is boxed in and nothing is rounded — surfaces
-separate by tone, spacing and soft depth, and rise to meet the cursor.
+This is **luminous seamless glass with IBM roots**: bundled IBM Plex Sans/Mono
+and IBM Blue carry the identity; square, outline-free crystal surfaces
+floating over a luminous pearl-ice field carry the feel. Nothing is boxed in
+and nothing is rounded — surfaces separate by tone, spacing, soft depth and
+subtle ambient glow, and rise to meet the cursor.
 
 ## The three themes
 
 | Theme | Attr | Feels like |
 |---|---|---|
-| **Arctic Glass** *(default)* | *(none)* | Bright arctic mesh, white glass, ink text |
-| **Obsidian** | `data-theme="dark"` | Deep navy, outline-free glass |
-| **Midnight** | `data-theme="midnight"` | Ultra-dark, neon blue borders and glows |
+| **Arctic Glass** *(default)* | *(none)* | Luminous pearl-ice mesh, translucent crystal glass, ink text |
+| **Obsidian** | `data-theme="dark"` | Deep navy, outline-free frosted obsidian glass |
+| **Midnight** | `data-theme="midnight"` | Ultra-dark, neon blue ambient glows |
 
 Building something new? Build it in **Arctic Glass first** — light is the
 personality of this app, dark is an option. Then verify both dark themes.
 A fourth theme is a token-block override, nothing more; if it needs
 component CSS, it's designed wrong.
 
-## The seamless law (adopted 2026-10-21 — replaces the rounded "liquid" law of the same day)
+## The seamless law (adopted 2026-10-21 — refined 2026-10-26 as "Luminous Seamless")
 
 Every surface follows these rules. They're encoded in the tokens and the
 `.glass-panel` / `.liquid-raise` classes — screens inherit the law by using
@@ -41,13 +42,12 @@ them, never by hand-rolling:
   spinners, whitelisted next to that rule. The ladder names are kept so a
   future change stays one edit.
 - **No seams.** Surfaces carry no outline (`--glass-border*` and
-  `--modal-border*` are transparent), no top-edge light line (`--specular`
-  is transparent), and shadows have no hairline rings or inner edge lines.
+  `--modal-border*` are transparent) and shadows have no outer rings.
   Sections are not split by divider lines — they separate by tone, spacing
   and soft depth. Small controls (chips, pills, secondary actions) are
   **tonal blocks** on `--control-fill`, not outlined boxes.
   Kept on purpose: input field edges (affordance), data-row separators and
-  the timeline month grid (reading data), and the header (see below).
+  the timeline month grid (reading data).
 - **Everything interactive answers the cursor** — one language, all tokens:
   - *Raise* (free-standing cards and tiles): `transform: var(--lift)`,
     `box-shadow: var(--shadow-raise)`, `border-color: var(--hover-border)`.
@@ -56,21 +56,23 @@ them, never by hand-rolling:
     `--hover-wash` / `--hover-ring` / `--hover-glow` only. **Never move
     something the user is typing into** — a transform also traps dropdowns
     in a new stacking context.
+  - Primary buttons (`.btn-primary`, `.cmd-btn--primary`, `.header-new-deal`)
+    are flat-luminous `var(--ibm-blue)` with a subtle diffused blue halo glow
+    (never 3-stop convex bevel gradients or diagonal sheen sweeps).
   - Buttons and chips lift `--lift-sm`. All of it rides
     `transition: var(--transition-liquid)`.
-- **Glass tiers, one blur per stack:** light surfaces `blur(12px)`
+- **Glass tiers, one blur per stack:** light surfaces `blur(14px)`
   (`--glass-blur-light`) · standard panels `blur(24px)` (`--glass-blur`) ·
-  modals and the header `blur(42px)` (`--glass-blur-heavy`). Anything nested
+  modals and the header `blur(40px)` (`--glass-blur-heavy`). Anything nested
   inside glass is translucent but **never re-blurs**.
-- **Glass is TINTED, never plain white/black.** Every tier carries a cool
-  ice-blue cast (light) or deep navy-blue cast (dark themes) so panels read
-  as material, not paper. Shadows are blue-cast too — flat gray shadow is
-  the old look.
-- **Every glass surface is three layers + one light:** tinted fill →
+- **Glass is luminous and translucent, never murky or flat paper.** In Arctic
+  Glass, surfaces sit over a bright pearl-ice mesh (`#f2f6fc` → `#eaf0fa`)
+  with whisper-soft inner top luminance (`inset 0 1px 0 rgba(255,255,255,0.72)`)
+  and soft blue-cast ambient depth.
+- **Every glass surface is three layers + one light:** translucent fill →
   backdrop blur+saturate → soft blue-cast depth (`--shadow-glass*`) — plus
   an **ambient accent field** (`--ambient-field`, accent light pooling
-  inside the surface) and grain. No outline, no edge line. That's what
-  `.glass-panel` is; use it.
+  inside the surface) and subtle grain. That's what `.glass-panel` is; use it.
 - **Glass needs something to refract.** The aurora (`body::before` — four
   blurred color fields drifting on a 90s loop) and the film grain
   (`body::after`) stay visible behind every page. Never flat-fill the body.
@@ -80,35 +82,42 @@ them, never by hand-rolling:
   whole mesh. Use `radial-gradient(40% 40% at …)`.
 - **Glows are additive and subtle** — a `--glow-*` composes *with* a shadow,
   never replaces one.
-- **The header is always dark**, in every theme. It is the one constant.
+- **The header is theme-aware translucent crystal** (`--header-bg` /
+  `--header-text`): airy frosted crystal in Arctic Glass, deep frosted
+  obsidian in Obsidian and Midnight, with the flowing blue→cyan→purple
+  luminous hairline under it.
 
 ## Where sizes and colors come from
 
 A ladder — always take the highest rung that fits:
 
 1. **Type roles first:** every text element plays a named role on the
-   12-step scale — `--type-micro` (0.56rem) up to `--type-3xl` (1.75rem).
+   12-step scale — `--type-micro` (0.6875rem / 11px) up to `--type-3xl`
+   (2rem / 32px), with `--type-body` at 0.875rem (14px).
    The full table lives in [.github/copilot-instructions.md](.github/copilot-instructions.md).
    Raw `rem`/`px` sizes in component CSS are wrong.
-2. **Display treatment is automatic:** anything named `*-title`, `*-label`,
-   `*-name`, `*-header` (plus `h1`–`h4`) is thin-weight, UPPERCASE,
-   letter-spaced by one global rule in base.css. Data values, badges,
-   inputs, and buttons opt out automatically. Don't re-implement it.
+2. **Typography hierarchy:** headings (`h1`–`h4`) and titles are crisp
+   sentence-case (`font-weight: 500–600`, `letter-spacing: -0.015em`).
+   Uppercase + wide letter-spacing (`0.06em–0.08em`) is reserved for eyebrow
+   labels, KPI captions, and column/axis strips (`.ribbon-cell`). Every
+   `button`, `input`, `select`, `textarea` (and Radix reset) explicitly
+   inherits `var(--font-family-sans)` so browser default Arial never leaks.
 3. **Colors:** theme tokens (`--text-*`, `--glass-*`, `--status-*`,
    `--interactive-*`). Accent washes via
    `color-mix(in srgb, var(--x) N%, transparent)`.
 4. **Fields and modals have exactly one source of truth each:**
    every input/select/textarea takes `--field-bg` / `--field-border`
-   (solid white in Arctic Glass — fields are *paper*, not glass; solid
-   dark in dark themes), and every modal/dialog shell takes `--modal-bg`
-   / `--modal-border` (transparent theme-tinted glass, heavy blur).
-   Never restyle a field background or a modal surface per component —
-   size and layout are the only per-modal overrides allowed.
+   (crisp translucent white in Arctic Glass, dark translucent in dark themes,
+   with a subtle blue halo on focus and no sunken inset shadow), and every
+   modal/dialog shell takes `--modal-bg` / `--modal-border` (transparent
+   theme-tinted glass, heavy blur). Never restyle a field background or a
+   modal surface per component — size and layout are the only per-modal
+   overrides allowed.
 5. **Domain colors:** implementation types ride `--impl-color`; SAP Activate
    phases come from [shared/domain_constants.json](shared/domain_constants.json)
    and are identical in Home timelines, GSSM sheets, and exported PPTX
    Gantt bars. Never restyle a phase locally.
-5. **Raw hex/rgba:** only inside `base.css` token definitions. Inline color
+6. **Raw hex/rgba:** only inside `base.css` token definitions. Inline color
    literals in components are legacy — convert on touch.
 
 ## The brand words (non-negotiable)
@@ -116,10 +125,10 @@ A ladder — always take the highest rung that fits:
 | # | Law | Why |
 |---|-----|-----|
 | 1 | **IBM Blue `#0f62fe` is THE accent.** Cyan and purple are supporting cast (gradients, glows, aurora). No new accent hues. | One brand color, unmistakable |
-| 2 | **IBM Plex Sans / Plex Mono**, system fallbacks. **No CDN fonts, ever.** | Brand + air-gapped policy |
-| 3 | **Square & seamless** (the seamless law). Square corners, no outlines or divider lines, tonal controls. | Clean and continuous — rounded edges and boxed-in Carbon panels were both retired 2026-10-21 |
+| 2 | **IBM Plex Sans / Plex Mono**, bundled locally from `@ibm/plex-sans` and `@ibm/plex-mono` in `main.jsx`. **No CDN fonts, ever.** | Brand + air-gapped policy |
+| 3 | **Square & seamless** (the seamless law). Square corners, no outlines or divider lines, tonal controls, flat-luminous primary buttons. | Clean and continuous — rounded edges and boxed-in Carbon panels were both retired 2026-10-21 |
 | 4 | **Light-first.** Arctic Glass is the default and the reference. | This is a daylight working tool |
-| 5 | **No external assets of any kind.** | Air-gapped policy |
+| 5 | **No external assets of any kind.** All icons come from `lucide-react` via `shared/ui/Icons.jsx` (never raw emoji). | Air-gapped policy + visual consistency |
 
 ## Motion
 
@@ -141,9 +150,10 @@ accent flow) run ≥ 14s and respect `prefers-reduced-motion`, no exceptions.
 - **The liquid raise** — cards float up into a soft blue halo under the
   cursor; square buttons glow.
 - **The film grain** — kills banding on large gradients.
-- **The dark header** with the flowing blue→cyan→purple hairline under it.
-- **The gradient `s0L` wordmark** with its soft glow.
-- **Accent-edge cards** — a 4px left bar in the implementation-type color;
+- **The translucent crystal header** (`--header-bg`) with the flowing
+  blue→cyan→purple hairline under it.
+- **The monospace `s0L` wordmark** with its soft blue-cyan gradient and glow.
+- **Accent-edge cards** — a 3px left bar in the implementation-type color;
   hover glows in that same color.
 - **The GSSM sync chip** — syncing · synced · failed, always visible truth
   about the deal record.

@@ -29,6 +29,14 @@ export default function Modal({ title, onClose, children, className = '' }) {
         </Dialog.Overlay>
         <Dialog.Content
           asChild
+          aria-describedby={undefined}
+          onOpenAutoFocus={(e) => {
+            const firstField = e.currentTarget.querySelector('input:not([type="hidden"]), select, textarea')
+            if (firstField) {
+              e.preventDefault()
+              firstField.focus()
+            }
+          }}
           onPointerDownOutside={() => onClose()}
           // The dialog owns this Escape — keep it from also reaching the shell's exit-deal shortcut
           onEscapeKeyDown={(e) => e.stopPropagation()}

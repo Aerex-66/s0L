@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import { IMPLEMENTATION_TYPE_COLORS, CLOSED_STATUSES } from '../../../shared/constants'
 import { formatShortDate, formatCompactMillions } from '../../../shared/utils/formatters'
-import { SearchIcon } from '../../../shared/ui/Icons'
+import { SearchIcon, LayersIcon } from '../../../shared/ui/Icons'
 import { cx } from '../../../shared/utils/cx'
 import PipelineMetrics from './PipelineMetrics'
 
@@ -186,15 +186,17 @@ export default function DealList({ deals, viewMode, layoutMode, onSelectDeal, on
         }) : (
           <motion.div
             key="empty"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="no-deals"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="no-deals glass-panel"
           >
-            <div className="no-deals-icon">📋</div>
-            <p>No deals found</p>
-            <span>{searchTerm ? 'Try a different filter term.' : 'Get started by creating your first deal.'}</span>
+            <div className="no-deals-icon">
+              <LayersIcon size={24} strokeWidth={1.5} />
+            </div>
+            <p>No active deals yet</p>
+            <span>{searchTerm ? 'Try a different filter term.' : 'Create a deal to start tracking timelines, approvals, GSSM staffing, and iSBD decks.'}</span>
             {!searchTerm && (
-              <div style={{ marginTop: '0.75rem' }}>
+              <div className="no-deals-action">
                 <button className="btn btn-primary" onClick={onCreateDeal}>+ New Deal</button>
               </div>
             )}

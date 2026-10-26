@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--bg-page, #f4f4f4);
+  background: transparent;
   overflow: hidden;
 }
 
@@ -43,9 +43,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.45rem 0.75rem;
-  border-bottom: 1px solid var(--border-subtle, #e0e0e0);
-  background: var(--bg-surface, #fff);
+  padding: 0.5rem 0.9rem;
+  background: var(--glass-bg-light);
 }
 
 .gs-header-left {
@@ -76,17 +75,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
-  border: 1px solid var(--border-subtle, #e0e0e0);
-  border-radius: var(--radius-xs, 3px);
-  padding: 0.2rem 0.35rem;
+  background: var(--control-fill);
+  border: 1px solid transparent;
+  padding: 0.25rem 0.4rem;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.12s;
+  transition: var(--transition-liquid);
 }
 
 .gs-refresh:hover {
-  background: var(--bg-hover, rgba(0,0,0,0.04));
+  background: var(--hover-wash);
   color: var(--text-primary);
 }
 
@@ -96,8 +94,7 @@
   align-items: center;
   gap: 0;
   padding: 0 0.5rem;
-  background: var(--bg-surface, #fff);
-  border-bottom: 1px solid var(--border-subtle, #e0e0e0);
+  background: var(--glass-bg-light);
   overflow-x: auto;
 }
 
@@ -122,34 +119,32 @@
 .gs-grouping-tab:hover { color: var(--text-primary); }
 
 .gs-grouping-tab--active {
-  color: var(--c-blue-60, #0f62fe);
-  border-bottom-color: var(--c-blue-60, #0f62fe);
+  color: var(--ibm-blue);
+  border-bottom-color: var(--ibm-blue);
 }
 
 .gs-grouping-count {
   font-size: var(--type-2xs);
   font-weight: 700;
   color: var(--text-tertiary);
-  background: rgba(0,0,0,0.05);
+  background: var(--control-fill);
   padding: 0.05rem 0.3rem;
-  border-radius: 8px;
   min-width: 1rem;
   text-align: center;
 }
 
 .gs-grouping-tab--active .gs-grouping-count {
   background: rgba(15, 98, 254, 0.1);
-  color: var(--c-blue-60, #0f62fe);
+  color: var(--ibm-blue);
 }
 
 /* ── Pivot sub-tabs (reports within a grouping) ── */
 .gs-pivot-bar {
   display: flex;
   align-items: center;
-  gap: 0.15rem;
-  padding: 0.3rem 0.75rem;
-  background: var(--bg-surface, #fff);
-  border-bottom: 1px solid var(--border-subtle, #e0e0e0);
+  gap: 0.2rem;
+  padding: 0.35rem 0.75rem;
+  background: transparent;
   overflow-x: auto;
 }
 

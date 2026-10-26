@@ -45,12 +45,14 @@ export default function NewDealModal({ onClose, onCreate }) {
   return (
     <Modal title="Create New Deal" onClose={onClose}>
       <form onSubmit={handleSubmit}>
-        <FormField label="Opportunity Number" required>
+        <div className="modal-form-grid">
+          <FormField label="Opportunity Number" required>
             <input
               type="text"
               name="opportunity_number"
               value={formData.opportunity_number}
               onChange={handleChange}
+              placeholder="e.g. OPP-10492"
               required={isRequiredTextField('opportunity_number')}
             />
           </FormField>
@@ -61,48 +63,19 @@ export default function NewDealModal({ onClose, onCreate }) {
               name="client_name"
               value={formData.client_name}
               onChange={handleChange}
+              placeholder="Client organization"
               required={isRequiredTextField('client_name')}
             />
           </FormField>
 
-          <FormField label="Project Name" required>
+          <FormField label="Project Name" required className="modal-form-span-2">
             <input
               type="text"
               name="project_name"
               value={formData.project_name}
               onChange={handleChange}
+              placeholder="Deal or transformation name"
               required={isRequiredTextField('project_name')}
-            />
-          </FormField>
-
-          <FormField label="RFP Submission Date">
-            <input
-              type="date"
-              name="rfp_submission_date"
-              value={formData.rfp_submission_date}
-              onChange={handleChange}
-            />
-          </FormField>
-
-          <FormField label="Rate Card Available?" required>
-            <select
-              name="rate_card"
-              value={formData.rate_card}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select option</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </FormField>
-
-          <FormField label="Price to Win">
-            <input
-              type="text"
-              name="price_to_win"
-              value={formData.price_to_win}
-              onChange={handleChange}
             />
           </FormField>
 
@@ -161,6 +134,39 @@ export default function NewDealModal({ onClose, onCreate }) {
               ))}
             </select>
           </FormField>
+
+          <FormField label="RFP Submission Date">
+            <input
+              type="date"
+              name="rfp_submission_date"
+              value={formData.rfp_submission_date}
+              onChange={handleChange}
+            />
+          </FormField>
+
+          <FormField label="Rate Card Available?" required>
+            <select
+              name="rate_card"
+              value={formData.rate_card}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select option</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </FormField>
+
+          <FormField label="Price to Win" className="modal-form-span-2">
+            <input
+              type="text"
+              name="price_to_win"
+              value={formData.price_to_win}
+              onChange={handleChange}
+              placeholder="Optional target value"
+            />
+          </FormField>
+        </div>
 
         <div className="modal-actions">
           <button type="button" className="btn btn-secondary" onClick={onClose} disabled={isSubmitting}>

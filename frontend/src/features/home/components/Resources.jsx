@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { formatCurrency } from '../../../shared/utils/financialsHelpers'
+import { UsersIcon } from '../../../shared/ui/Icons'
 
 const MONTH_ORDER = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
@@ -39,8 +40,10 @@ export default function Resources({ deal }) {
 
   if (!staffing || !staffing.total_headcount) {
     return (
-      <div className="tab-placeholder">
-        <div className="tab-placeholder-icon">📋</div>
+      <div className="tab-placeholder glass-panel">
+        <div className="tab-placeholder-icon">
+          <UsersIcon size={24} strokeWidth={1.5} />
+        </div>
         <h3>Resources</h3>
         <p>No staffing data yet. Import a GSSM workbook in the GSSM module to populate this view.</p>
       </div>

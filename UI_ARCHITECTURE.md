@@ -55,11 +55,26 @@ standalone app.
 ## Layer 1 — The shell
 
 Three small files. [App.jsx](frontend/src/App.jsx) owns which deal is open,
-which module is active, and the modals. [dealShell.js](frontend/src/shell/dealShell.js)
+which module is active, and the modals; [main.jsx](frontend/src/main.jsx)
+imports the self-hosted `@ibm/plex-sans` and `@ibm/plex-mono` font packages
+before mounting the shell. [dealShell.js](frontend/src/shell/dealShell.js)
 is the module list; [moduleRegistry.js](frontend/src/shell/moduleRegistry.js)
 lazy-loads each one. The shell hands every module exactly two props —
 **`deal`** and **`onUpdate`** — and that is the entire contract. A module
 that needs more than that is doing something wrong.
+
+Global styles in `frontend/src/styles/` are split strictly by concern:
+- `base.css` — design tokens, three theme blocks (`:root`, `dark`, `midnight`),
+  body mesh + aurora, typography hierarchy, and `.glass-panel` / `.liquid-raise`.
+- `layout.css` — app frame and the theme-aware translucent `AppHeader`.
+- `components.css` — shared UI blocks (buttons, `.cmd-btn`, `.ribbon`, `.chip`,
+  `.toolbar-strip`, modals, command palette, wizard, settings, `TimelineBar`).
+- `deals.css` — pipeline dashboard, command band, deal cards, opportunity rail,
+  and pipeline metrics table.
+- `home.css` — Home workspace (hero, inline stage rail, workspace tabs, and
+  the six Home tabs). Module-specific styles (`IsbdModule.css`,
+  `DocumentsModule.css`, `greenstar.css`, `MetricsModule.css`, `gssm.css`)
+  live inside their feature folders and load lazily with their module.
 
 ---
 

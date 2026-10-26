@@ -4,6 +4,7 @@ import Modal from '../../shared/ui/Modal'
 import LazyGate from '../../shared/ui/LazyGate'
 import { postFormData } from '../../shared/apiClient'
 import { cx } from '../../shared/utils/cx'
+import { PaperclipIcon, UploadIcon } from '../../shared/ui/Icons'
 import QuickSetupWizard from '../home/components/QuickSetupWizard'
 import ImportModal from '../deals/components/ImportModal'
 import ExportModal from '../deals/components/ExportModal'
@@ -178,13 +179,13 @@ function FileUploadPanel({ title, description, accept, moduleId, deal, onSuccess
         />
         {file ? (
           <div className="action-dropzone-file">
-            <span className="action-dropzone-icon">📎</span>
+            <span className="action-dropzone-icon"><PaperclipIcon size={18} /></span>
             <span className="action-dropzone-name">{file.name}</span>
             <span className="action-dropzone-size">{formatBytes(file.size)}</span>
           </div>
         ) : (
           <div className="action-dropzone-empty">
-            <span className="action-dropzone-icon">⬆</span>
+            <span className="action-dropzone-icon"><UploadIcon size={22} /></span>
             <span>Drag & drop file here, or <strong>click to browse</strong></span>
             <span className="action-dropzone-hint">Accepted: {accept}</span>
           </div>

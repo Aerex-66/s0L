@@ -104,18 +104,18 @@ frontend/src/
 - **Type scale tokens** (in `base.css :root`): Use these instead of raw `rem` values.
   | Token | Size | Role |
   |---|---|---|
-  | `--type-micro` | 0.56rem | micro labels, dots, format badges |
-  | `--type-tiny` | 0.62rem | tags, small badges, section badges |
-  | `--type-2xs` | 0.65rem | impl tags, stat labels |
-  | `--type-xs` | 0.70rem | card impl, archive links |
-  | `--type-sm` | 0.73rem | tab labels, filter chips, meta |
-  | `--type-body` | 0.84rem | body text, buttons, card titles |
-  | `--type-body-lg` | 0.875rem | approver info, contacts |
-  | `--type-md` | 0.9375rem | settings labels, stage icons |
-  | `--type-lg` | 1.05rem | deal hero h2, section headings |
-  | `--type-xl` | 1.25rem | modal h2, major headers |
-  | `--type-2xl` | 1.5rem | page titles |
-  | `--type-3xl` | 1.75rem | hero display, dashboard headers |
+  | `--type-micro` | 0.6875rem (11px) | micro labels, dots, format badges |
+  | `--type-tiny` | 0.72rem (11.5px) | tags, small badges, section badges |
+  | `--type-2xs` | 0.75rem (12px) | impl tags, stat labels |
+  | `--type-xs` | 0.78rem (12.5px) | card impl, archive links |
+  | `--type-sm` | 0.8125rem (13px) | tab labels, filter chips, meta |
+  | `--type-body` | 0.875rem (14px) | body text, buttons, card titles |
+  | `--type-body-lg` | 0.9375rem (15px) | approver info, contacts |
+  | `--type-md` | 1rem (16px) | settings labels, card titles |
+  | `--type-lg` | 1.125rem (18px) | deal hero h2, section headings |
+  | `--type-xl` | 1.35rem (21.6px) | modal h2, major headers |
+  | `--type-2xl` | 1.625rem (26px) | page titles |
+  | `--type-3xl` | 2rem (32px) | hero display, dashboard headers |
 
 ## Build and Test
 

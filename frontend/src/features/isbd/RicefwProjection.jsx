@@ -1,12 +1,21 @@
 import { memo } from 'react'
+import {
+  ReportChartIcon,
+  InterfaceLinkIcon,
+  ConversionSyncIcon,
+  EnhancementWrenchIcon,
+  FormDocIcon,
+  WorkflowBranchIcon,
+  BoxObjectIcon,
+} from '../../shared/ui/Icons'
 
 const TYPE_META = {
-  R: { label: 'Reports',      icon: '📊', color: '#3b82f6' },
-  I: { label: 'Interfaces',   icon: '🔗', color: '#8b5cf6' },
-  C: { label: 'Conversions',  icon: '🔄', color: '#f59e0b' },
-  E: { label: 'Enhancements', icon: '⚙️', color: '#10b981' },
-  F: { label: 'Forms',        icon: '📋', color: '#ec4899' },
-  W: { label: 'Workflow',     icon: '🔀', color: '#06b6d4' },
+  R: { label: 'Reports',      Icon: ReportChartIcon,       color: '#3b82f6' },
+  I: { label: 'Interfaces',   Icon: InterfaceLinkIcon,     color: '#8b5cf6' },
+  C: { label: 'Conversions',  Icon: ConversionSyncIcon,    color: '#f59e0b' },
+  E: { label: 'Enhancements', Icon: EnhancementWrenchIcon, color: '#10b981' },
+  F: { label: 'Forms',        Icon: FormDocIcon,           color: '#ec4899' },
+  W: { label: 'Workflow',     Icon: WorkflowBranchIcon,    color: '#06b6d4' },
 }
 
 const fmt = (v) => {
@@ -80,12 +89,13 @@ const RicefwProjection = memo(function RicefwProjection({ ricefw }) {
             .sort((a, b) => b[1].hours - a[1].hours)
             .map(([code, data]) => {
               const meta = TYPE_META[code]
+              const IconComp = meta?.Icon || BoxObjectIcon
               const barW = maxHours > 0 ? (data.hours / maxHours) * 100 : 0
               const pct = totalHours > 0 ? ((data.hours / totalHours) * 100).toFixed(0) : 0
               return (
                 <div key={code} className="rfw-proj-bar-row">
                   <div className="rfw-proj-bar-label">
-                    <span className="rfw-proj-bar-icon">{meta?.icon || '📦'}</span>
+                    <span className="rfw-proj-bar-icon"><IconComp size={10} /></span>
                     <span className="rfw-proj-bar-name">{meta?.label || code}</span>
                   </div>
                   <div className="rfw-proj-bar-track">

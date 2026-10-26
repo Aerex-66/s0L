@@ -3,6 +3,7 @@ import { Mail, MessageSquare, Phone, Video } from 'lucide-react'
 import { dealService } from '../../../shared/services/dealService'
 import { settingsService } from '../../settings/settingsService'
 import { dealLabel, mailtoLink, teamsCallLink, teamsChatLink } from '../handoff'
+import { ContactIcon } from '../../../shared/ui/Icons'
 import MeetingComposer from './MeetingComposer'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -156,8 +157,10 @@ export default function Contacts({ deal, onUpdate }) {
       )}
 
       {contacts.length === 0 && !showForm ? (
-        <div className="ct-empty">
-          <span className="ct-empty-icon">📇</span>
+        <div className="ct-empty glass-panel">
+          <span className="ct-empty-icon">
+            <ContactIcon size={24} strokeWidth={1.5} />
+          </span>
           <p>No contacts yet. Add stakeholders, approvers, and project leads.</p>
           <button className="btn btn-primary btn-sm" onClick={() => setShowForm(true)}>+ Add First Contact</button>
         </div>
