@@ -1,0 +1,57 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Frontend dev artifacts
+frontend/node_modules/.vite-temp/
+
+# Local generated document renders and uploaded working documents
+documents/*_slides/
+documents/*.pptx
+documents/*.pptx.*
+documents/*.docx
+documents/*.docx.*
+core/documents/*_slides/
+core/documents/*.pptx
+core/documents/*.pptx.*
+core/documents/*.docx
+core/documents/*.docx.*
+
+# Live deal data (contains real client data — excluded from repo)
+deals_data.json
+deals_data.backup-*.json
+
+# Real iSBD reference deck (client deal text + slide renders) — local only;
+# clones fall back to frontend/src/features/isbd/isbdReference.sample.json
+frontend/src/features/isbd/isbdReference.json
+frontend/public/isbd-bg/ref_slide*.png
+
+# Outlook calendar cache written by core/shared/outlook_calendar.ps1 (personal calendar data)
+outlook_calendar_cache.json
+
+# Scratch / test output files
+_cal_test.txt
+_cal_test2.txt
+_calout.txt
+_proc.txt
+_sta_test.txt
+_sta2.txt
+
+# Optional local analysis scratch
+*.tmp
+
+# GSSM server artifacts
+gssm-server/engine-imports/
+gssm-server/.gssm/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm

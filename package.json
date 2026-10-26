@@ -1,0 +1,23 @@
+{
+  "name": "s0l",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\" \"npm run dev:gssm\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "python deal_tracker.py",
+    "dev:gssm": "cd gssm-server && node index.js",
+    "install:all": "npm install && cd frontend && npm install && cd .. && pip install -r requirements.txt",
+    "clean": "rm -rf frontend/dist && find . -type d -name '__pycache__' -prune -exec rm -rf {} + && find . -type d -name '.pytest_cache' -prune -exec rm -rf {} + && find . -type f -name '*.pyc' -delete && find . -type f -name '*.pyo' -delete && find . -type f -name '.DS_Store' -delete",
+    "clean:deep": "npm run clean && rm -rf documents/*_slides",
+    "test": "python -m pytest -q && npm --prefix frontend test",
+    "registry": "node scripts/build-field-registry.mjs",
+    "verify": "npm --prefix frontend run build && python3 -m py_compile deal_tracker.py core/app_factory.py core/features/deals/deals.py core/features/documents/documents.py core/features/settings/settings.py core/shared/state.py core/shared/defaults.py core/shared/security.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

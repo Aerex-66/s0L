@@ -1,0 +1,3106 @@
+{
+  "source": "iSBD Reference Template v9",
+  "dimensions": {
+    "width_in": 16,
+    "height_in": 9
+  },
+  "slides": [
+    {
+      "index": 1,
+      "layout": "Title and Content",
+      "shapes": [
+        {
+          "name": "object 3",
+          "type": "FREEFORM (5)",
+          "left": 663259,
+          "top": 0,
+          "width": 6292582,
+          "height": 8229600
+        },
+        {
+          "name": "object 4",
+          "type": "PLACEHOLDER (14)",
+          "left": 1113255,
+          "top": 1524000,
+          "width": 5842586,
+          "height": 2231380,
+          "text": "IBM Confidential:\nIntegrated Solution Baseline Document (iSBD)"
+        },
+        {
+          "name": "object 5",
+          "type": "TEXT_BOX (17)",
+          "left": 1126319,
+          "top": 3733800,
+          "width": 3066288,
+          "height": 310854,
+          "text": "for Solution Release Review"
+        },
+        {
+          "name": "object 9",
+          "type": "PICTURE (13)",
+          "left": 1141560,
+          "top": 647999,
+          "width": 1047557,
+          "height": 419867,
+          "image_file": "ref_slide1_img0.png",
+          "image_type": "image/png",
+          "image_size": 2328
+        },
+        {
+          "name": "Table 10",
+          "type": "TABLE (19)",
+          "left": 1126318,
+          "top": 4267200,
+          "width": 5829523,
+          "height": 3414994,
+          "table": [
+            [
+              "Client Name: —"
+            ],
+            [
+              "Opportunity No: —"
+            ],
+            [
+              "Opportunity Name: —"
+            ],
+            [
+              "GEO /Market / Industry: —"
+            ],
+            [
+              "Partner Name: —"
+            ],
+            [
+              "Lead Service Line / Offering: —"
+            ],
+            [
+              "Opportunity Owner Name: —"
+            ],
+            [
+              "Senior Solution Consultant Name: —"
+            ],
+            [
+              "iSBD Update Date As Of (DD/MM/YYYY): —"
+            ]
+          ],
+          "table_rows": 9,
+          "table_cols": 1
+        },
+        {
+          "name": "Slide Number Placeholder 3",
+          "type": "TEXT_BOX (17)",
+          "left": 304800,
+          "top": 7858330,
+          "width": 237744,
+          "height": 147733,
+          "text": "0"
+        },
+        {
+          "name": "Date Placeholder 6",
+          "type": "TEXT_BOX (17)",
+          "left": 914400,
+          "top": 7848600,
+          "width": 3366744,
+          "height": 147733,
+          "text": "Template - 2025 Edition, Version 3.5.8"
+        },
+        {
+          "name": "Footer Placeholder 7",
+          "type": "TEXT_BOX (17)",
+          "left": 4976927,
+          "top": 7853267,
+          "width": 4684166,
+          "height": 147733,
+          "text": "© 2025 IBM Corporation | IBM Confidential"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "name": "Table 28",
+          "type": "TABLE (19)",
+          "left": 166365,
+          "top": 1045996,
+          "width": 4352086,
+          "height": 2855280,
+          "table": [
+            [
+              "Profile",
+              ""
+            ],
+            [
+              "Client Name",
+              ""
+            ],
+            [
+              "Account Classification",
+              ""
+            ],
+            [
+              "GEO / Market / Industry",
+              ""
+            ],
+            [
+              "Opportunity Name",
+              ""
+            ],
+            [
+              "Opportunity Type",
+              ""
+            ],
+            [
+              "Opportunity Number",
+              ""
+            ],
+            [
+              "Sales Stage",
+              ""
+            ],
+            [
+              "Solution WorkBench (SWB) Stage",
+              ""
+            ],
+            [
+              "Term",
+              ""
+            ],
+            [
+              "Credit Rating",
+              ""
+            ],
+            [
+              "Complex Opportunity?",
+              ""
+            ]
+          ],
+          "table_rows": 12,
+          "table_cols": 2
+        },
+        {
+          "name": "object 2",
+          "type": "PLACEHOLDER (14)",
+          "left": 284300,
+          "top": 360320,
+          "width": 13605781,
+          "height": 369332,
+          "text": "Deal Profile Summary"
+        },
+        {
+          "name": "Table 32",
+          "type": "TABLE (19)",
+          "left": 10287000,
+          "top": 1045996,
+          "width": 4281171,
+          "height": 2042400,
+          "table": [
+            [
+              "Opportunity Dates",
+              ""
+            ],
+            [
+              "RFP or Request Date",
+              ""
+            ],
+            [
+              "StormCast % / Date / Qualification Status",
+              ""
+            ],
+            [
+              "Solution Release Date",
+              ""
+            ],
+            [
+              "Solution Review (SRR) Date(s)",
+              ""
+            ],
+            [
+              "Price Review (PRR) Date(s)",
+              ""
+            ],
+            [
+              "Bid Submission Date",
+              ""
+            ],
+            [
+              "Decision Date",
+              ""
+            ],
+            [
+              "Delivery Start Date",
+              ""
+            ]
+          ],
+          "table_rows": 9,
+          "table_cols": 2
+        },
+        {
+          "name": "Group 1010",
+          "type": "TABLE (19)",
+          "left": 4585142,
+          "top": 1053682,
+          "width": 5603969,
+          "height": 2702880,
+          "table": [
+            [
+              "Financial and Contractual Profile ($USD)",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Expected Win Price",
+              "",
+              "",
+              ""
+            ],
+            [
+              "TCV / NPV GP%",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Price Type",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Pricing Structure",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Billing / Payment Terms",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Staff Augmentation?",
+              "",
+              "",
+              ""
+            ],
+            [
+              "FX Protection",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Inflation",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Re-Pricing Clause?",
+              "",
+              "",
+              ""
+            ],
+            [
+              "T/T Cost  Amortized?",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Non Standard SLAs?",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 12,
+          "table_cols": 4
+        },
+        {
+          "name": "TextBox 16",
+          "type": "TEXT_BOX (17)",
+          "left": 9738090,
+          "top": 7848600,
+          "width": 3155031,
+          "height": 230832,
+          "text": ""
+        },
+        {
+          "name": "Table 18",
+          "type": "TABLE (19)",
+          "left": 4578571,
+          "top": 3857040,
+          "width": 5603968,
+          "height": 3155927,
+          "table": [
+            [
+              "Expected Complexity",
+              ""
+            ],
+            [
+              "Solutioned to Standard?",
+              ""
+            ],
+            [
+              "CIC Offshore Resource Compliant",
+              ""
+            ],
+            [
+              "CIC Offshore Band mix Compliant",
+              ""
+            ],
+            [
+              "Consortium Agreement",
+              ""
+            ],
+            [
+              "Enhanced Risky Solution Type?",
+              ""
+            ],
+            [
+              "Client to IBM re-badging in scope?",
+              ""
+            ],
+            [
+              "PCW in place?",
+              ""
+            ],
+            [
+              "Capital, Investment, Cash Injection?",
+              ""
+            ],
+            [
+              "Data Privacy Assessment (DPA) Applicable?",
+              ""
+            ],
+            [
+              "Regulated Client?",
+              ""
+            ],
+            [
+              "FOAK?",
+              ""
+            ],
+            [
+              "Agile Delivery?",
+              ""
+            ],
+            [
+              "Cloud? / Hyperscaler?",
+              ""
+            ]
+          ],
+          "table_rows": 14,
+          "table_cols": 2
+        },
+        {
+          "name": "Table 19",
+          "type": "TABLE (19)",
+          "left": 169003,
+          "top": 3716565,
+          "width": 4352086,
+          "height": 4081743,
+          "table": [
+            [
+              "Key Opportunity Team Members",
+              ""
+            ],
+            [
+              "Lead Partner",
+              ""
+            ],
+            [
+              "Opportunity Owner",
+              ""
+            ],
+            [
+              "Solution Leader",
+              ""
+            ],
+            [
+              "Senior Solution Consultant",
+              ""
+            ],
+            [
+              "Lead Solution Architect",
+              ""
+            ],
+            [
+              "Risk Consultant",
+              ""
+            ],
+            [
+              "TDA Reviewer",
+              ""
+            ],
+            [
+              "ITR Reviewer",
+              ""
+            ],
+            [
+              "Legal Counsel",
+              ""
+            ],
+            [
+              "Pricer",
+              ""
+            ],
+            [
+              "Accountable Roles",
+              ""
+            ],
+            [
+              "Delivery Leader (responsible for delivery success)",
+              ""
+            ],
+            [
+              "Quality Partner (if rqd)",
+              ""
+            ],
+            [
+              "Program Mgr or Complex PM *",
+              ""
+            ],
+            [
+              "Lead Delivery Architect",
+              ""
+            ],
+            [
+              "Solutioning Approver **",
+              ""
+            ],
+            [
+              "Service Line Leader Approver **",
+              ""
+            ]
+          ],
+          "table_rows": 18,
+          "table_cols": 2
+        },
+        {
+          "name": "Table 22",
+          "type": "TABLE (19)",
+          "left": 4572000,
+          "top": 7162800,
+          "width": 5617111,
+          "height": 675720,
+          "table": [
+            [
+              "Current State – If Incumbent",
+              ""
+            ],
+            [
+              "Program Name",
+              ""
+            ],
+            [
+              "Contract Number",
+              ""
+            ]
+          ],
+          "table_rows": 3,
+          "table_cols": 2
+        },
+        {
+          "name": "Table 6",
+          "type": "TABLE (19)",
+          "left": 10284360,
+          "top": 6553200,
+          "width": 4281170,
+          "height": 268224,
+          "table": [
+            [
+              "Third Parties / Subcontractor value included in TCV",
+              ""
+            ]
+          ],
+          "table_rows": 1,
+          "table_cols": 2
+        },
+        {
+          "name": "Slide Number Placeholder 2",
+          "type": "PLACEHOLDER (14)",
+          "left": 412488,
+          "top": 7858330,
+          "width": 237744,
+          "height": 147733,
+          "text": "1"
+        },
+        {
+          "name": "Table 4",
+          "type": "TABLE (19)",
+          "left": 10284360,
+          "top": 6918916,
+          "width": 4281170,
+          "height": 548684,
+          "table": [
+            [
+              "Gen AI / Asset Inclusion",
+              "",
+              "",
+              ""
+            ],
+            [
+              "GenAI",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 4
+        },
+        {
+          "name": "Table 10",
+          "type": "TABLE (19)",
+          "left": 10284362,
+          "top": 3124200,
+          "width": 4281171,
+          "height": 3355848,
+          "table": [
+            [
+              "IBM Consulting / (Which is Lead)",
+              "",
+              "",
+              "TCV $M"
+            ],
+            [
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Total IBM Consulting",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Non IBM Consulting",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Total Non IBM Consulting",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Total",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 13,
+          "table_cols": 4
+        },
+        {
+          "left": 531359,
+          "top": 990600,
+          "width": 13573506,
+          "height": 0
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "name": "object 2",
+          "type": "PLACEHOLDER (14)",
+          "left": 475179,
+          "top": 217438,
+          "width": 3168640,
+          "height": 754053,
+          "text": "Executive Summary & Solution Strategy"
+        },
+        {
+          "name": "Table 6",
+          "type": "TABLE (19)",
+          "left": 567336,
+          "top": 1085190,
+          "width": 13829827,
+          "height": 2521588,
+          "table": [
+            [
+              "What is the Client ask?"
+            ],
+            [
+              ""
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 1
+        },
+        {
+          "name": "Table 16",
+          "type": "TABLE (19)",
+          "left": 3857577,
+          "top": 275227,
+          "width": 1465082,
+          "height": 702361,
+          "table": [
+            [
+              "Client",
+              ""
+            ],
+            [
+              "Existing",
+              "New"
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 2
+        },
+        {
+          "name": "Table 17",
+          "type": "TABLE (19)",
+          "left": 5492811,
+          "top": 275225,
+          "width": 3975668,
+          "height": 712740,
+          "table": [
+            [
+              "Engagement Type",
+              ""
+            ],
+            [
+              "Renewal / Extension",
+              "New Business"
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 2
+        },
+        {
+          "name": "Table 18",
+          "type": "TABLE (19)",
+          "left": 9643960,
+          "top": 275226,
+          "width": 2776640,
+          "height": 712740,
+          "table": [
+            [
+              "Engagement Source",
+              ""
+            ],
+            [
+              "RFI/RFP",
+              "Unsolicited"
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 2
+        },
+        {
+          "name": "Table 6",
+          "type": "TABLE (19)",
+          "left": 514720,
+          "top": 4875020,
+          "width": 13876458,
+          "height": 1870656,
+          "table": [
+            [
+              "What are the win themes",
+              "IBM Value Proposition"
+            ],
+            [
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 2
+        },
+        {
+          "name": "Table 6",
+          "type": "TABLE (19)",
+          "left": 568972,
+          "top": 3566163,
+          "width": 13829827,
+          "height": 1299489,
+          "table": [
+            [
+              "Key Customer Requirements",
+              "Solution Provider (IBM Consulting SLs, IBM Brands, 3rd Party)",
+              "L30  Offerings for IBM Consulting",
+              "Corresponding IBM Solution scope components"
+            ],
+            [
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 4
+        },
+        {
+          "name": "Table 8",
+          "type": "TABLE (19)",
+          "left": 522341,
+          "top": 6811460,
+          "width": 13876458,
+          "height": 1065500,
+          "table": [
+            [
+              "Solution Summary"
+            ],
+            [
+              ""
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 1
+        },
+        {
+          "name": "Table 24",
+          "type": "TABLE (19)",
+          "left": 12690140,
+          "top": 261594,
+          "width": 1635460,
+          "height": 702361,
+          "table": [
+            [
+              "Review  status",
+              ""
+            ],
+            [
+              "First",
+              "Repeat"
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 2
+        },
+        {
+          "name": "TextBox 7",
+          "type": "TEXT_BOX (17)",
+          "left": 9738091,
+          "top": 7848601,
+          "width": 3155031,
+          "height": 230832,
+          "text": ""
+        },
+        {
+          "name": "Slide Number Placeholder 2",
+          "type": "PLACEHOLDER (14)",
+          "left": 412488,
+          "top": 7858331,
+          "width": 237744,
+          "height": 147733,
+          "text": "2"
+        },
+        {
+          "left": 531359,
+          "top": 1087604,
+          "width": 13573506,
+          "height": 0
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "layout": "A-Content Slide",
+      "shapes": [
+        {
+          "name": "Table 94",
+          "type": "TABLE (19)",
+          "left": 531359,
+          "top": 4069557,
+          "width": 13573506,
+          "height": 3699256,
+          "table": [
+            [
+              "Development",
+              "Data & Analytics",
+              "Technology & Basis",
+              "User Roles & Security",
+              "Testing",
+              "Solution Construct/Delivery"
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 6
+        },
+        {
+          "name": "Table 95",
+          "type": "TABLE (19)",
+          "left": 531359,
+          "top": 1110996,
+          "width": 13573506,
+          "height": 3579876,
+          "table": [
+            [
+              "High Level Project Scope",
+              "Business Process",
+              "Applications",
+              "Organization",
+              "OCM & Training"
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 5
+        },
+        {
+          "name": "Text Placeholder 1",
+          "type": "PLACEHOLDER (14)",
+          "left": 365760,
+          "top": 205740,
+          "width": 12176202,
+          "height": 332398,
+          "text": "Levers of Scope"
+        },
+        {
+          "name": "Holder 6",
+          "type": "TEXT_BOX (17)",
+          "left": 412488,
+          "top": 7923649,
+          "width": 237744,
+          "height": 147733,
+          "text": "3"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "name": "Title 1",
+          "type": "PLACEHOLDER (14)",
+          "left": 365760,
+          "top": 205740,
+          "width": 13605781,
+          "height": 430887,
+          "text": "Implementation Timeline"
+        },
+        {
+          "name": "Slide Number Placeholder 2",
+          "type": "PLACEHOLDER (14)",
+          "left": 412488,
+          "top": 7858330,
+          "width": 237744,
+          "height": 147733,
+          "text": "4"
+        },
+        {
+          "name": "Picture 4",
+          "type": "PICTURE (13)",
+          "left": 2249263,
+          "top": 1847261,
+          "width": 9532980,
+          "height": 2806933,
+          "image_file": "ref_slide5_img1.x-wmf",
+          "image_type": "image/x-wmf",
+          "image_size": 20548
+        },
+        {
+          "left": 531360,
+          "top": 804472,
+          "width": 13573506,
+          "height": 0
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "name": "Title 1",
+          "type": "PLACEHOLDER (14)",
+          "left": 365760,
+          "top": 205740,
+          "width": 13605781,
+          "height": 369332,
+          "text": "Governance and Key Staff"
+        },
+        {
+          "name": "Slide Number Placeholder 3",
+          "type": "PLACEHOLDER (14)",
+          "left": 412488,
+          "top": 7858330,
+          "width": 237744,
+          "height": 147733,
+          "text": "5"
+        },
+        {
+          "name": "Table 7",
+          "type": "TABLE (19)",
+          "left": 531359,
+          "top": 1100000,
+          "width": 13573506,
+          "height": 6672400,
+          "table": [
+            [
+              "Team",
+              "Work Location",
+              "Role",
+              "Band",
+              "Resource Name",
+              "Start Date"
+            ],
+            [
+              "PMO",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "PMO",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Process",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Process",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Process",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Process",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Security",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Data",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Analytics",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Basis",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "OCM",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Training",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Testing",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Development",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 15,
+          "table_cols": 6
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "name": "Title 1",
+          "type": "PLACEHOLDER (14)",
+          "left": 365760,
+          "top": 205740,
+          "width": 13605781,
+          "height": 369332,
+          "text": "Bid Metrics"
+        },
+        {
+          "name": "Slide Number Placeholder 3",
+          "type": "PLACEHOLDER (14)",
+          "left": 412488,
+          "top": 7858330,
+          "width": 237744,
+          "height": 147733,
+          "text": "6"
+        },
+        {
+          "name": "Table 4",
+          "type": "TABLE (19)",
+          "left": 650231,
+          "top": 1825466,
+          "width": 13454632,
+          "height": 4762820,
+          "table": [
+            [
+              "",
+              "Target",
+              "",
+              "Actual",
+              "Met",
+              "Hard/Soft Criteria"
+            ],
+            [
+              "Bid Metrics Criteria",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Global CIC (offshore) %",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Domestic CIC (nearshore) %",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Total CIC (offshore+nearshore+landed) %",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Domestic (local) %",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "B6 (includes associates) to B7 ratio",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "B7 & below combined %",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Overall Band Mix",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Global CIC Band Mix",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Domestic CIC Band Mix",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Domestic Band Mix",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Total CIC leadership (Band 9 & above) %",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "P/AP %",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Associate %",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 15,
+          "table_cols": 6
+        },
+        {
+          "left": 531362,
+          "top": 762000,
+          "width": 13573506,
+          "height": 0
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "name": "Title 1",
+          "type": "PLACEHOLDER (14)",
+          "left": 365760,
+          "top": 205740,
+          "width": 13605781,
+          "height": 430887,
+          "text": "WRICEF Count/Estimates"
+        },
+        {
+          "name": "Slide Number Placeholder 2",
+          "type": "PLACEHOLDER (14)",
+          "left": 412488,
+          "top": 7858330,
+          "width": 237744,
+          "height": 147733,
+          "text": "7"
+        },
+        {
+          "name": "Table 5",
+          "type": "TABLE (19)",
+          "left": 7983557,
+          "top": 1110996,
+          "width": 6096981,
+          "height": 2468880,
+          "table": [
+            [
+              "Object Count by Complexity",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Type",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "R",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "I",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "C",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "E",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "F",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "W",
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 8,
+          "table_cols": 5
+        },
+        {
+          "name": "Table 7",
+          "type": "TABLE (19)",
+          "left": 549863,
+          "top": 1110996,
+          "width": 6929428,
+          "height": 4773168,
+          "table": [
+            [
+              "SAP Development Hours Summary",
+              "",
+              ""
+            ],
+            [
+              "Object Types",
+              "",
+              ""
+            ],
+            [
+              "S/4 Reports",
+              "",
+              ""
+            ],
+            [
+              "S/4 ABAP Interfaces",
+              "",
+              ""
+            ],
+            [
+              "S/4 Conversions",
+              "",
+              ""
+            ],
+            [
+              "S/4 Enhancements",
+              "",
+              ""
+            ],
+            [
+              "S/4 Forms",
+              "",
+              ""
+            ],
+            [
+              "Total",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              ""
+            ],
+            [
+              "Additional Effort",
+              "",
+              ""
+            ],
+            [
+              "Integration Test Support",
+              "",
+              ""
+            ],
+            [
+              "Go-Live Support",
+              "",
+              ""
+            ],
+            [
+              "Sub Total",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              ""
+            ],
+            [
+              "On-site Dev Lead",
+              "",
+              ""
+            ],
+            [
+              "On-site Dev Coordinator",
+              "",
+              ""
+            ],
+            [
+              "Offshore PM",
+              "",
+              ""
+            ],
+            [
+              "Offshore Dev Lead/SMEs",
+              "",
+              ""
+            ],
+            [
+              "Grand Total",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 19,
+          "table_cols": 3
+        },
+        {
+          "name": "Picture 9",
+          "type": "PICTURE (13)",
+          "left": 7983556,
+          "top": 3456432,
+          "width": 5979023,
+          "height": 2057400,
+          "image_file": "ref_slide8_img2.x-wmf",
+          "image_type": "image/x-wmf",
+          "image_size": 13192
+        },
+        {
+          "left": 412488,
+          "top": 688911,
+          "width": 13573506,
+          "height": 0
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "name": "Title 1",
+          "type": "PLACEHOLDER (14)",
+          "left": 365760,
+          "top": 205740,
+          "width": 13605781,
+          "height": 430887,
+          "text": "Deal Financials"
+        },
+        {
+          "name": "Slide Number Placeholder 2",
+          "type": "PLACEHOLDER (14)",
+          "left": 412488,
+          "top": 7858330,
+          "width": 237744,
+          "height": 147733,
+          "text": "8"
+        },
+        {
+          "name": "Table 4",
+          "type": "TABLE (19)",
+          "left": 1724213,
+          "top": 1110996,
+          "width": 11181974,
+          "height": 4572000,
+          "table": [
+            [
+              "Team",
+              "Sub-Team",
+              "% of Hours",
+              "Sum of Hours",
+              "Sum of Fees",
+              "% of Fees",
+              "Blended Rate"
+            ],
+            [
+              "PMO",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "PMO Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Process",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Process Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "OCM",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "OCM Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Technology",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Technology Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Analytics",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Analytics Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Data",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Data Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Development",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Development Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Testing",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Testing Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Training",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Training Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Grand Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 29,
+          "table_cols": 7
+        },
+        {
+          "name": "Table 5",
+          "type": "TABLE (19)",
+          "left": 1724211,
+          "top": 5750195,
+          "width": 11181976,
+          "height": 1950834,
+          "table": [
+            [
+              "Company",
+              "Work Location",
+              "% of Hours",
+              "Sum of Hours",
+              "Sum of Fees",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "IBM",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "IBM Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Grand Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 6,
+          "table_cols": 15
+        },
+        {
+          "left": 531362,
+          "top": 762000,
+          "width": 13573506,
+          "height": 0
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "name": "Title 1",
+          "type": "PLACEHOLDER (14)",
+          "left": 365760,
+          "top": 205740,
+          "width": 13605781,
+          "height": 430887,
+          "text": "Deal Financials"
+        },
+        {
+          "name": "Slide Number Placeholder 2",
+          "type": "PLACEHOLDER (14)",
+          "left": 412488,
+          "top": 7858330,
+          "width": 237744,
+          "height": 147733,
+          "text": "9"
+        },
+        {
+          "name": "Picture 8",
+          "type": "PICTURE (13)",
+          "left": 650232,
+          "top": 1257408,
+          "width": 12588621,
+          "height": 6006421,
+          "image_file": "ref_slide10_img3.png",
+          "image_type": "image/png",
+          "image_size": 42976
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "layout": "1_Title and Content",
+      "shapes": [
+        {
+          "name": "Rectangle 11",
+          "type": "AUTO_SHAPE (1)",
+          "left": 365760,
+          "top": 205740,
+          "width": 2470548,
+          "height": 461665,
+          "text": ""
+        },
+        {
+          "name": "Picture 5",
+          "type": "PICTURE (13)",
+          "left": 8684072,
+          "top": 1332711,
+          "width": 4371975,
+          "height": 3657600,
+          "image_file": "ref_slide11_img4.x-wmf",
+          "image_type": "image/x-wmf",
+          "image_size": 13116
+        },
+        {
+          "name": "Table 7",
+          "type": "TABLE (19)",
+          "left": 719191,
+          "top": 5979560,
+          "width": 12336856,
+          "height": 1171254,
+          "table": [
+            [
+              "Service Line",
+              "SL TCV",
+              "Asset TCV% (over SL TCV)",
+              "Asset TCV ($)",
+              "Asset Cost ($)",
+              "Price of Setting up Assets ($)",
+              "Gross Price Reduction after Applying Productivity ($)"
+            ],
+            [
+              "Business Apps",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 2,
+          "table_cols": 7
+        },
+        {
+          "name": "Table 8",
+          "type": "TABLE (19)",
+          "left": 811658,
+          "top": 1332711,
+          "width": 6700348,
+          "height": 4225607,
+          "table": [
+            [
+              "Team",
+              "% of Hours",
+              "Sum of Hours",
+              "Average  GenAI Relevance",
+              "Applicable % of Hours using GenAI",
+              "Applicable Hours using GenAI",
+              "Effective Savings %",
+              "Effective Savings (Hours)"
+            ],
+            [
+              "PMO",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Process",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "BASIS",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Security",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Development",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "OCM",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Training",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Testing",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Analytics",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Data",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Grand Total",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Effort without GenAI",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "table_rows": 14,
+          "table_cols": 8
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "name": "Title 1",
+          "type": "PLACEHOLDER (14)",
+          "left": 365760,
+          "top": 205740,
+          "width": 13416314,
+          "height": 1329595,
+          "text": "Technology Landscape and Application Architecture - Current State"
+        },
+        {
+          "name": "Rectangle 20",
+          "type": "AUTO_SHAPE (1)",
+          "left": 5667311,
+          "top": 3033296,
+          "width": 3290983,
+          "height": 302492,
+          "text": ""
+        },
+        {
+          "name": "Group 16",
+          "type": "GROUP (6)",
+          "left": 730836,
+          "top": 2712303,
+          "width": 13163932,
+          "height": 734980,
+          "is_group": true
+        },
+        {
+          "name": "Group 18",
+          "type": "GROUP (6)",
+          "left": 730836,
+          "top": 3600648,
+          "width": 13163932,
+          "height": 3158324,
+          "is_group": true
+        },
+        {
+          "name": "Rectangle 6",
+          "type": "AUTO_SHAPE (1)",
+          "left": 940137,
+          "top": 3956335,
+          "width": 2019655,
+          "height": 2632787,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 8",
+          "type": "AUTO_SHAPE (1)",
+          "left": 3086232,
+          "top": 3956335,
+          "width": 2019655,
+          "height": 2632787,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 9",
+          "type": "AUTO_SHAPE (1)",
+          "left": 5232327,
+          "top": 3956335,
+          "width": 2019655,
+          "height": 2632787,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 10",
+          "type": "AUTO_SHAPE (1)",
+          "left": 7378421,
+          "top": 3956335,
+          "width": 2019655,
+          "height": 2632787,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 11",
+          "type": "AUTO_SHAPE (1)",
+          "left": 9524515,
+          "top": 3956335,
+          "width": 2019655,
+          "height": 2632787,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 12",
+          "type": "AUTO_SHAPE (1)",
+          "left": 11670610,
+          "top": 3956335,
+          "width": 2019655,
+          "height": 2632787,
+          "text": ""
+        },
+        {
+          "name": "Group 65",
+          "type": "GROUP (6)",
+          "left": 730836,
+          "top": 1685246,
+          "width": 13163932,
+          "height": 909461,
+          "is_group": true
+        },
+        {
+          "name": "Rectangle 27",
+          "type": "AUTO_SHAPE (1)",
+          "left": 5937741,
+          "top": 2056546,
+          "width": 2047507,
+          "height": 329099,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 29",
+          "type": "AUTO_SHAPE (1)",
+          "left": 8117431,
+          "top": 2056546,
+          "width": 1316393,
+          "height": 329099,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 36",
+          "type": "AUTO_SHAPE (1)",
+          "left": 9566009,
+          "top": 2056546,
+          "width": 1316393,
+          "height": 329099,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 38",
+          "type": "AUTO_SHAPE (1)",
+          "left": 3040589,
+          "top": 2056546,
+          "width": 1316393,
+          "height": 329099,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 39",
+          "type": "AUTO_SHAPE (1)",
+          "left": 4489164,
+          "top": 2056546,
+          "width": 1316393,
+          "height": 329099,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 40",
+          "type": "AUTO_SHAPE (1)",
+          "left": 11014585,
+          "top": 2056546,
+          "width": 1316393,
+          "height": 329099,
+          "text": ""
+        },
+        {
+          "name": "Rectangle 41",
+          "type": "AUTO_SHAPE (1)",
+          "left": 1592012,
+          "top": 2056546,
+          "width": 1316393,
+          "height": 329099,
+          "text": ""
+        },
+        {
+          "name": "Group 61",
+          "type": "GROUP (6)",
+          "left": 730836,
+          "top": 6888908,
+          "width": 4607376,
+          "height": 734980,
+          "is_group": true
+        },
+        {
+          "name": "TextBox 47",
+          "type": "TEXT_BOX (17)",
+          "left": 931392,
+          "top": 7281160,
+          "width": 380774,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "TextBox 48",
+          "type": "TEXT_BOX (17)",
+          "left": 1495161,
+          "top": 7281160,
+          "width": 1780794,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "TextBox 49",
+          "type": "TEXT_BOX (17)",
+          "left": 3458949,
+          "top": 7281160,
+          "width": 842318,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "TextBox 50",
+          "type": "TEXT_BOX (17)",
+          "left": 5716435,
+          "top": 7272265,
+          "width": 513469,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "TextBox 52",
+          "type": "TEXT_BOX (17)",
+          "left": 6478994,
+          "top": 7272265,
+          "width": 975013,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "TextBox 53",
+          "type": "TEXT_BOX (17)",
+          "left": 7703097,
+          "top": 7272265,
+          "width": 775012,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "TextBox 54",
+          "type": "TEXT_BOX (17)",
+          "left": 8727199,
+          "top": 7272265,
+          "width": 542315,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "TextBox 56",
+          "type": "TEXT_BOX (17)",
+          "left": 9518604,
+          "top": 7272265,
+          "width": 711548,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "TextBox 57",
+          "type": "TEXT_BOX (17)",
+          "left": 10479241,
+          "top": 7272265,
+          "width": 742318,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "TextBox 58",
+          "type": "TEXT_BOX (17)",
+          "left": 12885139,
+          "top": 7272265,
+          "width": 740395,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "TextBox 59",
+          "type": "TEXT_BOX (17)",
+          "left": 11470648,
+          "top": 7272265,
+          "width": 1165400,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "Group 62",
+          "type": "GROUP (6)",
+          "left": 5443577,
+          "top": 6882013,
+          "width": 8451192,
+          "height": 740707,
+          "is_group": true
+        },
+        {
+          "name": "Straight Arrow Connector 81",
+          "type": "LINE (9)",
+          "left": 5957213,
+          "top": 3407838,
+          "width": 0,
+          "height": 548497
+        },
+        {
+          "name": "Straight Arrow Connector 83",
+          "type": "LINE (9)",
+          "left": 4096060,
+          "top": 3407838,
+          "width": 6199,
+          "height": 548497
+        },
+        {
+          "name": "Straight Arrow Connector 84",
+          "type": "LINE (9)",
+          "left": 8727198,
+          "top": 3417658,
+          "width": 0,
+          "height": 548497
+        },
+        {
+          "name": "Straight Arrow Connector 93",
+          "type": "LINE (9)",
+          "left": 10534343,
+          "top": 3417658,
+          "width": 0,
+          "height": 548497
+        },
+        {
+          "name": "Straight Arrow Connector 94",
+          "type": "LINE (9)",
+          "left": 12680437,
+          "top": 3407838,
+          "width": 0,
+          "height": 548497
+        },
+        {
+          "name": "Straight Arrow Connector 32",
+          "type": "LINE (9)",
+          "left": 1949964,
+          "top": 3407838,
+          "width": 0,
+          "height": 548497
+        },
+        {
+          "name": "TextBox 102",
+          "type": "TEXT_BOX (17)",
+          "left": 11894743,
+          "top": 7776472,
+          "width": 1730792,
+          "height": 203133,
+          "text": ""
+        },
+        {
+          "name": "Multiply 35",
+          "type": "PICTURE (13)",
+          "left": 5591974,
+          "top": 2025773,
+          "width": 248920,
+          "height": 219398,
+          "image_file": "ref_slide12_img5.png",
+          "image_type": "image/png",
+          "image_size": 2190
+        },
+        {
+          "name": "Multiply 35",
+          "type": "PICTURE (13)",
+          "left": 7771410,
+          "top": 2040076,
+          "width": 248920,
+          "height": 219398,
+          "image_file": "ref_slide12_img6.png",
+          "image_type": "image/png",
+          "image_size": 2190
+        },
+        {
+          "name": "Multiply 35",
+          "type": "PICTURE (13)",
+          "left": 9217922,
+          "top": 2040076,
+          "width": 248920,
+          "height": 219398,
+          "image_file": "ref_slide12_img7.png",
+          "image_type": "image/png",
+          "image_size": 2190
+        },
+        {
+          "name": "Multiply 35",
+          "type": "PICTURE (13)",
+          "left": 10666498,
+          "top": 2040076,
+          "width": 248920,
+          "height": 219398,
+          "image_file": "ref_slide12_img8.png",
+          "image_type": "image/png",
+          "image_size": 2190
+        },
+        {
+          "name": "Multiply 35",
+          "type": "PICTURE (13)",
+          "left": 11546150,
+          "top": 7768311,
+          "width": 248920,
+          "height": 219398,
+          "image_file": "ref_slide12_img9.png",
+          "image_type": "image/png",
+          "image_size": 2190
+        },
+        {
+          "name": "Rectangle 24",
+          "type": "AUTO_SHAPE (1)",
+          "left": 4102258,
+          "top": 3033296,
+          "width": 1349867,
+          "height": 302492,
+          "text": ""
+        },
+        {
+          "name": "TextBox 30",
+          "type": "TEXT_BOX (17)",
+          "left": 4484262,
+          "top": 7281160,
+          "width": 644239,
+          "height": 203133,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Finance (RTR)",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "14",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Finance (RTR) – Process Details",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "15",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "Enter in-scope items...",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Sales (OTC)",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "16",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Sales (OTC) – Process Details",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "17",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "Enter in-scope items...",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Procurement (PTP)",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "18",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Procurement (PTP) – Process Details",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "19",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "Enter in-scope items...",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Plan to Manufacture",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "20",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "Enter in-scope items...",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Organizational Change Management",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "21",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "layout": "Two Content",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Development & Integration",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "22",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "Enter in-scope items...",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "layout": "Two Content",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Data",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "23",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "Enter in-scope items...",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "layout": "Two Content",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Analytics",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "24",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "Enter in-scope items...",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "layout": "Two Content",
+      "shapes": [
+        {
+          "text": "Scope & Assumptions: Testing",
+          "top": 205740,
+          "left": 365760,
+          "width": 13606272,
+          "height": 518465
+        },
+        {
+          "text": "25",
+          "top": 7859268,
+          "left": 414528,
+          "width": 231648,
+          "height": 148133
+        },
+        {
+          "table": [
+            [
+              "In Scope",
+              "Out of Scope",
+              "Assumptions"
+            ],
+            [
+              "Enter in-scope items...",
+              "",
+              ""
+            ]
+          ],
+          "top": 1100000,
+          "left": 531359,
+          "width": 13573506,
+          "height": 6672400
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "layout": "Title Only Light",
+      "shapes": [
+        {
+          "name": "Slide Number Placeholder 1",
+          "type": "PLACEHOLDER (14)",
+          "left": 13367202,
+          "top": 7787351,
+          "width": 1000488,
+          "height": 175754,
+          "text": "24"
+        },
+        {
+          "name": "Footer Placeholder 2",
+          "type": "PLACEHOLDER (14)",
+          "left": 365760,
+          "top": 205740,
+          "width": 4552672,
+          "height": 439504,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "layout": "Title Only",
+      "shapes": [
+        {
+          "name": "Picture 8",
+          "type": "PICTURE (13)",
+          "left": 6335995,
+          "top": 3723118,
+          "width": 1958410,
+          "height": 783364,
+          "image_file": "ref_slide26_img10.png",
+          "image_type": "image/png",
+          "image_size": 3610
+        },
+        {
+          "name": "Slide Number Placeholder 1",
+          "type": "PLACEHOLDER (14)",
+          "left": 412488,
+          "top": 7858331,
+          "width": 273312,
+          "height": 142670,
+          "text": "25"
+        },
+        {
+          "name": "Date Placeholder 6",
+          "type": "TEXT_BOX (17)",
+          "left": 365760,
+          "top": 205740,
+          "width": 3366744,
+          "height": 147733,
+          "text": "Template - 2025 Edition, Version 3.5.8.1"
+        },
+        {
+          "name": "Footer Placeholder 7",
+          "type": "TEXT_BOX (17)",
+          "left": 4976927,
+          "top": 7853267,
+          "width": 4684166,
+          "height": 147733,
+          "text": "© 2025 IBM Corporation | IBM Confidential"
+        }
+      ]
+    }
+  ]
+}

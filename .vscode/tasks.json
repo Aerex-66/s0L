@@ -1,0 +1,127 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "frontend dev server",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\npm.cmd",
+			"args": [
+				"--prefix",
+				"frontend",
+				"run",
+				"dev"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"PATH": "C:\\Program Files\\nodejs;${env:LOCALAPPDATA}\\Programs\\Python\\Python312;${env:LOCALAPPDATA}\\Programs\\Python\\Python312\\Scripts;${env:PATH}"
+				}
+			},
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"owner": "custom",
+					"pattern": {
+						"regexp": ".+",
+						"file": 1,
+						"location": 1,
+						"message": 0
+					},
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": ".*VITE v.*",
+						"endsPattern": ".*Local:\\s+http://localhost:5120/.*"
+					}
+				}
+			],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"group": "dev-server"
+			}
+		},
+		{
+			"label": "backend dev server",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"deal_tracker.py"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"PATH": "C:\\Program Files\\nodejs;${env:LOCALAPPDATA}\\Programs\\Python\\Python312;${env:LOCALAPPDATA}\\Programs\\Python\\Python312\\Scripts;${env:PATH}"
+				}
+			},
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"owner": "custom",
+					"pattern": {
+						"regexp": ".+",
+						"file": 1,
+						"location": 1,
+						"message": 0
+					},
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": ".*DEAL TRACKER API.*",
+						"endsPattern": ".*Running on http://127\\.0\\.0\\.1:5121.*"
+					}
+				}
+			],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"group": "dev-server"
+			}
+		},
+		{
+			"label": "gssm dev server",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"--disable-warning=ExperimentalWarning",
+				"index.js"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/gssm-server",
+				"env": {
+					"PATH": "C:\\Program Files\\nodejs;${env:LOCALAPPDATA}\\Programs\\Python\\Python312;${env:LOCALAPPDATA}\\Programs\\Python\\Python312\\Scripts;${env:PATH}"
+				}
+			},
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"owner": "custom",
+					"pattern": {
+						"regexp": ".+",
+						"file": 1,
+						"location": 1,
+						"message": 0
+					},
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": ".*",
+						"endsPattern": ".*Spreadsheet server listening on :5175.*"
+					}
+				}
+			],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"group": "dev-server"
+			}
+		},
+		{
+			"label": "dev server",
+			"dependsOrder": "parallel",
+			"dependsOn": [
+				"frontend dev server",
+				"backend dev server",
+				"gssm dev server"
+			],
+			"problemMatcher": []
+		}
+	]
+}

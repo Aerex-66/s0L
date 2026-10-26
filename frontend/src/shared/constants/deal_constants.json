@@ -1,0 +1,468 @@
+{
+  "implementation_types": [
+    "Greenfield",
+    "Brownfield",
+    "Bluefield",
+    "Selective Data Transition",
+    "System Conversion"
+  ],
+  "sectors": [
+    "Distribution",
+    "Manufacturing",
+    "Industrial",
+    "Financial Services",
+    "Healthcare",
+    "Energy",
+    "Retail"
+  ],
+  "markets": [
+    "Distribution",
+    "Industrial/Communications",
+    "FSS",
+    "Public",
+    "Federal",
+    "Canada",
+    "Latin America"
+  ],
+  "industries": {
+    "Distribution": ["Wholesale", "Logistics", "Transportation"],
+    "Manufacturing": ["Automotive", "Pharmaceutical", "Consumer Goods", "Industrial"],
+    "Financial Services": ["Banking", "Insurance", "Capital Markets"],
+    "Healthcare": ["Hospitals", "Life Sciences", "Medical Devices"],
+    "Energy": ["Oil & Gas", "Utilities", "Renewable Energy"],
+    "Retail": ["Retail & Consumer Goods", "E-commerce", "Hospitality"],
+    "Public": ["Government", "Education", "Non-Profit"],
+    "Technology": ["Software", "Hardware", "IT Services"],
+    "Telecommunications": ["Telco", "Media", "Broadcasting"]
+  },
+  "rate_cards": [
+    "Standard US Rate Card",
+    "Premium US Rate Card",
+    "India Offshore Rate Card",
+    "CIC Rate Card",
+    "Government Rate Card",
+    "Strategic Account Rate Card"
+  ],
+  "deal_statuses": [
+    "Active",
+    "In Progress",
+    "On Hold",
+    "Closed Won",
+    "Closed Lost",
+    "Archived"
+  ],
+  "deal_types": [
+    "T&T",
+    "Fixed Bid",
+    "B&P",
+    "Hybrid"
+  ],
+  "deal_phases": [
+    "Discovery",
+    "Solution Design",
+    "Proposal",
+    "Negotiation",
+    "Contract Signing",
+    "Project Kickoff",
+    "Implementation",
+    "Hypercare",
+    "Completed"
+  ],
+  "phases": [
+    "Prepare",
+    "Explore",
+    "Build",
+    "Test",
+    "Go-Live",
+    "Hypercare"
+  ],
+  "timeline_names": [
+    "Main Project",
+    "Phase 2",
+    "Regional Rollout",
+    "Wave 2"
+  ],
+  "time_units": [
+    "days",
+    "weeks",
+    "months",
+    "years"
+  ],
+  "default_timeline": {
+    "name": "Main Project",
+    "implementation_type": "Greenfield",
+    "methodology": "balanced",
+    "total_duration": 12,
+    "duration_unit": "months",
+    "project_start_date": "",
+    "timeline": {
+      "Prepare": { "duration": 2, "unit": "months" },
+      "Explore": { "duration": 3, "unit": "months" },
+      "Build": { "duration": 4, "unit": "months" },
+      "Test": { "duration": 2, "unit": "months" },
+      "Go-Live": { "duration": 1, "unit": "months" },
+      "Hypercare": { "duration": 2, "unit": "months" }
+    }
+  },
+  "timeline_methodology": [
+    {
+      "value": "conservative",
+      "label": "Conservative",
+      "description": "Extended timelines with buffer for risk mitigation"
+    },
+    {
+      "value": "balanced",
+      "label": "Balanced (IBM Best Practice)",
+      "description": "Standard IBM delivery methodology timelines"
+    },
+    {
+      "value": "aggressive",
+      "label": "Aggressive",
+      "description": "Compressed timelines for experienced teams"
+    }
+  ],
+  "sldl_sectors": [
+    "Distribution",
+    "Manufacturing",
+    "Financial Services",
+    "Public Sector",
+    "Energy & Utilities"
+  ],
+  "staffing_locations": [
+    "US Onsite",
+    "India Offshore",
+    "Baton Rouge CIC",
+    "Halifax CIC",
+    "Europe",
+    "APAC"
+  ],
+  "risk_severity": [
+    "Low",
+    "Medium",
+    "High",
+    "Critical"
+  ],
+  "activity_types": [
+    "Meeting",
+    "Call",
+    "Email",
+    "Demo",
+    "Workshop",
+    "Review",
+    "Approval",
+    "Other"
+  ],
+  "document_types": [
+    "Proposal",
+    "SOW",
+    "Contract",
+    "Requirements",
+    "Presentation",
+    "Technical Design",
+    "Risk Assessment",
+    "Pricing",
+    "Other"
+  ],
+  "resource_roles": {
+    "leadership": [
+      "Delivery Partner",
+      "Program Manager",
+      "Response Lead",
+      "Engagement Manager"
+    ],
+    "technical": [
+      "Solution Architect",
+      "Technical Lead",
+      "Development Lead",
+      "Integration Lead"
+    ],
+    "functional": [
+      "Functional Lead",
+      "Process Consultant",
+      "Business Analyst",
+      "Change Management Lead"
+    ],
+    "specialized": [
+      "Data Architect",
+      "Security Specialist",
+      "Testing Lead",
+      "Training Lead"
+    ]
+  },
+  "billing_timing": [
+    "Bill Current",
+    "Bill Arrears"
+  ],
+  "payment_terms": [
+    "Net 15",
+    "Net 30",
+    "Net 45",
+    "Net 60",
+    "Upon Receipt",
+    "Custom"
+  ],
+  "billing_schedules": [
+    "Monthly",
+    "Quarterly",
+    "Milestone-based",
+    "Monthly milestone-based",
+    "Upon Completion",
+    "Upfront + Milestones",
+    "Custom"
+  ],
+  "implementation_type_colors": {
+    "Greenfield": "#24a148",
+    "Bluefield": "#0f62fe",
+    "Brownfield": "#8a3800",
+    "Selective Data Transition": "#fa4d56",
+    "System Conversion": "#8a3ffc",
+    "Data Transformation": "#b28600"
+  },
+  "phase_distributions": {
+    "Greenfield": {
+      "conservative": {
+        "Prepare": 0.14,
+        "Explore": 0.20,
+        "Build": 0.32,
+        "Test": 0.24,
+        "Go-Live": 0.05,
+        "Hypercare": 0.05
+      },
+      "balanced": {
+        "Prepare": 0.12,
+        "Explore": 0.18,
+        "Build": 0.35,
+        "Test": 0.22,
+        "Go-Live": 0.05,
+        "Hypercare": 0.08
+      },
+      "aggressive": {
+        "Prepare": 0.10,
+        "Explore": 0.15,
+        "Build": 0.40,
+        "Test": 0.20,
+        "Go-Live": 0.05,
+        "Hypercare": 0.10
+      }
+    },
+    "Bluefield": {
+      "conservative": {
+        "Prepare": 0.16,
+        "Explore": 0.24,
+        "Build": 0.28,
+        "Test": 0.22,
+        "Go-Live": 0.05,
+        "Hypercare": 0.05
+      },
+      "balanced": {
+        "Prepare": 0.14,
+        "Explore": 0.22,
+        "Build": 0.30,
+        "Test": 0.21,
+        "Go-Live": 0.05,
+        "Hypercare": 0.08
+      },
+      "aggressive": {
+        "Prepare": 0.12,
+        "Explore": 0.18,
+        "Build": 0.35,
+        "Test": 0.20,
+        "Go-Live": 0.05,
+        "Hypercare": 0.10
+      }
+    },
+    "Brownfield": {
+      "conservative": {
+        "Prepare": 0.20,
+        "Explore": 0.27,
+        "Build": 0.23,
+        "Test": 0.21,
+        "Go-Live": 0.04,
+        "Hypercare": 0.05
+      },
+      "balanced": {
+        "Prepare": 0.18,
+        "Explore": 0.25,
+        "Build": 0.25,
+        "Test": 0.20,
+        "Go-Live": 0.04,
+        "Hypercare": 0.08
+      },
+      "aggressive": {
+        "Prepare": 0.15,
+        "Explore": 0.22,
+        "Build": 0.30,
+        "Test": 0.18,
+        "Go-Live": 0.05,
+        "Hypercare": 0.10
+      }
+    },
+    "Selective Data Transition": {
+      "conservative": {
+        "Prepare": 0.18,
+        "Explore": 0.22,
+        "Build": 0.26,
+        "Test": 0.25,
+        "Go-Live": 0.05,
+        "Hypercare": 0.04
+      },
+      "balanced": {
+        "Prepare": 0.16,
+        "Explore": 0.20,
+        "Build": 0.28,
+        "Test": 0.23,
+        "Go-Live": 0.05,
+        "Hypercare": 0.08
+      },
+      "aggressive": {
+        "Prepare": 0.14,
+        "Explore": 0.17,
+        "Build": 0.32,
+        "Test": 0.22,
+        "Go-Live": 0.05,
+        "Hypercare": 0.10
+      }
+    },
+    "System Conversion": {
+      "conservative": {
+        "Prepare": 0.22,
+        "Explore": 0.30,
+        "Build": 0.20,
+        "Test": 0.19,
+        "Go-Live": 0.04,
+        "Hypercare": 0.05
+      },
+      "balanced": {
+        "Prepare": 0.20,
+        "Explore": 0.28,
+        "Build": 0.22,
+        "Test": 0.18,
+        "Go-Live": 0.04,
+        "Hypercare": 0.08
+      },
+      "aggressive": {
+        "Prepare": 0.17,
+        "Explore": 0.25,
+        "Build": 0.26,
+        "Test": 0.17,
+        "Go-Live": 0.05,
+        "Hypercare": 0.10
+      }
+    }
+  },
+  "approval_thresholds": {
+    "RISK_REVIEW_TCV": 2000000,
+    "WSA_REQUIRED_TCV": 5000000,
+    "AMERICAS_SRR_TCV": 10000000,
+    "EXECUTIVE_APPROVAL_TCV": 25000000
+  },
+  "probability_tiers": {
+    "QUALIFIED": 25,
+    "PROPOSED": 50,
+    "NEGOTIATING": 75,
+    "VERBAL_COMMIT": 90,
+    "CLOSED_WON": 100,
+    "CLOSED_LOST": 0
+  },
+  "gssm_phase_codes": {
+    "DI": { "label": "Discover", "canonical": null },
+    "PR": { "label": "Prepare", "canonical": "Prepare" },
+    "EX": { "label": "Explore", "canonical": "Explore" },
+    "RE": { "label": "Realize", "canonical": "Build" },
+    "RB": { "label": "Realize Build", "canonical": "Build", "subPhaseOf": "RE" },
+    "RC": { "label": "Realize Config", "canonical": "Build", "subPhaseOf": "RE" },
+    "RD": { "label": "Realize Data", "canonical": "Build", "subPhaseOf": "RE" },
+    "RT": { "label": "Realize Test", "canonical": "Test", "subPhaseOf": "RE" },
+    "DP": { "label": "Deploy", "canonical": "Go-Live" },
+    "SU": { "label": "Sustain", "canonical": "Hypercare" }
+  },
+  "gssm_pti_enums": {
+    "contract_types": ["Fixed Price", "Time And Materials"],
+    "price_types": ["BAFO Price", "Indicative Price", "B&P Price"],
+    "gbs_bid_types": ["Standard", "Strategic", "Alliance"],
+    "risk_rating_scale": { "min": 0, "max": 9, "labels": { "0": "None", "1": "Very Low", "3": "Low", "5": "Moderate", "7": "High", "9": "Critical" } }
+  },
+  "isbd_compliance_flags": [
+    "complex_opportunity",
+    "solutioned_to_standard",
+    "cic_offshore_resource_compliant",
+    "cic_offshore_band_compliant",
+    "consortium_agreement",
+    "enhanced_risky_solution",
+    "rebadging_in_scope",
+    "pcw_in_place",
+    "capital_investment",
+    "dpa_applicable",
+    "regulated_client",
+    "foak",
+    "agile_delivery",
+    "cloud_hyperscaler",
+    "genai_included"
+  ],
+  "isbd_contractual_fields": [
+    "billing_payment_terms",
+    "staff_augmentation",
+    "fx_protection",
+    "inflation",
+    "repricing_clause",
+    "penalties",
+    "tt_cost_amortized",
+    "non_standard_tc",
+    "non_standard_slas",
+    "performance_bond"
+  ],
+  "extended_resource_roles": {
+    "isbd_specific": [
+      "Risk Consultant",
+      "TDA Reviewer",
+      "ITR Reviewer",
+      "Legal Counsel",
+      "Pricer",
+      "Quality Partner",
+      "Delivery Architect",
+      "Solutioning Approver",
+      "Service Line Approver"
+    ],
+    "gssm_pmp": [
+      "Project Manager",
+      "Functional Lead",
+      "Technical Lead",
+      "Change Management Lead"
+    ]
+  },
+  "bid_metrics_enums": {
+    "regions": ["Americas", "EMEA", "APAC", "Global"],
+    "bid_types": ["New Logo", "Renewal", "Extension", "Follow-On", "Competitive"]
+  },
+  "staffability_locations": {
+    "us_onsite": "US Onsite",
+    "india_offshore": "India Offshore",
+    "br_nearshore": "Baton Rouge CIC",
+    "halifax_cic": "Halifax CIC",
+    "sra_pmp": "SRA/PMP Review"
+  },
+  "isbd_sales_stages": {
+    "Active": "Active",
+    "In Progress": "In Progress",
+    "On Hold": "Suspended",
+    "Closed Won": "Won",
+    "Closed Lost": "Lost",
+    "Archived": "Archived"
+  },
+  "pricing_type_map": {
+    "Indicative": "Indicative Price",
+    "B&P": "B&P Price",
+    "BAFO": "BAFO Price"
+  },
+  "price_model_map": {
+    "T&M": "Time And Materials",
+    "Fixed Price": "Fixed Price",
+    "Hybrid": "Hybrid"
+  },
+  "risk_level_scale": {
+    "Very Low (5%)": { "numeric": 1, "percent": 5 },
+    "Low (8%)": { "numeric": 3, "percent": 8 },
+    "Moderate (12%)": { "numeric": 5, "percent": 12 },
+    "High (18%)": { "numeric": 7, "percent": 18 }
+  }
+}

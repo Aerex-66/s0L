@@ -1,0 +1,67 @@
+{
+  "_comment": "Single source of truth for cross-runtime domain constants. Consumed by core/shared/domain.py (Flask) and frontend/src/shared/constants/gssmFieldMap.js (React). Follows the same contract pattern as field_aliases.json.",
+
+  "phase_palette": {
+    "DI": { "label": "Discover",           "color": "#0f62fe" },
+    "PR": { "label": "Prepare",            "color": "#8a3ffc" },
+    "EX": { "label": "Explore",            "color": "#24a148" },
+    "RE": { "label": "Realize",            "color": "#f1c21b" },
+    "RB": { "label": "Realize Build",      "color": "#d2a106" },
+    "RT": { "label": "Realize Test",       "color": "#ba4e00" },
+    "RC": { "label": "Realize Config",     "color": "#e8daff" },
+    "RD": { "label": "Realize Data",       "color": "#bae6ff" },
+    "DP": { "label": "Deploy",             "color": "#fa4d56" },
+    "SU": { "label": "Sustain",            "color": "#198038" },
+    "HC": { "label": "Hypercare",          "color": "#009d9a" },
+    "RB/RT": { "label": "Realize Build/Test", "color": "#c45d00" },
+    "XX": { "label": "User-Defined",       "color": "#6f6f6f" },
+    "YY": { "label": "User-Defined",       "color": "#8d8d8d" },
+    "ZZ": { "label": "User-Defined",       "color": "#a8a8a8" }
+  },
+
+  "phase_code_to_deal": {
+    "DI": "Discover",
+    "PR": "Prepare",
+    "EX": "Explore",
+    "RE": "Build",
+    "RB": "Build",
+    "RT": "Test",
+    "RC": "Build",
+    "RD": "Build",
+    "DP": "Go-Live",
+    "SU": "Hypercare"
+  },
+
+  "phase_name_to_code": {
+    "Discover": "DI",
+    "Prepare": "PR",
+    "Explore": "EX",
+    "Build": "RE",
+    "Test": "RT",
+    "Go-Live": "DP",
+    "Hypercare": "SU",
+    "Realize": "RE",
+    "Deploy": "DP",
+    "Sustain": "SU",
+    "Realize Build": "RB",
+    "Realize Test": "RT",
+    "Realize Config": "RC",
+    "Realize Data": "RD"
+  },
+
+  "service_areas": {
+    "RTR":             "Record to Report",
+    "OTC":             "Order to Cash",
+    "PTP/Ariba":       "Procure to Pay / Ariba",
+    "FTP&L":           "Financial Planning & Analysis",
+    "Data":            "Data Management",
+    "Analytics":       "Analytics & Reporting",
+    "IBP":             "Integrated Business Planning",
+    "Security":        "Security",
+    "OCM":             "Organizational Change Management",
+    "EPL":             "Enterprise Performance & Learning",
+    "Group Reporting": "Group Reporting & Consolidation",
+    "SAC":             "SAP Analytics Cloud",
+    "DPRC":            "Data Privacy & Regulatory Compliance"
+  }
+}

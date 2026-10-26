@@ -1,0 +1,152 @@
+/* ═══════════════════════════════════════════════════════════════
+   PER-DEAL METRICS MODULE
+   ═══════════════════════════════════════════════════════════════ */
+.metrics-module {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  max-width: 1100px;
+}
+
+/* ── KPI strip ─────────────────────────── */
+.metrics-kpi-strip {
+  display: flex;
+  gap: 0.5rem;
+}
+.metrics-kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--glass-border-top);
+  box-shadow: var(--shadow-glass);
+  transition: all 0.2s var(--ease-glass);
+}
+.metrics-kpi:hover {
+  box-shadow: var(--shadow-glass-raised);
+  transform: translateY(-1px);
+}
+.metrics-kpi-value {
+  font-size: var(--type-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+}
+.metrics-kpi-label {
+  font-size: var(--type-2xs);
+  font-weight: var(--font-weight-thin);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  margin-top: 0.15rem;
+}
+
+/* ── Detail card ───────────────────────── */
+.metrics-detail-card {
+  padding: 1rem;
+}
+.metrics-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.metrics-detail-impl {
+  font-size: var(--type-2xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.metrics-detail-status {
+  font-size: var(--type-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+}
+
+/* ── Field grid ────────────────────────── */
+.metrics-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.65rem 1.25rem;
+}
+.metrics-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.metrics-field-label {
+  font-size: var(--type-2xs);
+  font-weight: var(--font-weight-thin);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+}
+.metrics-field-value {
+  font-size: var(--type-body);
+  color: var(--text-primary);
+}
+
+/* ── Similar Deals ─────────────────────── */
+.metrics-similar {
+  margin-top: 0.25rem;
+}
+
+.metrics-similar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.metrics-similar-title {
+  font-size: var(--type-2xs);
+  font-weight: var(--font-weight-thin);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+}
+
+.metrics-similar-count {
+  font-size: var(--type-micro);
+  font-weight: 700;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  padding: 0.1rem 0.4rem;
+}
+
+.metrics-similar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.65rem;
+}
+
+.metrics-deal-card {
+  cursor: pointer;
+}
+
+/* Match reason tags */
+.metrics-match-tags {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+
+.metrics-match-tag {
+  font-size: var(--type-micro);
+  font-weight: 600;
+  color: var(--ibm-blue);
+  background: rgba(15, 98, 254, 0.08);
+  padding: 0.08rem 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}

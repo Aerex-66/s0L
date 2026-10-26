@@ -1,0 +1,2013 @@
+{
+  "_meta": {
+    "description": "iSBD + PRR slide template definitions. Each slide type defines layout, regions, and field mappings to deal data. SRR iSBD is the primary document; PRR reuses the same deal data with additional financial/approval slides.",
+    "template_source": "IBM Consulting iSBD Template 2025 Edition v3.5.8",
+    "documents": [
+      "SRR (Solution Release Review) iSBD",
+      "PRR (Pricing Release Review)"
+    ]
+  },
+  "backgrounds": {
+    "_note": "Standard iSBD slide backgrounds extracted from IBM Consulting template. Files in /isbd-bg/.",
+    "cover": "/isbd-bg/cover_bg.png",
+    "content": "/isbd-bg/content_bg.png",
+    "back_light": "/isbd-bg/back_light_bg.png",
+    "back_dark": "/isbd-bg/back_dark_bg.png"
+  },
+  "slideTypes": {
+    "cover": {
+      "id": "cover",
+      "title": "Cover",
+      "documents": [
+        "srr"
+      ],
+      "layout": "table_with_logo",
+      "description": "Title slide with IBM branding, client/deal identifiers in a single-column table.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "logo",
+          "position": "top-right",
+          "note": "IBM logo — preserved from template media"
+        },
+        {
+          "type": "table",
+          "rows": [
+            {
+              "label": "Client Name",
+              "key": "client_name"
+            },
+            {
+              "label": "Opportunity No",
+              "key": "opportunity_number"
+            },
+            {
+              "label": "Opportunity Name",
+              "key": "project_name"
+            },
+            {
+              "label": "GEO / Market / Industry",
+              "key": "geo_market",
+              "note": "Composite: geo/market/industry"
+            },
+            {
+              "label": "Partner Name",
+              "key": "partner_name"
+            },
+            {
+              "label": "Lead Service Line / Offering",
+              "key": "service_line"
+            },
+            {
+              "label": "Opportunity Owner Name",
+              "key": "opportunity_owner"
+            },
+            {
+              "label": "Senior Solution Consultant Name",
+              "key": "solution_consultant"
+            },
+            {
+              "label": "iSBD Update Date",
+              "key": "isbd_update_date",
+              "format": "date"
+            }
+          ]
+        },
+        {
+          "type": "static_text",
+          "content": "IBM Confidential: Integrated Solution Baseline Document (iSBD)",
+          "position": "center"
+        },
+        {
+          "type": "static_text",
+          "content": "for Solution Release Review",
+          "position": "center-below"
+        }
+      ]
+    },
+    "key_changes": {
+      "id": "key_changes",
+      "title": "Key Changes Since Last Submission",
+      "documents": [
+        "srr"
+      ],
+      "layout": "table_with_callouts",
+      "description": "Summary of scope/commercial changes since last submission. Dynamic row table plus narrative callout shapes.",
+      "regions": [
+        {
+          "type": "table",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Key Area",
+              "key": "change_area",
+              "width": "20%"
+            },
+            {
+              "header": "High Level Summary",
+              "key": "change_summary",
+              "width": "40%"
+            },
+            {
+              "header": "Reason for Inclusion",
+              "key": "change_reason",
+              "width": "40%"
+            }
+          ]
+        },
+        {
+          "type": "narrative_text",
+          "key": "key_changes_narrative",
+          "note": "Free-text executive narrative about the changes"
+        }
+      ]
+    },
+    "deal_profile_summary": {
+      "id": "deal_profile_summary",
+      "title": "Deal Profile Summary",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "multi_table",
+      "description": "The densest slide — 9 tables covering profile, dates, financials, complexity, team, incumbent status, sub-K, GenAI, and IBM consulting lines.",
+      "regions": [
+        {
+          "id": "profile",
+          "type": "table",
+          "title": "Profile",
+          "column": 0,
+          "rows": [
+            {
+              "label": "Client Name",
+              "key": "client_name"
+            },
+            {
+              "label": "Account Classification",
+              "key": "account_classification"
+            },
+            {
+              "label": "GEO / Market / Industry",
+              "key": "geo_market"
+            },
+            {
+              "label": "Opportunity Name",
+              "key": "project_name"
+            },
+            {
+              "label": "Opportunity Type",
+              "key": "opportunity_type"
+            },
+            {
+              "label": "Opportunity Number",
+              "key": "opportunity_number"
+            },
+            {
+              "label": "Sales Stage",
+              "key": "sales_stage"
+            },
+            {
+              "label": "Solution WorkBench (SWB) Stage",
+              "key": "swb_stage"
+            },
+            {
+              "label": "Term",
+              "key": "term"
+            },
+            {
+              "label": "Credit Rating",
+              "key": "credit_rating"
+            },
+            {
+              "label": "Complex Opportunity?",
+              "key": "complex_opportunity"
+            }
+          ]
+        },
+        {
+          "id": "opportunity_dates",
+          "type": "table",
+          "title": "Opportunity Dates",
+          "column": 2,
+          "rows": [
+            {
+              "label": "RFP or Request Date",
+              "key": "rfp_submission_date",
+              "format": "date"
+            },
+            {
+              "label": "StormCast % / Date / Qualification Status",
+              "key": "stormcast_status"
+            },
+            {
+              "label": "Solution Release Date",
+              "key": "solution_release_date",
+              "format": "date"
+            },
+            {
+              "label": "Solution Review (SRR) Date(s)",
+              "key": "srr_date",
+              "format": "date"
+            },
+            {
+              "label": "Price Review (PRR) Date(s)",
+              "key": "prr_date",
+              "format": "date"
+            },
+            {
+              "label": "Bid Submission Date",
+              "key": "bid_submission_date",
+              "format": "date"
+            },
+            {
+              "label": "Decision Date",
+              "key": "decision_date",
+              "format": "date"
+            },
+            {
+              "label": "Delivery Start Date",
+              "key": "delivery_start",
+              "format": "date"
+            }
+          ]
+        },
+        {
+          "id": "financial_profile",
+          "type": "table",
+          "title": "Financial and Contractual Profile ($USD)",
+          "column": 1,
+          "rows": [
+            {
+              "label": "Expected Win Price",
+              "key": "price_to_win",
+              "format": "currency"
+            },
+            {
+              "label": "TCV / NPV GP%",
+              "key": "tcv",
+              "format": "currency"
+            },
+            {
+              "label": "Price Type",
+              "key": "price_type"
+            },
+            {
+              "label": "Pricing Structure",
+              "key": "contract_type"
+            },
+            {
+              "label": "Billing / Payment Terms",
+              "key": "billing_payment_terms"
+            },
+            {
+              "label": "Staff Augmentation?",
+              "key": "staff_augmentation"
+            },
+            {
+              "label": "FX Protection",
+              "key": "fx_protection"
+            },
+            {
+              "label": "Inflation",
+              "key": "inflation"
+            },
+            {
+              "label": "Re-Pricing Clause?",
+              "key": "repricing_clause",
+              "paired": {
+                "label": "Penalties?",
+                "key": "penalties"
+              }
+            },
+            {
+              "label": "T/T Cost Amortized?",
+              "key": "tt_cost_amortized",
+              "paired": {
+                "label": "Non Standard T&C?",
+                "key": "non_standard_tc"
+              }
+            },
+            {
+              "label": "Non Standard SLAs?",
+              "key": "non_standard_slas",
+              "paired": {
+                "label": "Performance Bond?",
+                "key": "performance_bond"
+              }
+            }
+          ]
+        },
+        {
+          "id": "expected_complexity",
+          "type": "table",
+          "title": "Expected Complexity",
+          "column": 1,
+          "rows": [
+            {
+              "label": "Solutioned to Standard?",
+              "key": "solutioned_to_standard"
+            },
+            {
+              "label": "CIC Offshore Resource Compliant",
+              "key": "cic_offshore_resource_compliant"
+            },
+            {
+              "label": "CIC Offshore Band mix Compliant",
+              "key": "cic_offshore_band_compliant"
+            },
+            {
+              "label": "Consortium Agreement",
+              "key": "consortium_agreement"
+            },
+            {
+              "label": "Enhanced Risky Solution Type?",
+              "key": "enhanced_risky_solution"
+            },
+            {
+              "label": "Client to IBM re-badging in scope?",
+              "key": "rebadging_in_scope"
+            },
+            {
+              "label": "PCW in place?",
+              "key": "pcw_in_place"
+            },
+            {
+              "label": "Capital, Investment, Cash Injection?",
+              "key": "capital_investment"
+            },
+            {
+              "label": "Data Privacy Assessment (DPA) Applicable?",
+              "key": "dpa_applicable"
+            },
+            {
+              "label": "Regulated Client?",
+              "key": "regulated_client"
+            },
+            {
+              "label": "FOAK?",
+              "key": "foak"
+            },
+            {
+              "label": "Agile Delivery?",
+              "key": "agile_delivery"
+            },
+            {
+              "label": "Cloud? / Hyperscaler?",
+              "key": "cloud_hyperscaler"
+            }
+          ]
+        },
+        {
+          "id": "key_team_members",
+          "type": "table",
+          "title": "Key Opportunity Team Members",
+          "column": 0,
+          "rows": [
+            {
+              "label": "Lead Partner",
+              "key": "partner_name"
+            },
+            {
+              "label": "Opportunity Owner",
+              "key": "opportunity_owner"
+            },
+            {
+              "label": "Solution Leader",
+              "key": "solution_leader"
+            },
+            {
+              "label": "Senior Solution Consultant",
+              "key": "solution_consultant"
+            },
+            {
+              "label": "Lead Solution Architect",
+              "key": "lead_solution_architect"
+            },
+            {
+              "label": "Risk Consultant",
+              "key": "risk_consultant"
+            },
+            {
+              "label": "TDA Reviewer",
+              "key": "tda_reviewer"
+            },
+            {
+              "label": "ITR Reviewer",
+              "key": "itr_reviewer"
+            },
+            {
+              "label": "Legal Counsel",
+              "key": "legal_counsel"
+            },
+            {
+              "label": "Pricer",
+              "key": "pricer"
+            },
+            {
+              "label": "Accountable Roles",
+              "key": "_header_accountable_roles",
+              "header": true
+            },
+            {
+              "label": "Delivery Leader (responsible for delivery success)",
+              "key": "delivery_leader"
+            },
+            {
+              "label": "Quality Partner (if rqd)",
+              "key": "quality_partner"
+            },
+            {
+              "label": "Program Mgr or Complex PM *",
+              "key": "program_manager"
+            },
+            {
+              "label": "Lead Delivery Architect",
+              "key": "delivery_architect"
+            },
+            {
+              "label": "Solutioning Approver **",
+              "key": "solutioning_approver"
+            },
+            {
+              "label": "Service Line Leader Approver **",
+              "key": "service_line_approver"
+            }
+          ]
+        },
+        {
+          "id": "incumbent_state",
+          "type": "table",
+          "title": "Current State – If Incumbent",
+          "column": 1,
+          "rows": [
+            {
+              "label": "Program Name",
+              "key": "incumbent_program_name"
+            },
+            {
+              "label": "Contract Number",
+              "key": "incumbent_contract_number"
+            }
+          ]
+        },
+        {
+          "id": "subcontractor",
+          "type": "table",
+          "title": "Third Parties / Subcontractor",
+          "column": 2,
+          "rows": [
+            {
+              "label": "Third Parties / Subcontractor value included in TCV",
+              "key": "subcontractor_value",
+              "format": "currency"
+            }
+          ]
+        },
+        {
+          "id": "genai_assets",
+          "type": "table",
+          "title": "Gen AI / Asset Inclusion",
+          "column": 2,
+          "rows": [
+            {
+              "label": "GenAI",
+              "key": "genai_included"
+            },
+            {
+              "label": "Asset TCV%",
+              "key": "asset_tcv_percent",
+              "format": "percent"
+            }
+          ]
+        },
+        {
+          "id": "ibm_consulting_lines",
+          "type": "table",
+          "title": "IBM Consulting Lines",
+          "column": 2,
+          "description": "Which IBM Consulting service lines are involved and which is lead, with TCV allocation.",
+          "columns": [
+            "",
+            "Service Line",
+            "Sub-Line",
+            "TCV $M"
+          ],
+          "dynamic_rows": true,
+          "rows_template": [
+            "Strategy & Transformation / BTS – Customer Transformation (CT)",
+            "Business Applications / BTS – Data & Tech Transformation (DTT)",
+            "Hybrid Cloud & Data / BTS – Finance & Supply Chain Transformation (FCS)",
+            "Business Operations / BTS – Industry Transformation (ITU)",
+            "Application Operations",
+            "Cybersecurity Services (CSS)",
+            "Red Hat / Cloud Pak",
+            "Technology Support Services (TSS)",
+            "IBM Products",
+            "IBM Watsonx",
+            "Other / External"
+          ]
+        }
+      ]
+    },
+    "solution_history": {
+      "id": "solution_history",
+      "title": "Solution History",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "condition": {
+        "field": "review_status",
+        "not": "First",
+        "note": "Only include for Repeat / Bid Repair deals, never for first-time submissions"
+      },
+      "layout": "dynamic_column_table",
+      "description": "Tracks evolution of the solution across submissions. Columns are added for each submission date. Rows are fixed solution elements.",
+      "regions": [
+        {
+          "type": "table",
+          "dynamic_columns": true,
+          "column_key": "submission_date",
+          "fixed_rows": [
+            {
+              "label": "Type (Indicative, BAFO, B&P)",
+              "key": "submission_type"
+            },
+            {
+              "label": "Scope",
+              "key": "scope_summary"
+            },
+            {
+              "label": "Architecture",
+              "key": "architecture_summary"
+            },
+            {
+              "label": "Schedule",
+              "key": "schedule_summary"
+            },
+            {
+              "label": "Work Effort",
+              "key": "work_effort",
+              "prefill": {
+                "compute": "work_effort"
+              },
+              "format": "number"
+            },
+            {
+              "label": "TCV ($M)",
+              "key": "tcv",
+              "format": "currency"
+            },
+            {
+              "label": "NPV GP%",
+              "key": "npv_gp_percent",
+              "format": "percent"
+            },
+            {
+              "label": "Onshore / Offshore %",
+              "key": "onshore_offshore_pct",
+              "prefill": {
+                "compute": "onshore_offshore_pct"
+              }
+            },
+            {
+              "label": "Sub-K Value",
+              "key": "subcontractor_value",
+              "format": "currency"
+            },
+            {
+              "label": "# Resources",
+              "key": "resource_count",
+              "format": "number"
+            },
+            {
+              "label": "WRICEFs",
+              "key": "wricef_count",
+              "format": "number"
+            }
+          ],
+          "last_column": {
+            "header": "Difference (between previous and new)",
+            "key": "delta_notes"
+          }
+        }
+      ]
+    },
+    "proposed_timeline": {
+      "id": "proposed_timeline",
+      "title": "IBM Proposed Timeline",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "image_with_narrative",
+      "description": "Project timeline visual (typically a Gantt chart screenshot from the timeline tool) plus optional narrative text about adjustments.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "timeline_chart",
+          "note": "Embedded from timeline tool or uploaded image"
+        },
+        {
+          "type": "narrative_text",
+          "key": "timeline_adjustments_narrative"
+        }
+      ]
+    },
+    "scope_summary": {
+      "id": "scope_summary",
+      "title": "Levers of Scope",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "repeatable": true,
+      "layout": "wide_table",
+      "description": "Two-row scope table covering project scope, business process, applications, organization, and delivery approach.",
+      "regions": [
+        {
+          "type": "table",
+          "title": "Scope Overview",
+          "columns": [
+            {
+              "header": "High Level Project Scope",
+              "key": "scope_project_overview",
+              "width": "20%"
+            },
+            {
+              "header": "Business Process",
+              "key": "scope_business_process",
+              "width": "20%"
+            },
+            {
+              "header": "Applications",
+              "key": "scope_apps_ecosystem",
+              "width": "20%"
+            },
+            {
+              "header": "Organization",
+              "key": "scope_organization",
+              "width": "20%"
+            },
+            {
+              "header": "OCM & Training",
+              "key": "scope_ocm_training",
+              "width": "20%"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Delivery Detail",
+          "columns": [
+            {
+              "header": "Development",
+              "key": "scope_custom_dev",
+              "width": "16.6%"
+            },
+            {
+              "header": "Data & Analytics",
+              "key": "scope_data_migration",
+              "width": "16.6%"
+            },
+            {
+              "header": "Technology & Basis",
+              "key": "scope_tech_infra",
+              "width": "16.6%"
+            },
+            {
+              "header": "User Roles & Security",
+              "key": "scope_security",
+              "width": "16.6%"
+            },
+            {
+              "header": "Testing",
+              "key": "scope_testing",
+              "width": "16.6%"
+            },
+            {
+              "header": "Solution Construct / Delivery",
+              "key": "scope_delivery",
+              "width": "16.6%"
+            }
+          ]
+        }
+      ]
+    },
+    "wricef_count": {
+      "id": "wricef_count",
+      "title": "WRICEF Count",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "image_slide",
+      "description": "Embedded chart/table image showing WRICEF breakdown by type (Workflow, Report, Interface, Conversion, Enhancement, Form).",
+      "regions": [
+        {
+          "type": "image",
+          "role": "wricef_chart"
+        },
+        {
+          "type": "narrative_text",
+          "key": "wricef_notes"
+        }
+      ]
+    },
+    "assumptions": {
+      "id": "assumptions",
+      "title": "Assumptions",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "title_with_richtext",
+      "repeatable": true,
+      "description": "Repeatable slide type. Each instance has a title (e.g. 'Assumptions – Finance') and a rich-text body. Multiple slides per functional area.",
+      "categories": [
+        "Finance",
+        "Supply Chain",
+        "WAM",
+        "ISU",
+        "ISU (CIS/Meter2Cash)",
+        "SuccessFactors",
+        "Security & Controls",
+        "Basis",
+        "Analytics, Data, and MDG",
+        "Technical Requirements",
+        "Service Cloud",
+        "Testing",
+        "Automated Testing",
+        "Migration (PI/PO to BTP)",
+        "Resource Scheduling (RSH)",
+        "OCM Scope/Metrics",
+        "Staffing (CIC)"
+      ],
+      "regions": [
+        {
+          "type": "title",
+          "key": "assumption_title",
+          "note": "e.g. 'Assumptions – Finance'"
+        },
+        {
+          "type": "richtext",
+          "key": "assumption_body"
+        }
+      ]
+    },
+    "subcontractor_detail": {
+      "id": "subcontractor_detail",
+      "title": "Sub-Contractor",
+      "documents": [
+        "srr"
+      ],
+      "layout": "title_with_richtext",
+      "description": "Lists all sub-contractors and their scope descriptions.",
+      "regions": [
+        {
+          "type": "title",
+          "value": "Sub-Contractor"
+        },
+        {
+          "type": "richtext",
+          "key": "subcontractor_narrative"
+        }
+      ]
+    },
+    "ocm_scope": {
+      "id": "ocm_scope",
+      "title": "Organizational Change Management Scope & Key Metrics",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "two_column_text",
+      "description": "Left column: project scope by release. Right column: staffing breakdown.",
+      "regions": [
+        {
+          "type": "richtext",
+          "key": "ocm_project_scope",
+          "position": "left"
+        },
+        {
+          "type": "richtext",
+          "key": "ocm_staffing",
+          "position": "right"
+        }
+      ]
+    },
+    "key_resources": {
+      "id": "key_resources",
+      "title": "Key Resources",
+      "documents": [
+        "srr"
+      ],
+      "layout": "image_slide",
+      "description": "Before/after staffing comparison — typically an embedded image from GSSM.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "staffing_comparison"
+        }
+      ]
+    },
+    "financial_summary": {
+      "id": "financial_summary",
+      "title": "Services Financial Summary",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "image_with_notes",
+      "description": "Financial summary chart (from GSSM/GPE) plus assumptions text about risk rating, billing, payment terms.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "financial_chart"
+        },
+        {
+          "type": "narrative_text",
+          "key": "financial_assumptions",
+          "note": "Auto-composed from: risk_rating, billing_timing, payment_terms, genai_price"
+        }
+      ]
+    },
+    "holdback_strategy": {
+      "id": "holdback_strategy",
+      "title": "Holdback Strategy",
+      "documents": [
+        "srr"
+      ],
+      "layout": "image_slide",
+      "description": "GP holdback plan — embedded chart.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "holdback_chart"
+        }
+      ]
+    },
+    "genai": {
+      "id": "genai",
+      "title": "GenAI Solution Components",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "image_slide",
+      "description": "GenAI solution architecture or component diagram.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "genai_diagram"
+        }
+      ]
+    },
+    "onshore_offshore_mix": {
+      "id": "onshore_offshore_mix",
+      "title": "Onshore / Offshore Mix & Band Mix",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "dual_image",
+      "description": "Two charts side by side: onshore/offshore resource split and band mix distribution.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "location_mix_chart"
+        },
+        {
+          "type": "image",
+          "role": "band_mix_chart"
+        }
+      ]
+    },
+    "deal_financials_by_team": {
+      "id": "deal_financials_by_team",
+      "title": "Deal Financials by Team",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "image_slide",
+      "description": "Cost breakdown by functional team — embedded chart from GSSM.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "financials_by_team_chart"
+        }
+      ]
+    },
+    "key_deal_aspects": {
+      "id": "key_deal_aspects",
+      "title": "Key Deal Aspects",
+      "documents": [
+        "srr"
+      ],
+      "layout": "title_with_bullets",
+      "description": "Bullet list of win strategy, differentiators, approach highlights.",
+      "regions": [
+        {
+          "type": "title",
+          "value": "Key Deal Aspects"
+        },
+        {
+          "type": "richtext",
+          "key": "key_deal_aspects_body"
+        }
+      ]
+    },
+    "deal_timeline_context": {
+      "id": "deal_timeline_context",
+      "title": "Deal Timeline & Context",
+      "documents": [
+        "srr"
+      ],
+      "layout": "visual_timeline",
+      "description": "Monthly sales cycle narrative with positioned text boxes. Shows RFI, RFP, downselect, orals, BAFO milestones.",
+      "regions": [
+        {
+          "type": "timeline_entries",
+          "dynamic": true,
+          "entry_template": {
+            "month": "",
+            "narrative": ""
+          }
+        },
+        {
+          "type": "narrative_text",
+          "key": "deal_context_summary"
+        }
+      ]
+    },
+    "srr_action_items": {
+      "id": "srr_action_items",
+      "title": "SRR Action Items",
+      "documents": [
+        "srr"
+      ],
+      "layout": "title_with_richtext",
+      "repeatable": true,
+      "description": "Action items from SRR board review. May span multiple slides.",
+      "regions": [
+        {
+          "type": "title",
+          "value": "SRR Action Items"
+        },
+        {
+          "type": "richtext",
+          "key": "srr_action_items_body"
+        }
+      ]
+    },
+    "solution_changes": {
+      "id": "solution_changes",
+      "title": "Solution & Staffing Changes",
+      "documents": [
+        "srr"
+      ],
+      "layout": "table_slide",
+      "repeatable": true,
+      "description": "Table showing scope changes: Scope Area, Original Assumption, New Requirement, Changes.",
+      "regions": [
+        {
+          "type": "table",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Scope Area",
+              "key": "change_scope_area"
+            },
+            {
+              "header": "Original Scope Assumption",
+              "key": "change_original"
+            },
+            {
+              "header": "New Requirement",
+              "key": "change_new"
+            },
+            {
+              "header": "Changes",
+              "key": "change_delta"
+            }
+          ]
+        }
+      ]
+    },
+    "risk_assessment": {
+      "id": "risk_assessment",
+      "title": "Risk Assessment",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "risk_tables",
+      "repeatable": true,
+      "description": "RCA questions table + Key Risks table with probability, impact, mitigation, and timing. First instance also has the risk review metadata (date, consultant, TDA reviewer, etc.).",
+      "regions": [
+        {
+          "id": "rca_questions",
+          "type": "table",
+          "title": "RCA Questions",
+          "first_instance_only": true,
+          "columns": [
+            "#",
+            "RCA Question",
+            "Risk Assessment",
+            "Reason"
+          ],
+          "fixed_rows": [
+            "First of a Kind",
+            "Complex System Integration",
+            "Cross-Brand Delivery Management",
+            "Project Delivery",
+            "Contract Structure",
+            "Financials",
+            "Staffing",
+            "Process / Organizational Change",
+            "Re-price Ability",
+            "Risk Rating"
+          ]
+        },
+        {
+          "id": "risk_review_meta",
+          "type": "table",
+          "title": "Risk Review Metadata",
+          "first_instance_only": true,
+          "rows": [
+            {
+              "label": "Date",
+              "key": "risk_review_date",
+              "format": "date"
+            },
+            {
+              "label": "Risk Consultant",
+              "key": "risk_consultant"
+            },
+            {
+              "label": "TDA Reviewer",
+              "key": "tda_reviewer"
+            },
+            {
+              "label": "ITR Reviewer",
+              "key": "itr_reviewer"
+            },
+            {
+              "label": "Quality Partner",
+              "key": "quality_partner"
+            },
+            {
+              "label": "Contract Type",
+              "key": "contract_type"
+            },
+            {
+              "label": "Offering Type",
+              "key": "offering_type"
+            },
+            {
+              "label": "TCV",
+              "key": "tcv",
+              "format": "currency"
+            },
+            {
+              "label": "# Resources",
+              "key": "total_resources",
+              "format": "number"
+            },
+            {
+              "label": "Duration",
+              "key": "term_months"
+            },
+            {
+              "label": "Client",
+              "key": "client_name"
+            },
+            {
+              "label": "IBM SE",
+              "key": "ibm_se"
+            },
+            {
+              "label": "3rd Party",
+              "key": "risk_third_party"
+            }
+          ]
+        },
+        {
+          "id": "key_risks",
+          "type": "table",
+          "title": "Key Risks",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Description",
+              "key": "risk_description"
+            },
+            {
+              "header": "Probability",
+              "key": "risk_probability"
+            },
+            {
+              "header": "Impact",
+              "key": "risk_impact"
+            },
+            {
+              "header": "Mitigation",
+              "key": "risk_mitigation"
+            },
+            {
+              "header": "Close/Timing",
+              "key": "risk_timing"
+            }
+          ]
+        }
+      ]
+    },
+    "executive_summary": {
+      "id": "executive_summary",
+      "title": "Executive Summary & Solution Strategy",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "executive_summary",
+      "description": "PRR-specific. Client ask narrative, engagement type, engagement source, win themes, key requirements mapped to L30 offerings, solution summary, review status.",
+      "regions": [
+        {
+          "type": "richtext",
+          "key": "client_ask_narrative",
+          "title": "What is the Client ask?"
+        },
+        {
+          "type": "toggle",
+          "key": "client_type",
+          "label": "Client",
+          "options": [
+            "Existing",
+            "New"
+          ]
+        },
+        {
+          "type": "toggle",
+          "key": "engagement_type",
+          "label": "Engagement Type",
+          "options": [
+            "Renewal / Extension",
+            "New Business"
+          ]
+        },
+        {
+          "type": "toggle",
+          "key": "engagement_source",
+          "label": "Engagement Source",
+          "options": [
+            "RFI/RFP",
+            "Unsolicited"
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Win Themes",
+          "rows": [
+            {
+              "label": "Win Theme & Negotiation Strategy",
+              "key": "win_theme"
+            },
+            {
+              "label": "IBM Value Proposition",
+              "key": "value_proposition"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Key Customer Requirements → IBM Solution",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Key Customer Requirements",
+              "key": "customer_requirement"
+            },
+            {
+              "header": "Solution Provider",
+              "key": "solution_provider"
+            },
+            {
+              "header": "L30 Offerings",
+              "key": "l30_offerings"
+            },
+            {
+              "header": "IBM Solution Scope Components",
+              "key": "solution_components"
+            }
+          ]
+        },
+        {
+          "type": "richtext",
+          "key": "solution_summary_narrative",
+          "title": "Solution Summary"
+        },
+        {
+          "type": "toggle",
+          "key": "review_status",
+          "label": "Review Status",
+          "options": [
+            "First",
+            "Repeat"
+          ]
+        }
+      ]
+    },
+    "additional_deal_profile": {
+      "id": "additional_deal_profile",
+      "title": "Additional Deal Profile Information",
+      "documents": [
+        "prr"
+      ],
+      "layout": "multi_table",
+      "description": "PRR-specific supplementary deal profile data: incumbent details, contract specifics, and additional complexity indicators.",
+      "regions": [
+        {
+          "type": "table",
+          "title": "Incumbent / Contract Details",
+          "rows": [
+            {
+              "label": "Program Name",
+              "key": "incumbent_program_name"
+            },
+            {
+              "label": "Contract Number",
+              "key": "incumbent_contract_number"
+            },
+            {
+              "label": "Contract End Date",
+              "key": "incumbent_contract_end_date",
+              "format": "date"
+            },
+            {
+              "label": "Incumbent Provider",
+              "key": "incumbent_provider"
+            },
+            {
+              "label": "Annual Revenue",
+              "key": "incumbent_annual_revenue"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Complexity & Compliance",
+          "rows": [
+            {
+              "label": "Solutioned to Standard?",
+              "key": "solutioned_to_standard"
+            },
+            {
+              "label": "CIC Offshore Resource Compliant",
+              "key": "cic_offshore_resource_compliant"
+            },
+            {
+              "label": "CIC Offshore Band Mix Compliant",
+              "key": "cic_offshore_band_compliant"
+            },
+            {
+              "label": "Consortium Agreement",
+              "key": "consortium_agreement"
+            },
+            {
+              "label": "Enhanced Risky Solution Type?",
+              "key": "enhanced_risky_solution"
+            },
+            {
+              "label": "Client to IBM Re-badging in Scope?",
+              "key": "rebadging_in_scope"
+            },
+            {
+              "label": "PCW in Place?",
+              "key": "pcw_in_place"
+            },
+            {
+              "label": "Staff Augmentation?",
+              "key": "staff_augmentation"
+            },
+            {
+              "label": "FX Protection",
+              "key": "fx_protection"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "StormCast & Qualification",
+          "rows": [
+            {
+              "label": "StormCast % / Date / Qualification Status",
+              "key": "stormcast_status"
+            },
+            {
+              "label": "Solution Release Date",
+              "key": "solution_release_date",
+              "format": "date"
+            },
+            {
+              "label": "SRR Date(s)",
+              "key": "srr_date",
+              "format": "date"
+            },
+            {
+              "label": "PRR Date(s)",
+              "key": "prr_date",
+              "format": "date"
+            },
+            {
+              "label": "Bid Submission Date",
+              "key": "bid_submission_date",
+              "format": "date"
+            },
+            {
+              "label": "Decision Date",
+              "key": "decision_date",
+              "format": "date"
+            }
+          ]
+        }
+      ]
+    },
+    "solution_maps": {
+      "id": "solution_maps",
+      "title": "Solution Maps (Current / Future)",
+      "documents": [
+        "prr"
+      ],
+      "layout": "image_slide",
+      "repeatable": true,
+      "description": "Current-state and future-state solution architecture diagrams.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "solution_map"
+        },
+        {
+          "type": "narrative_text",
+          "key": "solution_map_notes"
+        }
+      ]
+    },
+    "business_process_scope": {
+      "id": "business_process_scope",
+      "title": "Business Process Scope",
+      "documents": [
+        "prr"
+      ],
+      "layout": "image_slide",
+      "description": "Business process scope diagram.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "process_scope_diagram"
+        }
+      ]
+    },
+    "custom_development": {
+      "id": "custom_development",
+      "title": "Custom Development / Remediation",
+      "documents": [
+        "prr"
+      ],
+      "layout": "image_with_notes",
+      "description": "Custom object count and remediation approach (e.g. SmartShift).",
+      "regions": [
+        {
+          "type": "image",
+          "role": "custom_dev_chart"
+        },
+        {
+          "type": "narrative_text",
+          "key": "custom_dev_notes"
+        }
+      ]
+    },
+    "key_proposed_resources": {
+      "id": "key_proposed_resources",
+      "title": "Key Proposed Resources",
+      "documents": [
+        "prr"
+      ],
+      "layout": "staffing_table",
+      "description": "Named resource table with role, band, dates, load factor.",
+      "regions": [
+        {
+          "type": "table",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Role",
+              "key": "resource_role"
+            },
+            {
+              "header": "Proposed Resource Name",
+              "key": "resource_name"
+            },
+            {
+              "header": "Band",
+              "key": "resource_band"
+            },
+            {
+              "header": "Start Date",
+              "key": "resource_start",
+              "format": "date"
+            },
+            {
+              "header": "Load Factor",
+              "key": "resource_load"
+            },
+            {
+              "header": "Where Staffed",
+              "key": "resource_location"
+            },
+            {
+              "header": "Roll-off Date",
+              "key": "resource_end",
+              "format": "date"
+            },
+            {
+              "header": "Comments",
+              "key": "resource_comments"
+            }
+          ]
+        }
+      ]
+    },
+    "bid_metrics": {
+      "id": "bid_metrics",
+      "title": "Bid Metrics / GSSM",
+      "documents": [
+        "prr"
+      ],
+      "layout": "image_slide",
+      "description": "GSSM output charts showing bid metrics.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "bid_metrics_chart"
+        }
+      ]
+    },
+    "detailed_staffing": {
+      "id": "detailed_staffing",
+      "title": "Detailed Staffing Model",
+      "documents": [
+        "prr"
+      ],
+      "layout": "image_slide",
+      "description": "Full staffing breakdown image from GSSM.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "staffing_model"
+        }
+      ]
+    },
+    "tda": {
+      "id": "tda",
+      "title": "Technical Delivery Assessment (TDA)",
+      "documents": [
+        "prr"
+      ],
+      "layout": "multi_table",
+      "description": "TDA results: key risks, complexity assessment, narrative, and reviewer info.",
+      "regions": [
+        {
+          "id": "tda_risks",
+          "type": "table",
+          "title": "Key Risks",
+          "columns": [
+            "Description",
+            "Probability",
+            "Impact",
+            "Mitigation",
+            "Close/Timing"
+          ],
+          "dynamic_rows": true
+        },
+        {
+          "id": "tda_complexity",
+          "type": "table",
+          "title": "Complexity Assessment",
+          "rows": [
+            {
+              "label": "First-of-a-Kind?",
+              "key": "tda_first_of_kind"
+            },
+            {
+              "label": "Complex System Integration?",
+              "key": "tda_complex_integration"
+            },
+            {
+              "label": "Cross-Brand Delivery?",
+              "key": "tda_cross_brand"
+            },
+            {
+              "label": "Project Delivery Complex?",
+              "key": "tda_project_delivery"
+            },
+            {
+              "label": "GDPR Reviewed?",
+              "key": "tda_gdpr"
+            }
+          ]
+        },
+        {
+          "type": "richtext",
+          "key": "tda_narrative",
+          "title": "TDA Summary Narrative"
+        },
+        {
+          "id": "tda_reviewer_info",
+          "type": "table",
+          "rows": [
+            {
+              "label": "TDA SME Name",
+              "key": "tda_reviewer"
+            },
+            {
+              "label": "TDA Risk Rating",
+              "key": "tda_risk_rating"
+            },
+            {
+              "label": "TDA Complexity Assessment",
+              "key": "tda_complexity_result"
+            }
+          ]
+        }
+      ]
+    },
+    "compliance_review": {
+      "id": "compliance_review",
+      "title": "Compliance and Review Status",
+      "documents": [
+        "prr"
+      ],
+      "layout": "dual_table",
+      "description": "Two tables: Compliance checklist (PM&T, RHOCP, estimation, etc.) and Solution Reviews checklist (global solutioning, staffing, risk).",
+      "regions": [
+        {
+          "type": "table",
+          "title": "Compliance",
+          "columns": [
+            "Compliance Item",
+            "Status (Y/N/NA)",
+            "Comments"
+          ],
+          "fixed_rows": [
+            "Standard PM&T",
+            "RHOCP Inclusion",
+            "Standard Estimation",
+            "Phase Gate Review",
+            "BVD",
+            "TDA",
+            "OSS"
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Solution Reviews",
+          "columns": [
+            "Review Item",
+            "Status",
+            "Comments"
+          ],
+          "fixed_rows": [
+            "Global Solutioning",
+            "Staffing – GEO",
+            "Staffing – CIC",
+            "PS&ITS Certification (CSB)",
+            "Legal",
+            "Risk"
+          ]
+        }
+      ]
+    },
+    "actions_to_close": {
+      "id": "actions_to_close",
+      "title": "Actions to Close Before Contract Signed",
+      "documents": [
+        "prr"
+      ],
+      "layout": "table_slide",
+      "description": "Action items needed before contract execution.",
+      "regions": [
+        {
+          "type": "table",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Deal Phase",
+              "key": "action_phase"
+            },
+            {
+              "header": "Description",
+              "key": "action_description"
+            },
+            {
+              "header": "Owner",
+              "key": "action_owner"
+            },
+            {
+              "header": "Status",
+              "key": "action_status"
+            }
+          ]
+        }
+      ]
+    },
+    "key_challenges": {
+      "id": "key_challenges",
+      "title": "Key Challenges to Meet Target Price",
+      "documents": [
+        "prr"
+      ],
+      "layout": "multi_table",
+      "description": "Challenges table plus target win price and methodology.",
+      "regions": [
+        {
+          "type": "table",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Key Issues / Challenges",
+              "key": "challenge_description"
+            },
+            {
+              "header": "Actions Taken",
+              "key": "challenge_action"
+            },
+            {
+              "header": "Support Needed",
+              "key": "challenge_support"
+            }
+          ]
+        },
+        {
+          "type": "kv_row",
+          "key": "target_win_price",
+          "label": "Target Win Price",
+          "format": "currency"
+        },
+        {
+          "type": "richtext",
+          "key": "price_methodology",
+          "title": "Methodology for Target Win Price"
+        }
+      ]
+    },
+    "key_dependencies": {
+      "id": "key_dependencies",
+      "title": "Key Dependencies",
+      "documents": [
+        "prr"
+      ],
+      "layout": "table_slide",
+      "description": "Dependency tracking table.",
+      "regions": [
+        {
+          "type": "table",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Dependency",
+              "key": "dependency_name"
+            },
+            {
+              "header": "Description",
+              "key": "dependency_description"
+            },
+            {
+              "header": "External/Internal",
+              "key": "dependency_type"
+            },
+            {
+              "header": "Expected Close",
+              "key": "dependency_close_date"
+            }
+          ]
+        }
+      ]
+    },
+    "solution_deviations": {
+      "id": "solution_deviations",
+      "title": "Additional Solution Deviations",
+      "documents": [
+        "prr"
+      ],
+      "layout": "table_slide",
+      "description": "Deviations from standard solution guidance.",
+      "regions": [
+        {
+          "type": "table",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Standard Solution Element",
+              "key": "deviation_standard"
+            },
+            {
+              "header": "Deviation / Risks",
+              "key": "deviation_description"
+            },
+            {
+              "header": "Reason for Deviation",
+              "key": "deviation_reason"
+            }
+          ]
+        }
+      ]
+    },
+    "business_value_drivers": {
+      "id": "business_value_drivers",
+      "title": "Key IBM Business Value Drivers",
+      "documents": [
+        "prr"
+      ],
+      "layout": "image_slide",
+      "description": "BVD dashboard screenshot from Solution Workbench.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "bvd_dashboard"
+        }
+      ]
+    },
+    "raci": {
+      "id": "raci",
+      "title": "RACI",
+      "documents": [
+        "prr"
+      ],
+      "layout": "table_slide",
+      "description": "Responsibility matrix: Activity × IBM / IBM 3rd Parties / Client.",
+      "regions": [
+        {
+          "type": "table",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Activity",
+              "key": "raci_activity"
+            },
+            {
+              "header": "IBM",
+              "key": "raci_ibm"
+            },
+            {
+              "header": "IBM 3rd Parties",
+              "key": "raci_3rd_party"
+            },
+            {
+              "header": "Client",
+              "key": "raci_client"
+            }
+          ]
+        }
+      ]
+    },
+    "prescribed_timeline": {
+      "id": "prescribed_timeline",
+      "title": "Prescribed Timeline",
+      "documents": [
+        "prr"
+      ],
+      "layout": "image_slide",
+      "description": "SAP prescribed/standard timeline for comparison.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "prescribed_timeline"
+        }
+      ]
+    },
+    "staffing_approvals": {
+      "id": "staffing_approvals",
+      "title": "Staffing and Approvals",
+      "documents": [
+        "prr"
+      ],
+      "layout": "multi_table",
+      "description": "Delivery locations with band mix and approval status, plus demand/staffability info and resourcing risks.",
+      "regions": [
+        {
+          "id": "delivery_locations",
+          "type": "table",
+          "title": "Delivery Locations",
+          "columns": [
+            "Location",
+            "Band Mix",
+            "Staffing %",
+            "Approver",
+            "Approval Date"
+          ],
+          "dynamic_rows": true
+        },
+        {
+          "id": "staffability",
+          "type": "table",
+          "title": "Staffability",
+          "rows": [
+            {
+              "label": "Demand in PMP",
+              "key": "demand_in_pmp"
+            },
+            {
+              "label": "R&CM Assessment",
+              "key": "rcm_assessment"
+            },
+            {
+              "label": "Staffability Review Date",
+              "key": "staffability_review_date",
+              "format": "date"
+            },
+            {
+              "label": "Staffability Expires",
+              "key": "staffability_expires",
+              "format": "date"
+            },
+            {
+              "label": "Submission Type",
+              "key": "price_type"
+            }
+          ]
+        },
+        {
+          "id": "resourcing_risks",
+          "type": "table",
+          "title": "Key Resourcing Risks",
+          "dynamic_rows": true,
+          "columns": [
+            {
+              "header": "Description",
+              "key": "resource_risk_description"
+            },
+            {
+              "header": "Mitigation",
+              "key": "resource_risk_mitigation"
+            },
+            {
+              "header": "In Price Case",
+              "key": "resource_risk_in_price"
+            },
+            {
+              "header": "Contingency $",
+              "key": "resource_risk_contingency",
+              "format": "currency"
+            },
+            {
+              "header": "Close/Timing",
+              "key": "resource_risk_timing"
+            }
+          ]
+        }
+      ]
+    },
+    "mandatory_assets": {
+      "id": "mandatory_assets",
+      "title": "Mandatory / Applicable Assets Inclusion",
+      "documents": [
+        "prr"
+      ],
+      "layout": "multi_table_with_images",
+      "description": "Asset inclusion checklist, non-inclusion details, PRR section confirmations, and approval status.",
+      "regions": [
+        {
+          "type": "table",
+          "title": "Inclusion Status",
+          "columns": [
+            "Asset L30",
+            "Asset Name",
+            "Description",
+            "Industry",
+            "GenAI?",
+            "Mandatory?",
+            "Included?"
+          ],
+          "dynamic_rows": true
+        },
+        {
+          "type": "table",
+          "title": "Non-Inclusion Details",
+          "columns": [
+            "Asset Name",
+            "Non-inclusion Details"
+          ],
+          "dynamic_rows": true
+        },
+        {
+          "type": "image",
+          "role": "swb_assets_screenshot"
+        },
+        {
+          "type": "image",
+          "role": "kbvd_assets_screenshot"
+        }
+      ]
+    },
+    "pi_po_interfaces": {
+      "id": "pi_po_interfaces",
+      "title": "PI/PO Interfaces",
+      "documents": [
+        "srr"
+      ],
+      "layout": "image_with_notes",
+      "description": "Interface migration diagram and narrative for PI/PO to BTP migration.",
+      "regions": [
+        {
+          "type": "image",
+          "role": "interface_diagram"
+        },
+        {
+          "type": "narrative_text",
+          "key": "interface_notes"
+        }
+      ]
+    },
+    "back_slide": {
+      "id": "back_slide",
+      "title": "Back Cover",
+      "documents": [
+        "srr",
+        "prr"
+      ],
+      "layout": "static",
+      "description": "IBM closing slide with template version and copyright.",
+      "regions": [
+        {
+          "type": "static_text",
+          "content": "Template - 2025 Edition, Version 3.5.8"
+        },
+        {
+          "type": "static_text",
+          "content": "© 2025 IBM Corporation | IBM Confidential"
+        }
+      ]
+    }
+  },
+  "canonical_order": {
+    "srr": [
+      "cover",
+      "deal_profile_summary",
+      "executive_summary",
+      "proposed_timeline",
+      "scope_summary",
+      "wricef_count",
+      "assumptions",
+      "subcontractor_detail",
+      "ocm_scope",
+      "key_resources",
+      "financial_summary",
+      "holdback_strategy",
+      "genai",
+      "onshore_offshore_mix",
+      "deal_financials_by_team",
+      "key_deal_aspects",
+      "deal_timeline_context",
+      "risk_assessment",
+      "srr_action_items",
+      "pi_po_interfaces",
+      "solution_history",
+      "back_slide"
+    ],
+    "prr": [
+      "deal_profile_summary",
+      "additional_deal_profile",
+      "executive_summary",
+      "scope_summary",
+      "ocm_scope",
+      "wricef_count",
+      "proposed_timeline",
+      "business_process_scope",
+      "solution_maps",
+      "custom_development",
+      "key_proposed_resources",
+      "onshore_offshore_mix",
+      "deal_financials_by_team",
+      "bid_metrics",
+      "detailed_staffing",
+      "financial_summary",
+      "genai",
+      "tda",
+      "risk_assessment",
+      "business_value_drivers",
+      "compliance_review",
+      "actions_to_close",
+      "key_challenges",
+      "key_dependencies",
+      "solution_deviations",
+      "assumptions",
+      "raci",
+      "prescribed_timeline",
+      "staffing_approvals",
+      "mandatory_assets",
+      "solution_history",
+      "back_slide"
+    ]
+  }
+}
