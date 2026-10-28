@@ -74,6 +74,23 @@ def _build():
 
 _NAMES, _GLOBAL_LABELS, _SCOPED_LABELS, _CELLS = _build()
 
+
+def _build_monday_bindings():
+    bindings, slots = [], {}
+    for key, entry in FIELDS.items():
+        block = entry.get('monday')
+        if not block:
+            continue
+        slot = (block.get('column_id') or block.get('source'), block.get('part'))
+        if slot in slots:
+            raise ValueError(f'monday column {slot} bound to both {slots[slot]} and {key}')
+        slots[slot] = key
+        bindings.append((key, block))
+    return tuple(bindings)
+
+
+_MONDAY_BINDINGS = _build_monday_bindings()
+
 # Top-level containers whose children are declared individually (financials, isbd_data, external_links).
 SECTIONS = frozenset(e['path'].split('.', 1)[0] for e in FIELDS.values() if '.' in e.get('path', ''))
 
@@ -110,6 +127,30 @@ def section_keys(section, *owners):
 
 def required_keys():
     return tuple(k for k, e in FIELDS.items() if e.get('required') == 'always')
+
+
+def is_linked(deal, owner):
+    """Whether a deal is linked to the source that owns a field (mirrors isLinked in fieldIndex.js)."""
+    if owner == 'gssm':
+        return bool(deal.get('gssm_workbook_id') or deal.get('gssm_synced_at'))
+    if owner == 'monday':
+        return bool(deal.get('monday_item_id'))
+    return False
+
+
+def deal_editable(key, deal):
+    """Whether s0L screens may write a field: deal-owned, or editable until the deal is linked to its owner."""
+    entry = FIELDS.get(key)
+    if not entry:
+        return False
+    if entry['owner'] == 'deal':
+        return True
+    return bool(entry.get('editable_until_linked')) and not is_linked(deal or {}, entry['owner'])
+
+
+def monday_bindings():
+    """(key, monday block) for every field the board fills, in index order."""
+    return _MONDAY_BINDINGS
 
 
 def isbd_key_for(label, slide_type=None):

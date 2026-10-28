@@ -108,6 +108,47 @@ def update_default_approvers():
     return jsonify(result)
 
 
+_SCOPES = ('mine', 'everyone')
+_PREFERENCE_KEYS = frozenset({'solutioner', 'scope'})
+
+
+def _preferences(data):
+    prefs = data.get('preferences') or {}
+    return {'solutioner': prefs.get('solutioner', ''), 'scope': prefs.get('scope', 'mine')}
+
+
+@settings_blueprint.route('/api/preferences', methods=['GET'])
+def get_preferences():
+    """Whose deals this computer's dashboard shows: the user's own (as a solutioner on the board) or everyone's."""
+    return jsonify(_preferences(load_data()))
+
+
+@settings_blueprint.route('/api/preferences', methods=['PUT'])
+def update_preferences():
+    payload = request.json
+    if not isinstance(payload, dict):
+        return jsonify({'error': 'Expected a JSON object'}), 400
+    unknown = sorted(set(payload) - _PREFERENCE_KEYS)
+    if unknown:
+        return jsonify({'error': f'Unknown preference(s): {", ".join(unknown)}'}), 400
+    if 'scope' in payload and payload['scope'] not in _SCOPES:
+        return jsonify({'error': 'scope must be "mine" or "everyone"'}), 400
+    name = str(payload.get('solutioner') or '').strip()
+    if len(name) > _MAX_FIELD_LEN:
+        return jsonify({'error': 'solutioner is too long'}), 400
+
+    data = load_data()
+    prefs = _preferences(data)
+    if 'solutioner' in payload:
+        prefs['solutioner'] = name
+    if 'scope' in payload:
+        prefs['scope'] = payload['scope']
+    # Keep what other features store here (the monday email the name was picked under).
+    data['preferences'] = {**(data.get('preferences') or {}), **prefs}
+    save_data(data)
+    return jsonify(prefs)
+
+
 @settings_blueprint.route('/api/contacts', methods=['GET'])
 def get_contacts():
     data = load_data()

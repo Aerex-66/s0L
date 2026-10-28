@@ -99,8 +99,8 @@ export default function QuickSetupWizard({ deal, onComplete, mode = 'setup' }) {
         })
       } else {
         // Full setup mode
-        // Save deal classification
-        await dealService.update(deal.id, {
+        // Save deal classification (board-owned fields stay as monday has them once the deal is linked)
+        const classification = {
           market: setupData.market,
           sector: setupData.sector,
           industry: setupData.industry,
@@ -111,7 +111,10 @@ export default function QuickSetupWizard({ deal, onComplete, mode = 'setup' }) {
           review_status: setupData.review_status,
           sap_applications: setupData.sap_applications,
           ...(setupData.estimated_value ? { estimated_value: setupData.estimated_value } : {}),
-        })
+        }
+        await dealService.update(deal.id, Object.fromEntries(
+          Object.entries(classification).filter(([key]) => isEditable(key, deal)),
+        ))
 
         // Save timeline as multi-timeline structure (GSSM owns it once a workbook is linked)
         if (isEditable('timelines', deal)) await dealService.updateTimeline(deal.id, {

@@ -419,7 +419,7 @@ function GssmModule({ deal, onUpdate }) {
           <div className="gssm-topbar-left">
             <span className="gssm-topbar-wordmark">GSSM</span>
             {activeSheet && opportunityNumber && (
-              <span className="gssm-topbar-opp">OPP-{opportunityNumber}</span>
+              <span className="gssm-topbar-opp" title="Opportunity number">{opportunityNumber}</span>
             )}
           </div>
 

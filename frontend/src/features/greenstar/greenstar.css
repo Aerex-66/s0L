@@ -134,7 +134,7 @@
 }
 
 .gs-grouping-tab--active .gs-grouping-count {
-  background: rgba(15, 98, 254, 0.1);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--ibm-blue);
 }
 
@@ -164,7 +164,7 @@
 }
 
 .gs-pivot-tab:hover {
-  background: rgba(0,0,0,0.03);
+  background: var(--control-fill);
   border-color: var(--border-subtle, #e0e0e0);
 }
 
@@ -238,8 +238,8 @@
 
 .gs-cell {
   padding: 0.25rem 0.5rem;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  border-right: 1px solid rgba(0,0,0,0.03);
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
 }
 
 .gs-cell-label {
@@ -254,12 +254,12 @@
   font-variant-numeric: tabular-nums;
 }
 
-.gs-data-row:hover td { background: rgba(15, 98, 254, 0.03); }
+.gs-data-row:hover td { background: color-mix(in srgb, var(--accent) 3%, transparent); }
 
 .gs-subtotal td {
   font-weight: 700;
-  background: rgba(0,0,0,0.025);
-  border-top: 1px solid rgba(0,0,0,0.08);
+  background: var(--control-fill);
+  border-top: 1px solid var(--border-color);
 }
 
 .gs-grand-total td {
@@ -295,7 +295,7 @@
   border-right: 1px solid var(--border-subtle, #e0e0e0);
 }
 
-.gs-mode-btn:hover { background: rgba(0,0,0,0.03); }
+.gs-mode-btn:hover { background: var(--control-fill); }
 
 .gs-mode-btn--active {
   background: var(--c-blue-60, #0f62fe);
@@ -376,7 +376,7 @@
 }
 
 .gfp-icon-btn:hover {
-  background: rgba(0,0,0,0.04);
+  background: var(--control-fill);
   color: var(--text-primary);
 }
 
@@ -413,10 +413,10 @@
   transition: all 0.1s;
 }
 
-.gfp-preset-btn:hover { background: rgba(0,0,0,0.04); }
+.gfp-preset-btn:hover { background: var(--control-fill); }
 
 .gfp-preset--active .gfp-preset-btn {
-  background: rgba(15, 98, 254, 0.08);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
   color: var(--c-blue-60, #0f62fe);
   font-weight: 600;
 }
@@ -437,7 +437,7 @@
 }
 
 .gfp-preset-del { color: var(--text-tertiary); }
-.gfp-preset-del:hover { color: #da1e28; }
+.gfp-preset-del:hover { color: var(--status-error); }
 
 /* ── Fields list ── */
 .gfp-fields {
@@ -498,14 +498,14 @@
 .gfp-chip:active { cursor: grabbing; }
 .gfp-chip-grip { opacity: 0.3; flex-shrink: 0; }
 
-.gfp-chip--roster { border-color: #d0d7de; color: var(--text-primary); }
-.gfp-chip--roster:hover { background: rgba(0,0,0,0.03); }
-.gfp-chip--value { border-color: #a5d6a7; color: #1a7f37; background: rgba(26,127,55,0.04); }
+.gfp-chip--roster { border-color: var(--border-color); color: var(--text-primary); }
+.gfp-chip--roster:hover { background: var(--control-fill); }
+.gfp-chip--value { border-color: #a5d6a7; color: var(--status-success); background: rgba(26,127,55,0.04); }
 .gfp-chip--value:hover { background: rgba(26,127,55,0.1); }
-.gfp-chip--month { border-color: #90caf9; color: #0969da; background: rgba(9,105,218,0.04); }
+.gfp-chip--month { border-color: #90caf9; color: var(--accent); background: rgba(9,105,218,0.04); }
 .gfp-chip--month:hover { background: rgba(9,105,218,0.1); }
-.gfp-chip--other { border-color: #d0d7de; color: var(--text-secondary); }
-.gfp-chip--other:hover { background: rgba(0,0,0,0.03); }
+.gfp-chip--other { border-color: var(--border-color); color: var(--text-secondary); }
+.gfp-chip--other:hover { background: var(--control-fill); }
 
 /* ── Drop zones ── */
 .gfp-zones {
@@ -516,7 +516,7 @@
 }
 
 .gfp-zone {
-  border: 1.5px dashed #d0d7de;
+  border: 1.5px dashed var(--border-color);
   border-radius: 4px;
   padding: 0.25rem 0.35rem;
   min-height: 2rem;
@@ -525,7 +525,7 @@
 
 .gfp-zone--over {
   border-color: var(--c-blue-60, #0f62fe);
-  background: rgba(15, 98, 254, 0.04);
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
 }
 
 .gfp-zone-label {
@@ -593,11 +593,6 @@
   outline: none;
 }
 
-.gfp-agg-select option {
-  background: #24292f;
-  color: #fff;
-}
-
 /* ── Actions ── */
 .gfp-actions {
   padding: 0.3rem 0.5rem;
@@ -616,7 +611,7 @@
   transition: all 0.1s;
 }
 
-.gfp-clear-btn:hover { background: rgba(0,0,0,0.04); }
+.gfp-clear-btn:hover { background: var(--control-fill); }
 .gfp-clear-btn:disabled { opacity: 0.3; cursor: default; }
 
 /* ── Scrollbars ── */

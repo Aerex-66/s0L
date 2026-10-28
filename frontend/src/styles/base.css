@@ -1,15 +1,40 @@
 /* ══════════════════════════════════════════════════════════════════
-   s0L — Glass Design System v6 · “Luminous Seamless”
-   Square geometry · translucent crystal glass · subtle ambient glow · living aurora · themed
+   s0L — Glass Design System v7 · "Personal Glass"
+   Dark-first · square seamless glass · one accent the user owns · living aurora.
+   A theme is a palette (canvas · surface · ink · accent) that
+   shared/ui/ThemeSwitcher.jsx sets on <html>; every token below derives from it.
    Canonical spec: /DESIGN.md — read it before changing tokens.
    ══════════════════════════════════════════════════════════════════ */
 
 :root {
+  color-scheme: dark;
+
+  /* -- Palette — the theme. Defaults are Obsidian; ThemeSwitcher.jsx overrides inline -- */
+  --canvas: #08090d;
+  --canvas-2: #10131b;
+  --surface: #141821;
+  --ink: #eceff5;
+  --accent: #4f7dff;
+  --on-accent: #ffffff;
+  --font-ui: 'Geist Variable';
+
+  /* Accent family — analogous hues derived from the one accent */
+  --accent-2: oklch(from var(--accent) l c calc(h + 50));
+  --accent-3: oklch(from var(--accent) l c calc(h - 50));
+  /* Practice hues (one per monday group): fixed hues at the accent's lightness and chroma, so each theme keeps them */
+  --practice-1: oklch(from var(--accent) clamp(0.6, l, 0.72) max(c, 0.15) 258); /* SAP: blue */
+  --practice-2: oklch(from var(--accent) clamp(0.6, l, 0.72) max(c, 0.15) 27); /* Oracle: red */
+  --practice-3: oklch(from var(--accent) clamp(0.6, l, 0.72) max(c, 0.15) 175); /* Salesforce, Adobe, ServiceNow: teal */
+  --practice-4: oklch(from var(--accent) clamp(0.6, l, 0.72) max(c, 0.15) 62); /* Workday & SuccessFactors: orange */
+  --practice-5: oklch(from var(--accent) clamp(0.6, l, 0.72) max(c, 0.15) 305); /* AMO & Supply Chain: violet */
+  --accent-strong: color-mix(in oklab, var(--accent) 82%, black);
+  --accent-light: color-mix(in oklab, var(--accent) 70%, white);
+
   /* -- Type Scale ------------------------------------------ */
-  /* Families (self-hosted via @ibm/plex-sans & @ibm/plex-mono in main.jsx) */
-  --font-family-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-family-mono: 'IBM Plex Mono', 'Consolas', 'Menlo', monospace;
-  --font-family-display: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Families — bundled via @fontsource-variable/* in main.jsx (never a CDN) */
+  --font-family-sans: var(--font-ui), 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+  --font-family-mono: 'Geist Mono Variable', 'Cascadia Mono', Consolas, monospace;
+  --font-family-display: var(--font-family-sans);
 
   /* Weights */
   --font-weight-thin: 400;
@@ -51,13 +76,13 @@
   --radius-xl: 0px;
   --radius-full: 0px;
 
-  /* Brand — IBM Design Language */
-  --ibm-blue: #0f62fe;
-  --ibm-blue-light: #4589ff;
-  --ibm-blue-dark: #0043ce;
-  --ibm-blue-vivid: #0062ff;
-  --accent-cyan: #00b4ff;
-  --accent-ice: rgba(15, 98, 254, 0.07);
+  /* Brand aliases — legacy names, all following the user's accent */
+  --ibm-blue: var(--accent);
+  --ibm-blue-light: var(--accent-light);
+  --ibm-blue-dark: var(--accent-strong);
+  --ibm-blue-vivid: var(--accent);
+  --accent-cyan: var(--accent-2);
+  --accent-ice: color-mix(in srgb, var(--accent) 8%, transparent);
   --ibm-gray-10: #f4f6fa;
   --ibm-gray-20: #e2e7f0;
   --ibm-gray-30: #cbd3e1;
@@ -65,112 +90,126 @@
   --ibm-gray-70: #4b5870;
   --ibm-gray-90: #1e2638;
   --ibm-gray-100: #0f1523;
-  --ibm-red: #da1e28;
-  --ibm-green: #198038;
-  --ibm-purple: #8a3ffc;
+  --ibm-red: #fa4d56;
+  --ibm-green: #42be65;
+  --ibm-purple: #a56eff;
 
-  /* Semantic surfaces — LIGHT (Arctic Glass: luminous pearl-ice) */
-  --bg-primary: rgba(255, 255, 255, 0.85);
-  --bg-secondary: rgba(241, 245, 252, 0.72);
-  --bg-tertiary: rgba(226, 233, 245, 0.65);
-  --bg-dark: #080c18;
-  --bg-dark-secondary: #0f1526;
-  --bg-deep: #0c0f1a;
-  --bg-app: linear-gradient(155deg, #f6f8fd 0%, #eef3fb 45%, #e8effa 100%);
+  /* Semantic surfaces — derived from the palette */
+  --bg-primary: color-mix(in srgb, var(--surface) 84%, transparent);
+  --bg-secondary: color-mix(in srgb, color-mix(in oklab, var(--surface) 93%, var(--ink)) 72%, transparent);
+  --bg-tertiary: color-mix(in srgb, color-mix(in oklab, var(--surface) 87%, var(--ink)) 66%, transparent);
+  --bg-dark: #0a0c12;
+  --bg-dark-secondary: #11141c;
+  --bg-deep: color-mix(in oklab, var(--canvas) 80%, black);
+  --bg-app: linear-gradient(170deg, var(--canvas-2) 0%, var(--canvas) 62%);
 
   /* Text */
-  --text-primary: #0b1224;
-  --text-secondary: #3d4d68;
-  --text-tertiary: #6e809e;
-  --text-inverse: #ffffff;
-  --text-on-dark: #e8edf5;
-  --text-on-light: #0b1224;
+  --text-primary: var(--ink);
+  --text-secondary: color-mix(in oklab, var(--ink) 70%, var(--canvas));
+  --text-tertiary: color-mix(in oklab, var(--ink) 50%, var(--canvas));
+  --text-inverse: var(--canvas);
+  --text-on-dark: #eef1f6;
+  --text-on-light: #0b1020;
 
-  /* Borders */
-  --border-color: rgba(15, 30, 65, 0.08);
-  --border-subtle: rgba(15, 30, 65, 0.045);
+  /* Borders — data rows and input edges only; surfaces stay seamless */
+  --border-color: color-mix(in srgb, var(--ink) 9%, transparent);
+  --border-subtle: color-mix(in srgb, var(--ink) 5%, transparent);
   --border-dark: rgba(255, 255, 255, 0.12);
 
-  /* ── Glass tokens — clean, sleek, transparent, luminous ── */
-  --glass-bg: rgba(255, 255, 255, 0.66);
-  --glass-bg-heavy: rgba(255, 255, 255, 0.80);
-  --glass-bg-light: rgba(255, 255, 255, 0.50);
-  --control-fill: rgba(15, 35, 80, 0.05);
+  /* ── Glass tokens — translucent palette surface over the living canvas ── */
+  --glass-bg: color-mix(in srgb, var(--surface) 62%, transparent);
+  --glass-bg-heavy: color-mix(in srgb, var(--surface) 78%, transparent);
+  --glass-bg-light: color-mix(in srgb, var(--surface) 44%, transparent);
+  --glass-surface: color-mix(in srgb, var(--surface) 54%, transparent);
+  --control-fill: color-mix(in srgb, var(--ink) 7%, transparent);
   --glass-border: transparent;
   --glass-border-top: transparent;
-  --glass-surface: rgba(255, 255, 255, 0.60);
   --glass-blur-light: 14px;
   --glass-blur: 24px;
   --glass-blur-heavy: 40px;
-  --specular: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.75) 50%, transparent 100%);
-  /* Ambient accent field — whisper-soft light pooling inside glass */
-  --ambient-field: radial-gradient(120% 140% at 10% -20%, rgba(15, 98, 254, 0.055) 0%, transparent 58%),
-                   radial-gradient(90% 120% at 90% 120%, rgba(0, 180, 255, 0.04) 0%, transparent 58%);
+  --specular: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--ink) 16%, transparent) 50%, transparent 100%);
+  --specular-edge: color-mix(in srgb, var(--ink) 8%, transparent);
+  /* Ambient accent field — accent light pooling inside glass */
+  --ambient-field: radial-gradient(120% 140% at 12% -20%, color-mix(in srgb, var(--accent) 13%, transparent) 0%, transparent 55%),
+                   radial-gradient(90% 120% at 88% 120%, color-mix(in srgb, var(--accent-2) 8%, transparent) 0%, transparent 55%);
   --glass-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E");
-  --glass-highlight: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.12) 45%, transparent 100%);
-  --glass-shimmer: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
+  --glass-highlight: linear-gradient(135deg, color-mix(in srgb, var(--accent) 7%, transparent) 0%, color-mix(in srgb, var(--ink) 2%, transparent) 40%, transparent 100%);
+  --glass-shimmer: linear-gradient(120deg, transparent 30%, color-mix(in srgb, var(--accent) 6%, transparent) 50%, transparent 70%);
 
-  /* Shadows — weightless ambient depth + subtle top luminance */
-  --shadow-sm: 0 2px 6px rgba(15, 35, 80, 0.045);
-  --shadow-md: 0 6px 20px -2px rgba(15, 35, 80, 0.07), 0 2px 6px rgba(15, 35, 80, 0.04);
-  --shadow-lg: 0 12px 36px -4px rgba(15, 35, 80, 0.10), 0 4px 10px rgba(15, 35, 80, 0.045);
-  --shadow-xl: 0 24px 64px -8px rgba(15, 35, 80, 0.14), 0 6px 18px rgba(15, 35, 80, 0.06);
-  --shadow-button: 0 2px 10px -2px rgba(15, 35, 80, 0.08);
-  --shadow-button-hover: 0 8px 24px -4px rgba(15, 98, 254, 0.22), 0 2px 6px rgba(15, 35, 80, 0.06);
-  --shadow-card: 0 4px 20px -2px rgba(15, 35, 80, 0.055), inset 0 1px 0 rgba(255, 255, 255, 0.70);
-  --shadow-card-hover:
-    0 14px 38px -6px rgba(15, 35, 80, 0.11),
-    0 4px 12px rgba(15, 35, 80, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.90);
+  /* Background field strengths (body mesh + aurora) */
+  --mesh-1: 22%;
+  --mesh-2: 12%;
+  --mesh-3: 13%;
+  --aurora-1: 16%;
+  --aurora-2: 10%;
+
+  /* Shadows — real depth + a whisper of top light */
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.30), 0 2px 6px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.36), 0 4px 10px rgba(0, 0, 0, 0.20);
+  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.46), 0 6px 18px rgba(0, 0, 0, 0.22);
+  --shadow-button: 0 2px 10px -2px rgba(0, 0, 0, 0.30);
+  --shadow-button-hover: 0 8px 24px -4px color-mix(in srgb, var(--accent) 35%, transparent), 0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.28), inset 0 1px 0 var(--specular-edge);
+  --shadow-card-hover: 0 16px 44px rgba(0, 0, 0, 0.40), inset 0 1px 0 color-mix(in srgb, var(--ink) 13%, transparent);
   --shadow-modal:
-    0 36px 96px -12px rgba(10, 22, 55, 0.22),
-    0 12px 32px -4px rgba(10, 22, 55, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85);
-  --shadow-glass: 0 6px 28px -4px rgba(15, 35, 80, 0.055), 0 2px 6px rgba(15, 35, 80, 0.025), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    0 48px 120px rgba(0, 0, 0, 0.62),
+    0 16px 40px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 var(--specular-edge);
+  --shadow-glass: 0 6px 24px rgba(0, 0, 0, 0.26), inset 0 1px 0 var(--specular-edge);
   --shadow-glass-raised:
-    0 14px 40px -6px rgba(15, 35, 80, 0.10),
-    0 4px 12px rgba(15, 35, 80, 0.045),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
-  --shadow-inset: inset 0 1px 3px rgba(15, 35, 80, 0.05);
+    0 12px 40px rgba(0, 0, 0, 0.36),
+    0 4px 12px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent);
+  --shadow-inset: inset 0 1px 4px rgba(0, 0, 0, 0.26);
 
-  /* Glow — subtle ambient halo system */
-  --glow-blue: 0 0 28px rgba(15, 98, 254, 0.16), 0 0 56px rgba(15, 98, 254, 0.06);
-  --glow-cyan: 0 0 24px rgba(0, 180, 255, 0.14), 0 0 48px rgba(0, 180, 255, 0.05);
-  --glow-purple: 0 0 24px rgba(138, 63, 252, 0.12);
-  --glow-subtle: 0 0 18px rgba(15, 98, 254, 0.07);
+  /* Glow — accent halos; compose with a shadow, never replace one */
+  --glow-blue: 0 0 40px color-mix(in srgb, var(--accent) 26%, transparent), 0 0 80px color-mix(in srgb, var(--accent) 8%, transparent);
+  --glow-cyan: 0 0 32px color-mix(in srgb, var(--accent-2) 20%, transparent), 0 0 64px color-mix(in srgb, var(--accent-2) 6%, transparent);
+  --glow-purple: 0 0 24px color-mix(in srgb, var(--accent-3) 16%, transparent);
+  --glow-subtle: 0 0 18px color-mix(in srgb, var(--accent) 10%, transparent);
 
-  /* Status */
-  --status-gray: #78879e;
-  --status-success: #198038;
-  --status-warning: #d97706;
-  --status-error: #da1e28;
-  --status-info: #0f62fe;
-  --status-gray-bg: rgba(120, 135, 158, 0.09);
-  --status-success-bg: rgba(25, 128, 56, 0.09);
-  --status-warning-bg: rgba(217, 119, 6, 0.09);
-  --status-error-bg: rgba(218, 30, 40, 0.09);
-  --status-info-bg: rgba(15, 98, 254, 0.08);
+  /* Status — legible on dark glass */
+  --status-gray: #8c96a8;
+  --status-success: #3ecf7a;
+  --status-warning: #f5b544;
+  --status-error: #ff5d6c;
+  --status-info: var(--accent);
+  --status-gray-bg: color-mix(in srgb, var(--status-gray) 14%, transparent);
+  --status-success-bg: color-mix(in srgb, var(--status-success) 13%, transparent);
+  --status-warning-bg: color-mix(in srgb, var(--status-warning) 13%, transparent);
+  --status-error-bg: color-mix(in srgb, var(--status-error) 13%, transparent);
+  --status-info-bg: color-mix(in srgb, var(--accent) 13%, transparent);
 
   /* Interactive */
-  --interactive-hover: rgba(15, 98, 254, 0.055);
-  --interactive-active: rgba(15, 98, 254, 0.10);
-  --interactive-focus: #0f62fe;
+  --interactive-hover: color-mix(in srgb, var(--accent) 10%, transparent);
+  --interactive-active: color-mix(in srgb, var(--accent) 18%, transparent);
+  --interactive-focus: var(--accent);
 
   /* ── Form fields — ONE source of truth for every input/select/textarea ── */
-  --field-bg: rgba(255, 255, 255, 0.84);
-  --field-bg-focus: #ffffff;
-  --field-border: rgba(15, 35, 80, 0.11);
+  --field-bg: color-mix(in srgb, var(--canvas) 66%, transparent);
+  --field-bg-focus: color-mix(in srgb, var(--canvas) 86%, transparent);
+  --field-border: color-mix(in srgb, var(--ink) 13%, transparent);
   --field-text: var(--text-primary);
 
   /* ── Modal surface — ONE source of truth for every modal/dialog shell ── */
-  --modal-bg: rgba(250, 252, 255, 0.86);
+  --modal-bg: color-mix(in srgb, var(--surface) 86%, transparent);
   --modal-border: transparent;
   --modal-border-top: transparent;
 
   /* Calendar */
-  --calendar-day-bg: rgba(255, 255, 255, 0.68);
-  --calendar-day-hover: rgba(15, 98, 254, 0.07);
-  --calendar-today: rgba(15, 98, 254, 0.12);
+  --calendar-day-bg: color-mix(in srgb, var(--surface) 60%, transparent);
+  --calendar-day-hover: color-mix(in srgb, var(--accent) 12%, transparent);
+  --calendar-today: color-mix(in srgb, var(--accent) 22%, transparent);
+
+  /* Short vertical divider that fades at both ends (header groups, stat line) */
+  --divider-fade: linear-gradient(180deg,
+    transparent,
+    color-mix(in srgb, var(--ink) 22%, transparent) 25%,
+    color-mix(in srgb, var(--ink) 22%, transparent) 75%,
+    transparent);
+  /* Data-table header bar: recessed, darker than the rows */
+  --table-head-bg: color-mix(in oklab, var(--canvas) 55%, black);
 
   /* Motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -198,215 +237,119 @@
     color var(--duration-hover) var(--ease-liquid),
     opacity var(--duration-hover) var(--ease-liquid);
 
-  /* Header — theme-aware translucent crystal bar */
-  --header-bg: rgba(255, 255, 255, 0.72);
-  --header-border: rgba(15, 35, 80, 0.06);
-  --header-text: #0b1224;
-  --header-text-muted: #5a6b87;
-  --header-btn-bg: rgba(15, 35, 80, 0.045);
+  /* Header — translucent bar over the canvas */
+  --header-bg: color-mix(in srgb, var(--canvas) 72%, transparent);
+  --header-border: color-mix(in srgb, var(--ink) 6%, transparent);
+  --header-text: color-mix(in srgb, var(--ink) 94%, transparent);
+  --header-text-muted: color-mix(in oklab, var(--ink) 58%, var(--canvas));
+  --header-btn-bg: color-mix(in srgb, var(--ink) 7%, transparent);
   --header-btn-border: transparent;
-  --header-track-bg: rgba(15, 35, 80, 0.05);
-  --header-toggle-active-bg: rgba(255, 255, 255, 0.95);
-  --header-toggle-active-text: var(--ibm-blue);
-  --header-toggle-active-shadow: 0 2px 8px rgba(15, 35, 80, 0.07), 0 0 14px rgba(15, 98, 254, 0.08);
-  --header-shadow: 0 4px 24px -4px rgba(15, 35, 80, 0.05), inset 0 -1px 0 rgba(15, 35, 80, 0.05);
+  --header-shadow: 0 4px 28px rgba(0, 0, 0, 0.30), inset 0 1px 0 color-mix(in srgb, var(--ink) 4%, transparent);
   --header-accent-gradient: linear-gradient(90deg,
     transparent 0%,
-    rgba(15, 98, 254, 0.22) 25%,
-    rgba(0, 180, 255, 0.28) 50%,
-    rgba(138, 63, 252, 0.18) 75%,
+    color-mix(in srgb, var(--accent) 50%, transparent) 22%,
+    color-mix(in srgb, var(--accent-2) 55%, transparent) 50%,
+    color-mix(in srgb, var(--accent-3) 45%, transparent) 78%,
     transparent 100%
   );
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   THEME: DARK (Obsidian)
-   Deep dark with glass panels floating over dark mesh
+   MODE: LIGHT — only what differs from the dark defaults above.
+   Light palettes (Frost) come from ThemeSwitcher.jsx like every theme.
    ═══════════════════════════════════════════════════════════════ */
-[data-theme="dark"] {
-  --bg-primary: rgba(20, 28, 48, 0.78);
-  --bg-secondary: rgba(26, 35, 58, 0.68);
-  --bg-tertiary: rgba(34, 45, 72, 0.62);
-  --bg-dark: #080c18;
-  --bg-dark-secondary: #0f1526;
-  --bg-deep: #0a0e1a;
-  --bg-app: linear-gradient(160deg, #0a0e1c 0%, #0e1428 45%, #0a0e1c 100%);
+[data-mode="light"] {
+  color-scheme: light;
 
-  --text-primary: #e6ecf5;
-  --text-secondary: #9baac4;
-  --text-tertiary: #647696;
-  --text-inverse: #0b1224;
-  --text-on-dark: #e6ecf5;
-  --text-on-light: #0b1224;
+  --ibm-red: #da1e28;
+  --ibm-green: #198038;
+  --ibm-purple: #8a3ffc;
 
-  --border-color: rgba(255, 255, 255, 0.075);
-  --border-subtle: rgba(255, 255, 255, 0.04);
+  --text-secondary: color-mix(in oklab, var(--ink) 74%, var(--canvas));
+  --text-tertiary: color-mix(in oklab, var(--ink) 56%, var(--canvas));
 
-  --glass-bg: rgba(18, 26, 46, 0.62);
-  --glass-bg-heavy: rgba(18, 26, 46, 0.78);
-  --glass-bg-light: rgba(18, 26, 46, 0.44);
-  --control-fill: rgba(140, 175, 255, 0.08);
-  --glass-border: transparent;
-  --glass-border-top: transparent;
-  --glass-surface: rgba(18, 26, 46, 0.54);
-  --specular: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.10) 50%, transparent 100%);
-  --ambient-field: radial-gradient(120% 140% at 12% -20%, rgba(15, 98, 254, 0.12) 0%, transparent 55%),
-                   radial-gradient(90% 120% at 88% 120%, rgba(0, 212, 255, 0.07) 0%, transparent 55%);
-  --glass-highlight: linear-gradient(135deg, rgba(140, 175, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 40%, transparent 100%);
-  --glass-shimmer: linear-gradient(120deg, transparent 30%, rgba(140, 175, 255, 0.06) 50%, transparent 70%);
+  --glass-bg: color-mix(in srgb, var(--surface) 66%, transparent);
+  --glass-bg-heavy: color-mix(in srgb, var(--surface) 80%, transparent);
+  --glass-bg-light: color-mix(in srgb, var(--surface) 50%, transparent);
+  --glass-surface: color-mix(in srgb, var(--surface) 60%, transparent);
+  --control-fill: color-mix(in srgb, var(--ink) 5%, transparent);
+  --specular: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
+  --specular-edge: rgba(255, 255, 255, 0.75);
+  --ambient-field: radial-gradient(120% 140% at 10% -20%, color-mix(in srgb, var(--accent) 7%, transparent) 0%, transparent 58%),
+                   radial-gradient(90% 120% at 90% 120%, color-mix(in srgb, var(--accent-2) 5%, transparent) 0%, transparent 58%);
+  --glass-highlight: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.12) 45%, transparent 100%);
+  --glass-shimmer: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
 
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.22);
-  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.16);
-  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.34), 0 4px 10px rgba(0, 0, 0, 0.20);
-  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.44), 0 6px 18px rgba(0, 0, 0, 0.22);
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  --shadow-card-hover: 0 16px 44px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --shadow-modal:
-    0 48px 120px rgba(0, 0, 0, 0.60),
-    0 16px 40px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
-  --shadow-glass: 0 6px 24px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  --shadow-glass-raised:
-    0 12px 40px rgba(0, 0, 0, 0.35),
-    0 4px 12px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --shadow-inset: inset 0 1px 4px rgba(0, 0, 0, 0.25);
+  /* Richer field than v6 — the light theme should never read as plain white */
+  --mesh-1: 22%;
+  --mesh-2: 18%;
+  --mesh-3: 16%;
+  --aurora-1: 18%;
+  --aurora-2: 13%;
 
-  --glow-blue: 0 0 40px rgba(15, 98, 254, 0.26), 0 0 80px rgba(15, 98, 254, 0.08);
-  --glow-cyan: 0 0 32px rgba(0, 212, 255, 0.20), 0 0 64px rgba(0, 212, 255, 0.06);
-
-  --interactive-hover: rgba(69, 137, 255, 0.09);
-  --interactive-active: rgba(69, 137, 255, 0.16);
-
-  --field-bg: rgba(12, 18, 34, 0.72);
-  --field-bg-focus: rgba(15, 23, 42, 0.88);
-  --field-border: rgba(255, 255, 255, 0.12);
-
-  --modal-bg: rgba(18, 26, 46, 0.86);
-  --modal-border: transparent;
-  --modal-border-top: transparent;
-
-  --calendar-day-bg: rgba(18, 24, 42, 0.60);
-  --calendar-day-hover: rgba(15, 98, 254, 0.12);
-  --calendar-today: rgba(15, 98, 254, 0.20);
-
-  --status-gray-bg: rgba(141, 141, 141, 0.12);
-  --status-success-bg: rgba(36, 161, 72, 0.12);
-  --status-warning-bg: rgba(241, 194, 27, 0.12);
-  --status-error-bg: rgba(218, 30, 40, 0.12);
-  --status-info-bg: rgba(15, 98, 254, 0.12);
-
-  --header-bg: rgba(10, 15, 28, 0.78);
-  --header-border: rgba(255, 255, 255, 0.06);
-  --header-text: rgba(255, 255, 255, 0.92);
-  --header-text-muted: rgba(255, 255, 255, 0.52);
-  --header-btn-bg: rgba(255, 255, 255, 0.05);
-  --header-btn-border: transparent;
-  --header-track-bg: rgba(255, 255, 255, 0.05);
-  --header-toggle-active-bg: rgba(69, 137, 255, 0.20);
-  --header-toggle-active-text: #ffffff;
-  --header-toggle-active-shadow: 0 0 16px rgba(69, 137, 255, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  --header-shadow: 0 4px 28px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
-   THEME: MIDNIGHT (Deep neon)
-   Ultra-dark with vivid cyan/blue neon accents
-   ═══════════════════════════════════════════════════════════════ */
-[data-theme="midnight"] {
-  --ibm-blue: #4589ff;
-  --ibm-blue-light: #78a9ff;
-  --ibm-blue-dark: #0f62fe;
-  --accent-cyan: #33b1ff;
-
-  --bg-primary: rgba(10, 16, 34, 0.80);
-  --bg-secondary: rgba(15, 22, 46, 0.70);
-  --bg-tertiary: rgba(22, 30, 58, 0.65);
-  --bg-dark: #060a16;
-  --bg-dark-secondary: #0a0e1c;
-  --bg-deep: #060a14;
-  --bg-app: linear-gradient(160deg, #060a14 0%, #080f22 50%, #060a14 100%);
-
-  --text-primary: #dce4f5;
-  --text-secondary: #8a9cb8;
-  --text-tertiary: #546688;
-  --text-inverse: #0a0f1e;
-
-  --border-color: rgba(69, 137, 255, 0.10);
-  --border-subtle: rgba(69, 137, 255, 0.05);
-
-  --glass-bg: rgba(10, 18, 38, 0.64);
-  --glass-bg-heavy: rgba(10, 18, 38, 0.80);
-  --glass-bg-light: rgba(10, 18, 38, 0.46);
-  --control-fill: rgba(69, 137, 255, 0.10);
-  --glass-border: transparent;
-  --glass-border-top: transparent;
-  --glass-surface: rgba(10, 18, 38, 0.56);
-  --specular: linear-gradient(90deg, transparent 0%, rgba(69, 137, 255, 0.22) 50%, transparent 100%);
-  --ambient-field: radial-gradient(120% 140% at 12% -20%, rgba(15, 98, 254, 0.18) 0%, transparent 55%),
-                   radial-gradient(90% 120% at 88% 120%, rgba(0, 212, 255, 0.10) 0%, transparent 55%);
-  --glass-highlight: linear-gradient(135deg, rgba(69, 137, 255, 0.11) 0%, rgba(0, 212, 255, 0.03) 40%, transparent 100%);
-  --glass-shimmer: linear-gradient(120deg, transparent 30%, rgba(69, 137, 255, 0.08) 50%, transparent 70%);
-
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.30);
-  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.36), 0 2px 6px rgba(0, 0, 0, 0.20);
-  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.42), 0 4px 10px rgba(0, 0, 0, 0.25);
-  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.52), 0 6px 18px rgba(0, 0, 0, 0.25);
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(69, 137, 255, 0.08);
+  --shadow-sm: 0 2px 6px rgba(15, 35, 80, 0.05);
+  --shadow-md: 0 6px 20px -2px rgba(15, 35, 80, 0.08), 0 2px 6px rgba(15, 35, 80, 0.04);
+  --shadow-lg: 0 12px 36px -4px rgba(15, 35, 80, 0.11), 0 4px 10px rgba(15, 35, 80, 0.05);
+  --shadow-xl: 0 24px 64px -8px rgba(15, 35, 80, 0.15), 0 6px 18px rgba(15, 35, 80, 0.06);
+  --shadow-button: 0 2px 10px -2px rgba(15, 35, 80, 0.08);
+  --shadow-button-hover: 0 8px 24px -4px color-mix(in srgb, var(--accent) 24%, transparent), 0 2px 6px rgba(15, 35, 80, 0.06);
+  --shadow-card: 0 4px 20px -2px rgba(15, 35, 80, 0.06), inset 0 1px 0 var(--specular-edge);
   --shadow-card-hover:
-    0 14px 42px rgba(0, 0, 0, 0.45),
-    0 0 28px rgba(15, 98, 254, 0.10),
-    inset 0 1px 0 rgba(69, 137, 255, 0.14);
-  --shadow-modal: 0 40px 100px rgba(0, 0, 0, 0.65), 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(69, 137, 255, 0.12);
-  --shadow-glass: 0 6px 24px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(69, 137, 255, 0.07);
+    0 14px 38px -6px rgba(15, 35, 80, 0.12),
+    0 4px 12px rgba(15, 35, 80, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.90);
+  --shadow-modal:
+    0 36px 96px -12px rgba(10, 22, 55, 0.24),
+    0 12px 32px -4px rgba(10, 22, 55, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --shadow-glass: 0 6px 28px -4px rgba(15, 35, 80, 0.07), 0 2px 6px rgba(15, 35, 80, 0.03), inset 0 1px 0 var(--specular-edge);
   --shadow-glass-raised:
-    0 12px 40px rgba(0, 0, 0, 0.42),
-    0 0 22px rgba(15, 98, 254, 0.08),
-    inset 0 1px 0 rgba(69, 137, 255, 0.12);
-  --shadow-inset: inset 0 1px 4px rgba(0, 0, 0, 0.30);
+    0 14px 40px -6px rgba(15, 35, 80, 0.11),
+    0 4px 12px rgba(15, 35, 80, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  --shadow-inset: inset 0 1px 3px rgba(15, 35, 80, 0.05);
 
-  --glow-blue: 0 0 48px rgba(15, 98, 254, 0.32), 0 0 96px rgba(15, 98, 254, 0.10);
-  --glow-cyan: 0 0 40px rgba(0, 212, 255, 0.26), 0 0 80px rgba(0, 212, 255, 0.08);
+  --glow-blue: 0 0 28px color-mix(in srgb, var(--accent) 16%, transparent), 0 0 56px color-mix(in srgb, var(--accent) 6%, transparent);
+  --glow-cyan: 0 0 24px color-mix(in srgb, var(--accent-2) 14%, transparent), 0 0 48px color-mix(in srgb, var(--accent-2) 5%, transparent);
+  --glow-purple: 0 0 24px color-mix(in srgb, var(--accent-3) 12%, transparent);
+  --glow-subtle: 0 0 18px color-mix(in srgb, var(--accent) 8%, transparent);
 
-  --interactive-hover: rgba(69, 137, 255, 0.10);
-  --interactive-active: rgba(69, 137, 255, 0.18);
+  --status-gray: #6f7d94;
+  --status-success: #198038;
+  --status-warning: #c26a05;
+  --status-error: #da1e28;
+  --status-gray-bg: color-mix(in srgb, var(--status-gray) 10%, transparent);
+  --status-success-bg: color-mix(in srgb, var(--status-success) 9%, transparent);
+  --status-warning-bg: color-mix(in srgb, var(--status-warning) 9%, transparent);
+  --status-error-bg: color-mix(in srgb, var(--status-error) 9%, transparent);
+  --status-info-bg: color-mix(in srgb, var(--accent) 9%, transparent);
 
-  --field-bg: rgba(8, 14, 28, 0.78);
-  --field-bg-focus: rgba(10, 18, 36, 0.92);
-  --field-border: rgba(69, 137, 255, 0.16);
+  --interactive-hover: color-mix(in srgb, var(--accent) 6%, transparent);
+  --interactive-active: color-mix(in srgb, var(--accent) 11%, transparent);
 
-  --modal-bg: rgba(10, 18, 38, 0.88);
-  --modal-border: transparent;
-  --modal-border-top: transparent;
+  --field-bg: rgba(255, 255, 255, 0.84);
+  --field-bg-focus: #ffffff;
+  --field-border: color-mix(in srgb, var(--ink) 12%, transparent);
 
-  --calendar-day-bg: rgba(10, 16, 32, 0.65);
-  --calendar-day-hover: rgba(69, 137, 255, 0.12);
-  --calendar-today: rgba(69, 137, 255, 0.22);
+  --modal-bg: color-mix(in srgb, var(--surface) 88%, transparent);
 
-  --status-gray-bg: rgba(141, 141, 141, 0.15);
-  --status-success-bg: rgba(36, 161, 72, 0.15);
-  --status-warning-bg: rgba(241, 194, 27, 0.15);
-  --status-error-bg: rgba(218, 30, 40, 0.15);
-  --status-info-bg: rgba(69, 137, 255, 0.15);
+  --calendar-day-bg: rgba(255, 255, 255, 0.68);
+  --calendar-day-hover: color-mix(in srgb, var(--accent) 7%, transparent);
+  --calendar-today: color-mix(in srgb, var(--accent) 12%, transparent);
 
-  --header-bg: rgba(6, 10, 22, 0.82);
-  --header-border: rgba(69, 137, 255, 0.10);
-  --header-text: rgba(255, 255, 255, 0.94);
-  --header-text-muted: rgba(216, 224, 240, 0.55);
-  --header-btn-bg: rgba(69, 137, 255, 0.07);
-  --header-btn-border: transparent;
-  --header-track-bg: rgba(69, 137, 255, 0.07);
-  --header-toggle-active-bg: rgba(69, 137, 255, 0.22);
-  --header-toggle-active-text: #ffffff;
-  --header-toggle-active-shadow: 0 0 18px rgba(69, 137, 255, 0.28), inset 0 1px 0 rgba(120, 169, 255, 0.20);
-  --header-shadow: 0 4px 30px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(69, 137, 255, 0.08);
+  --table-head-bg: color-mix(in oklab, var(--canvas) 90%, black);
+
+  --header-bg: rgba(255, 255, 255, 0.72);
+  --header-text: var(--ink);
+  --header-text-muted: color-mix(in oklab, var(--ink) 62%, var(--canvas));
+  --header-btn-bg: color-mix(in srgb, var(--ink) 5%, transparent);
+  --header-shadow: 0 4px 24px -4px rgba(15, 35, 80, 0.05), inset 0 -1px 0 rgba(15, 35, 80, 0.05);
   --header-accent-gradient: linear-gradient(90deg,
     transparent 0%,
-    rgba(69, 137, 255, 0.45) 20%,
-    rgba(0, 212, 255, 0.55) 50%,
-    rgba(138, 63, 252, 0.45) 80%,
+    color-mix(in srgb, var(--accent) 26%, transparent) 25%,
+    color-mix(in srgb, var(--accent-2) 30%, transparent) 50%,
+    color-mix(in srgb, var(--accent-3) 20%, transparent) 75%,
     transparent 100%
   );
 }
@@ -432,20 +375,21 @@ body {
   color: var(--text-primary);
   line-height: 1.5;
   font-size: 14px;
-  letter-spacing: -0.008em;
+  letter-spacing: -0.011em;
+  /* One number style everywhere: digits line up in KPIs, tables and dates */
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 
-  /* ── THE BACKGROUND — Luminous Pearl-Ice Mesh ──
-     Bright, airy, and translucent so crystal glass panes float cleanly with subtle glow. */
-  background-color: #f2f6fc;
+  /* ── THE BACKGROUND — theme canvas + accent mesh ──
+     Three accent-family light pools over the canvas: the light the glass refracts. */
+  background-color: var(--canvas);
   background-image:
-    radial-gradient(ellipse 75% 55% at 15% 20%, rgba(15, 98, 254, 0.075) 0%, transparent 60%),
-    radial-gradient(ellipse 65% 50% at 85% 18%, rgba(0, 180, 255, 0.065) 0%, transparent 58%),
-    radial-gradient(ellipse 60% 55% at 75% 82%, rgba(138, 63, 252, 0.045) 0%, transparent 55%),
-    radial-gradient(ellipse 55% 45% at 22% 85%, rgba(69, 137, 255, 0.06) 0%, transparent 55%),
-    linear-gradient(160deg, #f7f9fe 0%, #f0f4fc 45%, #eaf0fa 100%);
+    radial-gradient(ellipse 80% 55% at 8% -8%, color-mix(in srgb, var(--accent) var(--mesh-1), transparent) 0%, transparent 62%),
+    radial-gradient(ellipse 60% 50% at 96% 6%, color-mix(in srgb, var(--accent-2) var(--mesh-2), transparent) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 60% at 72% 108%, color-mix(in srgb, var(--accent-3) var(--mesh-3), transparent) 0%, transparent 62%),
+    linear-gradient(170deg, var(--canvas-2) 0%, var(--canvas) 62%);
   background-attachment: fixed;
 }
 
@@ -463,10 +407,10 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(36% 30% at 24% 30%, rgba(15, 98, 254, 0.11) 0%, transparent 70%),
-    radial-gradient(30% 26% at 78% 20%, rgba(0, 180, 255, 0.09) 0%, transparent 70%),
-    radial-gradient(32% 30% at 68% 78%, rgba(138, 63, 252, 0.07) 0%, transparent 70%),
-    radial-gradient(26% 24% at 32% 84%, rgba(69, 137, 255, 0.08) 0%, transparent 70%);
+    radial-gradient(36% 30% at 24% 30%, color-mix(in srgb, var(--accent) var(--aurora-1), transparent) 0%, transparent 70%),
+    radial-gradient(30% 26% at 78% 20%, color-mix(in srgb, var(--accent-2) var(--aurora-2), transparent) 0%, transparent 70%),
+    radial-gradient(32% 30% at 68% 78%, color-mix(in srgb, var(--accent-3) var(--aurora-2), transparent) 0%, transparent 70%),
+    radial-gradient(26% 24% at 32% 84%, color-mix(in srgb, var(--accent) var(--aurora-2), transparent) 0%, transparent 70%);
   filter: blur(64px) saturate(1.2);
   animation: auroraDrift 90s linear infinite;
   will-change: transform;
@@ -487,52 +431,9 @@ body::after {
   body::before { animation: none; }
 }
 
-/* Dark body background */
-[data-theme="dark"] body,
-body[data-theme="dark"] {
-  background-color: #0a0e1c;
-  background-image:
-    radial-gradient(ellipse 80% 60% at 15% 60%, rgba(105, 108, 190, 0.10) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 50% at 85% 25%, rgba(15, 98, 254, 0.12) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 60% at 55% 90%, rgba(0, 186, 255, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 40% at 40% 10%, rgba(138, 63, 252, 0.06) 0%, transparent 50%),
-    linear-gradient(160deg, #0a0e1c 0%, #0e1328 30%, #0c1020 60%, #0a0e1c 100%);
-  background-attachment: fixed;
-}
-
-/* Midnight body background */
-[data-theme="midnight"] body,
-body[data-theme="midnight"] {
-  background-color: #060a14;
-  background-image:
-    radial-gradient(ellipse 80% 60% at 15% 65%, rgba(15, 98, 254, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse 70% 50% at 85% 20%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 50% at 50% 85%, rgba(138, 63, 252, 0.08) 0%, transparent 45%),
-    radial-gradient(30% 30% at 70% 30%, rgba(69, 137, 255, 0.06) 0%, transparent 50%),
-    linear-gradient(160deg, #060a14 0%, #080e20 30%, #0a1028 50%, #060a14 100%);
-  background-attachment: fixed;
-}
-
-/* Aurora tuning per dark theme — richer neon field */
-[data-theme="dark"] body::before {
-  background:
-    radial-gradient(36% 30% at 24% 30%, rgba(15, 98, 254, 0.14) 0%, transparent 70%),
-    radial-gradient(30% 26% at 78% 20%, rgba(0, 212, 255, 0.09) 0%, transparent 70%),
-    radial-gradient(32% 30% at 68% 78%, rgba(138, 63, 252, 0.10) 0%, transparent 70%),
-    radial-gradient(26% 24% at 32% 84%, rgba(69, 137, 255, 0.08) 0%, transparent 70%);
-}
-
-[data-theme="midnight"] body::before {
-  background:
-    radial-gradient(36% 30% at 24% 30%, rgba(15, 98, 254, 0.18) 0%, transparent 70%),
-    radial-gradient(30% 26% at 78% 20%, rgba(0, 212, 255, 0.12) 0%, transparent 70%),
-    radial-gradient(32% 30% at 68% 78%, rgba(138, 63, 252, 0.13) 0%, transparent 70%),
-    radial-gradient(26% 24% at 32% 84%, rgba(69, 137, 255, 0.11) 0%, transparent 70%);
-}
-
-/* ── Selection & focus — crisp IBM blue ── */
+/* ── Selection & focus — the user's accent ── */
 ::selection {
-  background: rgba(15, 98, 254, 0.18);
+  background: color-mix(in srgb, var(--accent) 32%, transparent);
   color: inherit;
 }
 
@@ -545,43 +446,34 @@ body[data-theme="midnight"] {
    module CSS and third-party widgets (ag-grid). Circles that are marks, not corners
    (status dots, spinners), are the only exceptions. */
 *, *::before, *::after { border-radius: 0 !important; }
-.docs-upload-spinner, .gssm-spinner, .fs-type-dot, .isbd-status-dot, .stage-chip-indicator,
-.isbd-thumb.dirty .isbd-thumb-index::after, .slv-items li::before {
+.docs-upload-spinner, .gssm-spinner, .fs-type-dot, .isbd-status-dot, .stage-chip-indicator, .deal-status-dot,
+.header-monday-dot, .isbd-thumb.dirty .isbd-thumb-index::after, .slv-items li::before {
   border-radius: 50% !important;
 }
 
 /* ── Typography hierarchy ──
    Headings & titles are crisp sentence-case with tight geometric tracking.
    Eyebrow/column labels use uppercase + wide tracking.
-   Every form/button control inherits IBM Plex Sans explicitly. */
+   Every form/button control inherits the UI font explicitly. */
 button, input, select, textarea {
   font-family: var(--font-family-sans);
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-family-display);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
   letter-spacing: -0.015em;
 }
 
-/* Scrollbar — themed, rounded, blue-tinted on hover */
+/* Scrollbar — ink-tinted, accent on hover */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.14);
+  background: color-mix(in srgb, var(--ink) 14%, transparent);
   border-radius: var(--radius-full);
   border: 1px solid transparent;
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(15, 98, 254, 0.35); }
-
-[data-theme="dark"] ::-webkit-scrollbar-thumb,
-[data-theme="midnight"] ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-}
-[data-theme="dark"] ::-webkit-scrollbar-thumb:hover,
-[data-theme="midnight"] ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.16);
-}
+::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--accent) 50%, transparent); }
 
 /* ── Shared glass class — the foundation ──
    Five layers + two lights: tinted fill · blur+saturate · hairline with
@@ -623,8 +515,8 @@ h1, h2, h3, h4 {
 
 /* Raised glass — prominent elevation with glow rim */
 .glass-raised {
-  box-shadow: var(--shadow-glass-raised), 0 0 0 0.5px rgba(255, 255, 255, 0.40);
-  border-top: 1px solid rgba(255, 255, 255, 0.90);
+  box-shadow: var(--shadow-glass-raised);
+  border-top: 1px solid var(--specular-edge);
   transition: var(--transition-liquid);
 }
 .glass-raised:hover {
@@ -690,7 +582,7 @@ h1, h2, h3, h4 {
 
 .description-text {
   font-size: var(--type-body);
-  color: #64748b;
+  color: var(--text-tertiary);
   margin: 0.3rem 0 0.8rem;
 }
 
@@ -728,59 +620,25 @@ h1, h2, h3, h4 {
 
 
 /* ══════════════════════════════════════════════════════════════════
-   DARK/MIDNIGHT THEME OVERRIDES — component-level fixes
+   DARK-MODE COMPONENT FIXES — apply to every dark theme
    ══════════════════════════════════════════════════════════════════ */
-
-/* Dark theme: ensure approval-group-header uses themed surface */
-[data-theme="dark"] .approval-group-header,
-[data-theme="midnight"] .approval-group-header {
+[data-mode="dark"] .approval-group-header {
   background: var(--glass-bg);
 }
 
-/* Dark theme: settings-tabs header strip */
-[data-theme="dark"] .settings-tabs,
-[data-theme="midnight"] .settings-tabs {
+[data-mode="dark"] .settings-tabs {
   background: var(--glass-bg-light);
   border-bottom-color: var(--border-color);
 }
 
-/* Dark theme: deal-hero-progress-track segment colors */
-[data-theme="dark"] .progress-segment.status-todo,
-[data-theme="midnight"] .progress-segment.status-todo {
+[data-mode="dark"] .progress-segment.status-todo {
   background: var(--bg-tertiary);
 }
 
-/* Theme switcher button glow on hover */
-.theme-switcher-btn:hover {
-  color: var(--accent-cyan) !important;
-  border-color: rgba(0, 212, 255, 0.25) !important;
-  box-shadow: 0 0 24px rgba(0, 212, 255, 0.15) !important;
-}
-
-/* Midnight: more vivid brand glow */
-[data-theme="midnight"] .brand-mark {
-  filter: drop-shadow(0 0 20px rgba(69, 137, 255, 0.5));
-}
-
-/* Midnight: accentuated neon borders on glass hover */
-[data-theme="midnight"] .deal-card:hover {
-  border-color: rgba(69, 137, 255, 0.25);
-  box-shadow: var(--shadow-card-hover), 0 0 40px rgba(69, 137, 255, 0.06);
-}
-
-[data-theme="midnight"] .stage-card:hover {
-  border-color: rgba(69, 137, 255, 0.25);
-  box-shadow: var(--shadow-glass-raised), 0 0 30px rgba(69, 137, 255, 0.06);
-}
-
-/* Focus ring on dark themes */
-[data-theme="dark"] input:focus,
-[data-theme="dark"] select:focus,
-[data-theme="dark"] textarea:focus,
-[data-theme="midnight"] input:focus,
-[data-theme="midnight"] select:focus,
-[data-theme="midnight"] textarea:focus {
-  box-shadow: 0 0 0 3px rgba(69, 137, 255, 0.15), 0 0 24px rgba(69, 137, 255, 0.06);
+[data-mode="dark"] input:focus,
+[data-mode="dark"] select:focus,
+[data-mode="dark"] textarea:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent), 0 0 24px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 

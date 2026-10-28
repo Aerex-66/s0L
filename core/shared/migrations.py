@@ -74,7 +74,7 @@ def route_isbd_values(deal, values):
         changed = True
         if _empty(value):
             continue
-        if owner != 'deal' or fi.path_of(key) != key:
+        if fi.path_of(key) != key or not fi.deal_editable(key, deal):
             skipped.append({'key': key, 'value': value, 'reason': f'owned by {owner}; the deal record is the source'})
         elif not _empty(deal.get(key)):
             skipped.append({'key': key, 'value': value, 'reason': 'deal already has a value'})

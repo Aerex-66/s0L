@@ -30,6 +30,12 @@ core/documents/*.docx.*
 deals_data.json
 deals_data.backup-*.json
 
+# monday app credentials hand-off file (imported by `npm run install:all`, then deleted)
+monday-app.json
+
+# Client logos fetched from Wikidata / client websites (cache next to deals_data.json)
+/client_logos/
+
 # Real iSBD reference deck (client deal text + slide renders) — local only;
 # clones fall back to frontend/src/features/isbd/isbdReference.sample.json
 frontend/src/features/isbd/isbdReference.json
@@ -52,6 +58,9 @@ _sta2.txt
 # GSSM server artifacts
 gssm-server/engine-imports/
 gssm-server/.gssm/
+
+# Packaged builds (npm run package): staging folder, download cache, zips
+release/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm

@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
-import { IMPLEMENTATION_TYPE_COLORS, CLOSED_STATUSES } from '../../shared/constants'
+import { IMPLEMENTATION_TYPE_COLORS, isClosedDeal } from '../../shared/constants'
 import { formatCompactMillions, formatShortDate } from '../../shared/utils/formatters'
 import { dealService } from '../../shared/services/dealService'
 import useStore from '../../shared/useStore'
@@ -78,7 +78,7 @@ export default function MetricsModule({ deal }) {
     if (!allDeals.length) return []
     return allDeals.filter(d => {
       if (d.id === deal.id) return false
-      if (CLOSED_STATUSES.includes(d.status)) return false
+      if (isClosedDeal(d)) return false
       const matchImpl = deal.implementation_type && d.implementation_type === deal.implementation_type
       const matchSector = deal.sector && d.sector === deal.sector
       const matchIndustry = deal.industry && d.industry === deal.industry

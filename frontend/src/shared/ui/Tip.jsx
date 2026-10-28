@@ -2,7 +2,7 @@ import * as Tooltip from '@radix-ui/react-tooltip'
 
 /**
  * Styled tooltip — drop-in replacement for title="" attributes.
- * Usage: <Tip content="Search (⌘K)"><button>...</button></Tip>
+ * Usage: <Tip content="Search (Ctrl+K)"><button>...</button></Tip>
  */
 export default function Tip({ content, side = 'bottom', children, delayDuration = 300 }) {
   if (!content) return children

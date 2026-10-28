@@ -1,0 +1,80 @@
+{
+  "columns": [
+    { "id": "name", "title": "Opportunity", "type": "name" },
+    { "id": "dropdown_mkqy4mkc", "title": "Client", "type": "dropdown" },
+    { "id": "text_mkqypdsv", "title": "Opportunity Description", "type": "text" },
+    { "id": "color_mkqypejx", "title": "Status", "type": "status" },
+    { "id": "color_mkqyaeva", "title": "Implementation Type", "type": "status" },
+    { "id": "color_mkqyhjk0", "title": "Currency", "type": "status" },
+    { "id": "dropdown_mksmcb", "title": "Sector", "type": "dropdown" },
+    { "id": "dropdown_mksmkbj8", "title": "Industry", "type": "dropdown" },
+    { "id": "text_mkxcyckc", "title": "Deal Type", "type": "text" },
+    { "id": "numeric_mkqyh0mz", "title": "TCV ($M)", "type": "numbers" },
+    { "id": "timerange_mksghf1v", "title": "Date", "type": "timeline" },
+    { "id": "color_mkqyvgvy", "title": "Lead SSC", "type": "status" },
+    { "id": "dropdown_mm25w58s", "title": "Sales Stage", "type": "dropdown" },
+    { "id": "dropdown_mm2513h7", "title": "SWB Level", "type": "dropdown" },
+    { "id": "subitems_mkx0abcd", "title": "Subitems", "type": "subtasks" }
+  ],
+  "groups": [
+    { "id": "group_mksetb9d", "title": "SAP" },
+    { "id": "group_mksnwvrd", "title": "Oracle" }
+  ],
+  "items": [
+    {
+      "id": "1001", "name": "006Ab00000XyZ12QAB", "group": { "id": "group_mksetb9d", "title": "SAP" },
+      "column_values": [
+        { "id": "dropdown_mkqy4mkc", "type": "dropdown", "text": "Contoso" },
+        { "id": "text_mkqypdsv", "type": "text", "text": "S/4 rollout" },
+        { "id": "color_mkqypejx", "type": "status", "text": "Active" },
+        { "id": "color_mkqyaeva", "type": "status", "text": "Greenfield" },
+        { "id": "color_mkqyhjk0", "type": "status", "text": "USD" },
+        { "id": "dropdown_mksmcb", "type": "dropdown", "text": "Industrial" },
+        { "id": "dropdown_mksmkbj8", "type": "dropdown", "text": "Automotive" },
+        { "id": "text_mkxcyckc", "type": "text", "text": "B&P" },
+        { "id": "numeric_mkqyh0mz", "type": "numbers", "text": "12.5" },
+        { "id": "timerange_mksghf1v", "type": "timeline", "text": "2026-01-05 - 2026-06-30", "from": "2026-01-05", "to": "2026-06-30" },
+        { "id": "color_mkqyvgvy", "type": "status", "text": "Pat Lee" },
+        { "id": "dropdown_mm25w58s", "type": "dropdown", "text": "Qualify" },
+        { "id": "dropdown_mm2513h7", "type": "dropdown", "text": "3" },
+        { "id": "subitems_mkx0abcd", "type": "subtasks", "text": "" }
+      ]
+    },
+    {
+      "id": "1002", "name": "Fabrikam renewal (TBD)", "group": { "id": "group_mksetb9d", "title": "SAP" },
+      "column_values": [
+        { "id": "dropdown_mkqy4mkc", "type": "dropdown", "text": "Fabrikam" },
+        { "id": "color_mkqypejx", "type": "status", "text": null },
+        { "id": "numeric_mkqyh0mz", "type": "numbers", "text": null },
+        { "id": "timerange_mksghf1v", "type": "timeline", "text": "", "from": null, "to": null }
+      ]
+    },
+    {
+      "id": "1003", "name": "006Ab0000DupE01QAA", "group": { "id": "group_mksnwvrd", "title": "Oracle" },
+      "column_values": [
+        { "id": "dropdown_mkqy4mkc", "type": "dropdown", "text": "Northwind" },
+        { "id": "color_mkqypejx", "type": "status", "text": "Active" }
+      ]
+    },
+    {
+      "id": "1004", "name": "006Ab0000DupE01QAA", "group": { "id": "group_mksnwvrd", "title": "Oracle" },
+      "column_values": [
+        { "id": "dropdown_mkqy4mkc", "type": "dropdown", "text": "Northwind" },
+        { "id": "color_mkqypejx", "type": "status", "text": "Assignment Needed" }
+      ]
+    },
+    {
+      "id": "1005", "name": "006Ab0000WoN001QAA", "group": { "id": "group_mksetb9d", "title": "SAP" },
+      "column_values": [
+        { "id": "dropdown_mkqy4mkc", "type": "dropdown", "text": "Tailspin" },
+        { "id": "dropdown_mm25w58s", "type": "dropdown", "text": "Won" }
+      ]
+    },
+    {
+      "id": "1006", "name": "006Ab0000Orcl01QAA", "group": { "id": "group_mksnwvrd", "title": "Oracle" },
+      "column_values": [
+        { "id": "dropdown_mkqy4mkc", "type": "dropdown", "text": "Litware" }
+      ]
+    }
+  ]
+}

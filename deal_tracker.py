@@ -6,12 +6,17 @@ Deal Tracker API entrypoint.
 import os
 
 from core.app_factory import create_app
+from core.features.calendar.calendar import cache_file
+from core.features.calendar.outlook_sync import outlook_available, start_outlook_sync
 
 
 app = create_app()
 
 
 if __name__ == '__main__':
+    if os.environ.get('S0L_OUTLOOK_SYNC') == '1' and outlook_available():
+        start_outlook_sync(cache_file())
+
     frontend_port = os.environ.get('FRONTEND_PORT', '5120')
     print('\n' + '=' * 60)
     print('DEAL TRACKER API'.center(60))

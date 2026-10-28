@@ -3,6 +3,7 @@ import Papa from 'papaparse'
 import { format as formatDate } from 'date-fns'
 import Modal from '../../../shared/ui/Modal'
 import { FormField, FormCheckbox } from '../../../shared/ui/FormField'
+import { isClosedDeal } from '../../../shared/constants'
 
 export default function ExportModal({ deals, onClose }) {
   const [exportFormat, setExportFormat] = useState('csv')
@@ -56,9 +57,7 @@ export default function ExportModal({ deals, onClose }) {
   const getFilteredDeals = () => {
     let filtered = deals
     if (!includeArchived) {
-      // Exclude closed statuses - use constants
-      const closedStatuses = ['Closed Won', 'Closed Lost', 'Archived', 'Completed']
-      filtered = deals.filter(d => !closedStatuses.includes(d.status))
+      filtered = deals.filter(d => !isClosedDeal(d))
     }
     return filtered
   }

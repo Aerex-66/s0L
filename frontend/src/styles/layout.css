@@ -107,12 +107,12 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 14px rgba(15, 98, 254, 0.22));
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 22%, transparent));
   transition: filter var(--duration-normal) var(--ease-glass);
 }
 
 .header-brand:hover .brand-mark {
-  filter: drop-shadow(0 0 20px rgba(15, 98, 254, 0.38));
+  filter: drop-shadow(0 0 20px color-mix(in srgb, var(--accent) 38%, transparent));
 }
 
 .brand-sub {
@@ -164,9 +164,102 @@
 .header-right {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.65rem;
-  flex-shrink: 0;
+  /* Same share as .header-left, so the notice banner between them sits in the middle */
+  flex: 1 1 0;
   margin-left: auto;
+}
+
+/* Notices: the TT Execs' reminders, centered in the header. One at a time; hover shows the
+   latest few with their dates, the chevron pins the whole list open. Inside the blurred header,
+   so the list is solid surface (no re-blur). */
+.notice-banner { position: relative; flex: 0 1 34rem; min-width: 0; }
+.notice-banner-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 34px;
+  padding: 0 0.3rem 0 0.75rem;
+  font-size: var(--type-sm);
+  color: var(--header-text);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 14%, transparent);
+  transition: var(--transition-liquid);
+}
+.notice-banner:hover .notice-banner-bar { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.notice-banner-icon { flex: none; color: var(--accent); }
+.notice-banner-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  animation: noticeIn var(--duration-slow) var(--ease-glass);
+}
+@keyframes noticeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: none; }
+}
+.notice-banner-date,
+.notice-banner-count { flex: none; font-size: var(--type-2xs); color: var(--text-tertiary); }
+.notice-banner-expand {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: var(--transition-liquid);
+}
+.notice-banner-expand:hover { color: var(--accent); background: var(--hover-wash); }
+.notice-banner-expand svg { transition: transform var(--duration-hover) var(--ease-liquid); }
+.notice-banner-expand[aria-expanded='true'] svg { transform: rotate(180deg); color: var(--accent); }
+/* Padding, not a gap, between bar and list, so the pointer can cross without losing the hover */
+.notice-banner-pop { position: absolute; top: 100%; left: 0; right: 0; z-index: 300; padding-top: 8px; }
+.notice-banner-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem;
+  max-height: 16rem;
+  overflow-y: auto;
+  color: var(--text-primary);
+  background-color: var(--surface);
+  background-image: var(--ambient-field), var(--glass-noise);
+  box-shadow: var(--shadow-modal), var(--glow-subtle);
+  animation: appearanceIn var(--duration-normal) var(--ease-out);
+}
+.notice-banner-list--all { max-height: min(28rem, 70vh); }
+.notice-item {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+  padding: 0.5rem 0.6rem;
+  font-size: var(--type-sm);
+}
+.notice-item + .notice-item { border-top: 1px solid var(--border-subtle); }
+.notice-item-date { font-size: var(--type-2xs); color: var(--text-tertiary); padding-top: 0.15rem; }
+.notice-item-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.notice-item-author { grid-column: 2; font-size: var(--type-2xs); color: var(--text-tertiary); }
+.notice-banner-more {
+  width: 100%;
+  padding: 0.45rem;
+  font-size: var(--type-2xs);
+  color: var(--accent);
+  background: var(--surface);
+  border: 0;
+  cursor: pointer;
+}
+.notice-banner-more:hover { background: var(--hover-wash); }
+@media (prefers-reduced-motion: reduce) {
+  .notice-banner-text, .notice-banner-list { animation: none; }
+}
+@media (max-width: 1100px) {
+  .notice-banner { display: none; }
 }
 
 .header-action-btn {
@@ -179,90 +272,120 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition-liquid);
+  transition: var(--transition-liquid), filter var(--duration-hover) var(--ease-liquid);
   position: relative;
   font-family: var(--font-family-sans);
 }
 
+/* Header icons never sit in a box: hover lifts and lights the glyph itself */
 .header-action-btn:hover {
   color: var(--header-text);
-  background: var(--header-btn-bg);
   transform: var(--lift-sm);
-  box-shadow: var(--hover-ring), var(--glow-subtle);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 40%, transparent));
+}
+
+/* monday: the vendor's own mark, plus a status dot that turns green once connected */
+.header-monday-logo {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.header-monday-dot {
+  position: absolute;
+  top: 5px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background: var(--header-text-muted);
+  box-shadow: 0 0 0 2px var(--canvas);
+  transition: background var(--duration-normal) var(--ease-glass);
+}
+
+.header-monday-dot.is-connected {
+  background: var(--status-success);
+}
+
+.header-monday-dot.is-connecting,
+.header-monday-dot.is-syncing {
+  background: var(--accent);
 }
 
 .header-new-deal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
   background: var(--ibm-blue);
   border: 1px solid transparent;
-  color: #ffffff;
-  padding: 0.45rem 1.05rem;
-  font-family: var(--font-family-sans);
-  font-size: var(--type-sm);
-  font-weight: 500;
-  letter-spacing: -0.005em;
+  color: var(--on-accent);
   cursor: pointer;
   transition: var(--transition-liquid);
-  white-space: nowrap;
-  box-shadow: 0 4px 16px -2px rgba(15, 98, 254, 0.32);
-  line-height: 1.3;
+  box-shadow: 0 4px 16px -2px color-mix(in srgb, var(--accent) 32%, transparent);
 }
 
 .header-new-deal:hover {
   background: var(--ibm-blue-dark);
-  box-shadow: 0 8px 24px -3px rgba(15, 98, 254, 0.45), 0 0 18px rgba(15, 98, 254, 0.16);
+  box-shadow: 0 8px 24px -3px color-mix(in srgb, var(--accent) 45%, transparent), 0 0 18px color-mix(in srgb, var(--accent) 16%, transparent);
   transform: var(--lift-sm);
 }
 
-/* Header toggle groups (dashboard mode: Active/Archives, Tiles/Metrics) */
+/* Header icon toggles (dashboard: Active/Archives, Tiles/Metrics).
+   Selected = accent glyph + a short glowing underline — no box. */
 .header-toggle-group {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   gap: 2px;
-  padding: 3px;
-  background: var(--header-track-bg);
 }
 .header-toggle {
   position: relative;
-  padding: 0.34rem 0.85rem;
-  background: transparent;
-  border: none;
-  font-family: var(--font-family-sans);
-  font-size: var(--type-sm);
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  color: var(--header-text-muted);
-  cursor: pointer;
-  transition: var(--transition-liquid);
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  white-space: nowrap;
-  line-height: 1.35;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--header-text-muted);
+  cursor: pointer;
+  transition: var(--transition-liquid), filter var(--duration-hover) var(--ease-liquid);
+}
+.header-toggle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 14px;
+  height: 2px;
+  background: var(--accent);
+  transform: translateX(-50%) scaleX(0);
+  transition: transform var(--duration-hover) var(--ease-liquid);
 }
 .header-toggle:hover {
   color: var(--header-text);
-  background: var(--header-btn-bg);
 }
 .header-toggle.active {
-  color: var(--header-toggle-active-text);
-  font-weight: 600;
-  background: var(--header-toggle-active-bg);
-  box-shadow: var(--header-toggle-active-shadow);
+  color: var(--accent);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 55%, transparent));
+}
+.header-toggle.active::after {
+  transform: translateX(-50%) scaleX(1);
 }
 .header-toggle:focus-visible {
   outline: none;
   box-shadow: inset 0 0 0 2px var(--ibm-blue);
 }
-.header-toggle-count {
-  font-family: var(--font-family-mono);
-  font-weight: 600;
-  font-size: var(--type-micro);
-  color: var(--header-text-muted);
-  opacity: 0.75;
-}
-.header-toggle.active .header-toggle-count {
-  color: var(--ibm-blue);
-  opacity: 1;
+
+/* Short fading hairline between the header's icon groups */
+.header-divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 20px;
+  margin: 0 0.2rem;
+  background: var(--divider-fade);
 }
 
 /* ── Responsive chrome — the header must never warp ── */
@@ -272,10 +395,8 @@
 }
 @media (max-width: 960px) {
   .brand-sub { display: none; }
-  .header-toggle { padding: 0.34rem 0.6rem; }
   .header-right { gap: 0.4rem; }
   .breadcrumb-name { max-width: 170px; }
-  .header-new-deal { padding: 0.45rem 0.75rem; }
 }
 
 /* Loading states */
@@ -296,7 +417,7 @@
   height: 8px;
   background: var(--ibm-blue);
   animation: loadPulse 1.2s ease infinite;
-  box-shadow: 0 0 20px rgba(15, 98, 254, 0.4);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
 @keyframes loadPulse {

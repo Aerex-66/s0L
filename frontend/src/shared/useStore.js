@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { MODAL_FLAG_MAP, MODAL_KEYS } from './constants'
+import { get as apiGet, put as apiPut } from './apiClient'
 
 function getModalFlags(activeModal) {
   return Object.entries(MODAL_FLAG_MAP).reduce((acc, [modalKey, stateKey]) => {
@@ -22,9 +23,29 @@ const useStore = create((set, get) => ({
     showExportModal: false,
     showActionModal: false,
     showDealDetails: false,
+    settingsTab: null,
+
+    // Whose deals the dashboard shows (saved by the backend for this computer)
+    preferences: { solutioner: '', scope: 'mine' },
+    loadPreferences: async () => {
+      try {
+        set({ preferences: await apiGet('/api/preferences') })
+      } catch (error) {
+        console.error('Loading preferences failed:', error)
+      }
+    },
+    savePreferences: async (patch) => {
+      set({ preferences: { ...get().preferences, ...patch } })
+      try {
+        set({ preferences: await apiPut('/api/preferences', patch) })
+      } catch (error) {
+        console.error('Saving preferences failed:', error)
+      }
+    },
 
     // Actions
-    openModal: (modalKey) => set({ activeModal: modalKey, ...getModalFlags(modalKey) }),
+    openModal: (modalKey) => set({ activeModal: modalKey, settingsTab: null, ...getModalFlags(modalKey) }),
+    openSettingsAt: (tab) => set({ activeModal: MODAL_KEYS.SETTINGS, settingsTab: tab, ...getModalFlags(MODAL_KEYS.SETTINGS) }),
     closeModal: () => set({ activeModal: null, ...getModalFlags(null) }),
     setCurrentDealId: (id) => set({ currentDealId: id }),
 

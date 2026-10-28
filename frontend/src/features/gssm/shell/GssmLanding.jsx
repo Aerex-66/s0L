@@ -38,7 +38,7 @@ export default function GssmLanding({
               <FileSpreadsheet className="gssm-catalog-icon" size={18} />
               <div className="gssm-catalog-info">
                 <span className="gssm-catalog-name">{item.name}</span>
-                {item.opportunityNumber && <span className="gssm-catalog-opp">OPP-{item.opportunityNumber}</span>}
+                {item.opportunityNumber && <span className="gssm-catalog-opp" title="Opportunity number">{item.opportunityNumber}</span>}
                 <span className="gssm-catalog-date">{new Date(item.createdAt).toLocaleDateString()}</span>
               </div>
             </li>

@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 import Database from 'better-sqlite3'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const DEFAULT_DB_PATH = path.join(__dirname, '.gssm', 'store.sqlite')
+const DEFAULT_DB_PATH = process.env.GSSM_DB_PATH || path.join(__dirname, '.gssm', 'store.sqlite')
 
 const ensureDir = async (filePath) => {
   await fs.mkdir(path.dirname(filePath), { recursive: true })

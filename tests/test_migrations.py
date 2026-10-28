@@ -58,6 +58,18 @@ def test_deal_value_wins_over_isbd_copy():
     assert deal['isbd_data'] == {}
 
 
+def test_isbd_sales_stage_moves_to_the_unlinked_deal():
+    deal = {'id': '1', 'isbd_data': {'sales_stage': 'Qualify', 'term': '36'}}
+    migrations.migrate_deal(deal)
+    assert deal['sales_stage'] == 'Qualify' and deal['isbd_data'] == {'term': '36'}
+
+
+def test_isbd_sales_stage_dropped_on_linked_deal():
+    deal = {'id': '1', 'monday_item_id': '1001', 'sales_stage': 'Won', 'isbd_data': {'sales_stage': 'Qualify'}}
+    migrations.migrate_deal(deal)
+    assert deal['sales_stage'] == 'Won' and deal['isbd_data'] == {}
+
+
 def test_migrate_deal_is_idempotent():
     deal = deal_like_live_1()
     migrations.migrate_deal(deal)

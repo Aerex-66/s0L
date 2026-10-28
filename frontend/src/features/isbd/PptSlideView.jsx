@@ -1,7 +1,8 @@
-import { createContext, useCallback, useContext, useState, useRef, useEffect, memo, useMemo } from 'react'
+import { createContext, useCallback, useContext, useState, useRef, useEffect, memo } from 'react'
 import { parseCurrency } from '../../shared/utils/financialsHelpers'
 import { isCurrencyEdit, toDisplayCurrency } from './cellValues'
-import { getField, isbdKeyFor, ownerOf } from '../../shared/constants/fieldIndex'
+import { getField, isbdKeyFor } from '../../shared/constants/fieldIndex'
+import { DeckLockContext } from './deckLock'
 import { splitLabelValue } from './labelValue'
 
 /**
@@ -50,7 +51,6 @@ function useKeyFor() {
 }
 
 const INPUT_TYPES = { yn: 'yn', toggle: 'toggle', date: 'date', currency: 'number', number: 'plain-number' }
-const LOCKED_OWNERS = new Set(['gssm', 'derived'])
 
 function getFieldType(fieldKey) {
   return INPUT_TYPES[getField(fieldKey)?.type] || 'text'
@@ -183,7 +183,7 @@ const PptSlideView = memo(function PptSlideView({
     renderContent = (
       <>
         {nonTables.map((shape, i) => (
-          <ShapeRenderer key={`nt-${i}`} shape={shape} data={data} onChange={onChange} readOnly={readOnly} isCover={isCover} totalShapes={shapes.length} shapeIndex={i} />
+          <ShapeRenderer key={`nt-${i}`} shape={shape} data={data} onChange={onChange} readOnly={readOnly} isCover={isCover} />
         ))}
         {Object.values(columns).map((colShapes, colIdx) => {
           colShapes.sort((a, b) => a.top - b.top)
@@ -251,8 +251,6 @@ const PptSlideView = memo(function PptSlideView({
         onChange={onChange}
         readOnly={readOnly}
         isCover={isCover}
-        totalShapes={shapes.length}
-        shapeIndex={i}
       />
     ))
   }
@@ -275,7 +273,7 @@ export default PptSlideView
 //  ShapeRenderer — dispatches each shape type
 // ══════════════════════════════════════════════════════════════════
 
-const ShapeRenderer = memo(function ShapeRenderer({ shape, data, onChange, readOnly, isCover, totalShapes, shapeIndex }) {
+const ShapeRenderer = memo(function ShapeRenderer({ shape, data, onChange, readOnly, isCover }) {
   const slideTypeId = useContext(SlideTypeContext)
   // Title placeholder (top < 10%) gets highest z-index.
   // Tables: lower on the slide → higher z-index so they render on top
@@ -338,8 +336,6 @@ const ShapeRenderer = memo(function ShapeRenderer({ shape, data, onChange, readO
     // Check if this is a flex-rendered prompt/body table
     const r0 = shape.table[0] || []
     const cols = shape.table_cols || r0.length || 1
-    const isSingleColBody = cols === 1 && shape.table.length >= 2 && !r0[0]?.includes(':')
-    const isPrompt = cols > 1 && r0.length > 1 && r0.every(c => c && c.trim()) && shape.table.length >= 2
 
     const tableStyle = {
       ...style,
@@ -355,7 +351,6 @@ const ShapeRenderer = memo(function ShapeRenderer({ shape, data, onChange, readO
           data={data}
           onChange={onChange}
           readOnly={readOnly}
-          isCover={isCover}
         />
       </div>
     )
@@ -432,7 +427,7 @@ const ShapeRenderer = memo(function ShapeRenderer({ shape, data, onChange, readO
 //  TableShape — renders PPTX table at exact position
 // ══════════════════════════════════════════════════════════════════
 
-const TableShape = memo(function TableShape({ rows, cols, data, onChange, readOnly, isCover }) {
+const TableShape = memo(function TableShape({ rows, cols, data, onChange, readOnly }) {
   const keyFor = useKeyFor()
   const colCount = cols || 1
   const isSingleCol = colCount === 1
@@ -938,8 +933,9 @@ const DualOptionToggle = memo(function DualOptionToggle({
 // ══════════════════════════════════════════════════════════════════
 
 const CellEdit = memo(function CellEdit({ value, fieldKey, onChange, readOnly: viewReadOnly, placeholder, fieldType, multiline }) {
-  // GSSM-owned and derived values are shown, never edited, in the deck.
-  const readOnly = viewReadOnly || LOCKED_OWNERS.has(ownerOf(fieldKey))
+  // GSSM-owned and derived values (and monday values on linked deals) are shown, never edited, in the deck.
+  const isLocked = useContext(DeckLockContext)
+  const readOnly = viewReadOnly || isLocked(fieldKey)
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value || '')
   const inputRef = useRef(null)

@@ -1,10 +1,15 @@
-import { formatDealName, IMPLEMENTATION_TYPE_COLORS, CLOSED_STATUSES } from './shared/constants'
-import { SearchIcon, SettingsIcon, EditIcon } from './shared/ui/Icons'
+import { formatDealName, IMPLEMENTATION_TYPE_COLORS, isClosedDeal } from './shared/constants'
+import {
+  SearchIcon, SettingsIcon, EditIcon, PlusIcon,
+  ActiveDealsIcon, ArchiveIcon, TilesIcon, MetricsIcon, ExecIcon, BackIcon, MyDealsIcon, TeamDealsIcon,
+} from './shared/ui/Icons'
 import { cx } from './shared/utils/cx'
 import { useMemo } from 'react'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import Tip from './shared/ui/Tip'
 import ThemeSwitcher from './shared/ui/ThemeSwitcher'
+import MondayConnect from './shell/MondayConnect'
+import NoticeBanner from './shell/NoticeBanner'
 
 export default function AppHeader({
   currentDeal,
@@ -14,6 +19,9 @@ export default function AppHeader({
   layoutMode,
   setLayoutMode,
   deals,
+  dealScope,
+  solutioner,
+  onScopeChange,
   onBrandClick,
   onCommandPalette,
   onSettings,
@@ -22,15 +30,17 @@ export default function AppHeader({
   onExitDeal,
 }) {
   const headerMode = currentDeal ? 'deal' : 'dashboard'
+  // The TT Exec view covers the whole team, active and archived, so whose deals and which list don't apply there.
+  const dealFilters = !currentDeal && layoutMode !== 'exec'
 
   const activeCount = useMemo(() => {
     if (currentDeal) return 0
-    return (deals || []).filter(d => !CLOSED_STATUSES.includes(d.status)).length
+    return (deals || []).filter(d => !isClosedDeal(d)).length
   }, [deals, currentDeal])
 
   const archiveCount = useMemo(() => {
     if (currentDeal) return 0
-    return (deals || []).filter(d => CLOSED_STATUSES.includes(d.status)).length
+    return (deals || []).filter(isClosedDeal).length
   }, [deals, currentDeal])
 
   return (
@@ -69,69 +79,137 @@ export default function AppHeader({
           )}
         </div>
 
+        {/* Notices belong to the individual dashboards; the TT Exec view is where they're sent */}
+        {!currentDeal && layoutMode !== 'exec' && <NoticeBanner />}
+
         {/* Right: actions */}
         <div className="header-right">
-          {!currentDeal && (
+          {dealFilters && (
+            <ToggleGroup.Root
+              type="single"
+              value={dealScope}
+              onValueChange={(v) => { if (v) onScopeChange(v) }}
+              className="header-toggle-group"
+              aria-label="Whose deals"
+            >
+              <Tip content={solutioner ? `My deals · ${solutioner}` : 'My deals · pick your name in Settings'}>
+                <ToggleGroup.Item
+                  value="mine"
+                  aria-label="My deals"
+                  className={cx('header-toggle', dealScope === 'mine' && 'active')}
+                >
+                  <MyDealsIcon />
+                </ToggleGroup.Item>
+              </Tip>
+              <Tip content="Everyone's deals · team view">
+                <ToggleGroup.Item
+                  value="everyone"
+                  aria-label="Everyone's deals"
+                  className={cx('header-toggle', dealScope === 'everyone' && 'active')}
+                >
+                  <TeamDealsIcon />
+                </ToggleGroup.Item>
+              </Tip>
+            </ToggleGroup.Root>
+          )}
+          {dealFilters && <span className="header-divider" aria-hidden="true" />}
+          {dealFilters && (
             <ToggleGroup.Root
               type="single"
               value={viewMode}
               onValueChange={(v) => { if (v) setViewMode(v) }}
               className="header-toggle-group"
+              aria-label="Deal list"
             >
-              <ToggleGroup.Item value="active" className={cx('header-toggle', viewMode === 'active' && 'active')}>
-                Active <span className="header-toggle-count">{activeCount}</span>
-              </ToggleGroup.Item>
-              <ToggleGroup.Item value="archives" className={cx('header-toggle', viewMode === 'archives' && 'active')}>
-                Archives <span className="header-toggle-count">{archiveCount}</span>
-              </ToggleGroup.Item>
+              <Tip content={`Active · ${activeCount}`}>
+                <ToggleGroup.Item
+                  value="active"
+                  aria-label={`Active deals (${activeCount})`}
+                  className={cx('header-toggle', viewMode === 'active' && 'active')}
+                >
+                  <ActiveDealsIcon />
+                </ToggleGroup.Item>
+              </Tip>
+              <Tip content={`Archives · ${archiveCount}`}>
+                <ToggleGroup.Item
+                  value="archives"
+                  aria-label={`Archived deals (${archiveCount})`}
+                  className={cx('header-toggle', viewMode === 'archives' && 'active')}
+                >
+                  <ArchiveIcon />
+                </ToggleGroup.Item>
+              </Tip>
             </ToggleGroup.Root>
           )}
+          {dealFilters && <span className="header-divider" aria-hidden="true" />}
           {!currentDeal && (
             <ToggleGroup.Root
               type="single"
               value={layoutMode}
               onValueChange={(v) => { if (v) setLayoutMode(v) }}
               className="header-toggle-group"
+              aria-label="Layout"
             >
-              <ToggleGroup.Item value="grid" className={cx('header-toggle', layoutMode === 'grid' && 'active')}>
-                Tiles
-              </ToggleGroup.Item>
-              <ToggleGroup.Item value="metrics" className={cx('header-toggle', layoutMode === 'metrics' && 'active')}>
-                Metrics
-              </ToggleGroup.Item>
+              <Tip content="Tile view">
+                <ToggleGroup.Item
+                  value="grid"
+                  aria-label="Tile view"
+                  className={cx('header-toggle', layoutMode === 'grid' && 'active')}
+                >
+                  <TilesIcon />
+                </ToggleGroup.Item>
+              </Tip>
+              <Tip content="Metrics view">
+                <ToggleGroup.Item
+                  value="metrics"
+                  aria-label="Metrics view"
+                  className={cx('header-toggle', layoutMode === 'metrics' && 'active')}
+                >
+                  <MetricsIcon />
+                </ToggleGroup.Item>
+              </Tip>
+              <Tip content="TT Exec · the team's numbers and assignments">
+                <ToggleGroup.Item
+                  value="exec"
+                  aria-label="TT Exec"
+                  className={cx('header-toggle', layoutMode === 'exec' && 'active')}
+                >
+                  <ExecIcon />
+                </ToggleGroup.Item>
+              </Tip>
             </ToggleGroup.Root>
           )}
-          <Tip content="Search &amp; commands (⌘K)">
-            <button className="header-action-btn" onClick={onCommandPalette}>
+          {!currentDeal && <span className="header-divider" aria-hidden="true" />}
+          <Tip content="Search &amp; commands (Ctrl+K)">
+            <button className="header-action-btn" onClick={onCommandPalette} aria-label="Search and commands">
               <SearchIcon />
             </button>
           </Tip>
           <ThemeSwitcher />
           {currentDeal && (
             <Tip content="Edit deal details">
-              <button className="header-action-btn" onClick={onDealDetails}>
+              <button className="header-action-btn" onClick={onDealDetails} aria-label="Edit deal details">
                 <EditIcon />
               </button>
             </Tip>
           )}
-          {currentDeal && (
-            <Tip content="Settings (⌘,)">
-              <button className="header-action-btn" onClick={onSettings}>
-                <SettingsIcon />
-              </button>
-            </Tip>
-          )}
+          <MondayConnect />
+          <Tip content="Settings (Ctrl+,)">
+            <button className="header-action-btn" onClick={onSettings} aria-label="Settings">
+              <SettingsIcon />
+            </button>
+          </Tip>
           {!currentDeal && (
-            <Tip content="New Deal (⌘N)">
-              <button className="header-new-deal" onClick={onNewDeal}>
-                + New Deal
+            <Tip content="New deal (Ctrl+N)">
+              <button className="header-new-deal" onClick={onNewDeal} aria-label="New deal">
+                <PlusIcon size={16} />
               </button>
             </Tip>
           )}
           {currentDeal && (
-            <Tip content="Exit to pipeline" side="left">
-              <button className="cmd-btn" onClick={onExitDeal}>
-                <span aria-hidden="true">←</span> Pipeline
+            <Tip content="Back to pipeline" side="left">
+              <button className="header-action-btn" onClick={onExitDeal} aria-label="Back to pipeline">
+                <BackIcon />
               </button>
             </Tip>
           )}

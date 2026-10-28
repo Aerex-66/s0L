@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -19,3 +20,45 @@ def tmp_store(tmp_path, monkeypatch):
     client = create_app().test_client()
     client.data_file = data_file
     yield client
+
+
+@pytest.fixture
+def vault(tmp_path, monkeypatch):
+    """Throwaway monday secrets folder with a reversible stand-in for DPAPI."""
+    from core.features.integrations.monday import credentials
+    monkeypatch.setattr(credentials, 'SECRETS_DIR', str(tmp_path / 'vault'))
+    monkeypatch.setattr(credentials, 'protect', lambda data: data[::-1])
+    monkeypatch.setattr(credentials, 'unprotect', lambda blob: blob[::-1])
+    return tmp_path / 'vault'
+
+
+class FakeMonday:
+    """Stands in for every HTTP call to monday: queue (status, body, headers) per URL; the last one repeats."""
+
+    def __init__(self):
+        self.calls = []
+        self._queues = {}
+
+    def queue(self, url, status, body, headers=None):
+        self._queues.setdefault(url, []).append((status, body, headers or {}))
+
+    def __call__(self, url, payload, headers=None, timeout=30):
+        self.calls.append((url, payload, headers or {}))
+        queued = self._queues.get(url)
+        if not queued:
+            raise AssertionError(f'unexpected call to {url}')
+        return queued.pop(0) if len(queued) > 1 else queued[0]
+
+
+@pytest.fixture
+def fake_monday(monkeypatch):
+    from core.features.integrations.monday import oauth
+    fake = FakeMonday()
+    monkeypatch.setattr(oauth, 'post_json', fake)
+    return fake
+
+
+@pytest.fixture
+def board():
+    """Synthetic deal board with the real column ids; names are invented."""
+    return json.loads((Path(__file__).parent / 'fixtures' / 'monday_board.json').read_text(encoding='utf-8'))

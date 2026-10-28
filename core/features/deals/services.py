@@ -27,12 +27,12 @@ def cleanup_deal_documents(deal):
                 shutil.rmtree(slides_dir, ignore_errors=True)
 
 
-def get_activities_with_defaults():
+def get_activities_with_defaults(data=None):
     """Build the initial activity list for a new deal, resolving SAL/PAL
     approvers from the master contact directory. Returns (activities,
     auto_contacts) where auto_contacts are directory entries to attach
-    to the deal."""
-    data = load_data()
+    to the deal. Pass `data` when the store is already loaded."""
+    data = data if data is not None else load_data()
     defaults = data.get('default_approvers', {})
     directory = data.get('master_contacts', [])
     # Index directory by approver_key for contact_id lookup
@@ -83,10 +83,10 @@ def get_activities_with_defaults():
     return activities, auto_contacts
 
 
-def build_new_deal(deal_id, changes):
+def build_new_deal(deal_id, changes, data=None):
     """Assemble a new deal from validated write changes (see writes.py),
     with initialized activities and auto-populated contacts."""
-    activities, auto_contacts = get_activities_with_defaults()
+    activities, auto_contacts = get_activities_with_defaults(data)
     for i, c in enumerate(auto_contacts, 1):
         c['id'] = i
 

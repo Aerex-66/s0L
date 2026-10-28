@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react'
 import { settingsService } from '../settingsService'
 import ApproversTab from './ApproversTab'
 import DirectoryTab from './DirectoryTab'
+import MondayTab from './MondayTab'
+import MyViewTab from './MyViewTab'
 import ConfirmDialog from '../../../shared/ui/ConfirmDialog'
 import Modal from '../../../shared/ui/Modal'
 import { useAsyncLoad } from '../../../shared/useAsyncLoad'
 
-export default function Settings({ onClose }) {
+export default function Settings({ onClose, initialTab }) {
   const [directory, setDirectory] = useState([])
   const [defaultApprovers, setDefaultApprovers] = useState({})
-  const [activeTab, setActiveTab] = useState('directory')
+  const [activeTab, setActiveTab] = useState(initialTab || 'directory')
   const [savedKey, setSavedKey] = useState(null)
   const [savedId, setSavedId] = useState(null)
   const [saveError, setSaveError] = useState('')
@@ -131,8 +133,10 @@ export default function Settings({ onClose }) {
   ]
 
   const settingsTabs = [
+    { id: 'view', label: 'My view', subtitle: 'Your name and whose deals you see' },
     { id: 'directory', label: 'Directory', subtitle: 'All people — approvers, leads, contacts', badge: directory.length },
     { id: 'approvers', label: 'SAL Defaults', subtitle: 'Service area lead routing' },
+    { id: 'monday', label: 'monday', subtitle: 'Deal board sync' },
   ]
 
   return (
@@ -178,6 +182,14 @@ export default function Settings({ onClose }) {
               savedKey={savedKey}
               saveIndividualApprover={saveIndividualApprover}
               clearApprover={clearApprover}
+            />
+          )}
+
+          {activeTab === 'view' && <MyViewTab />}
+
+          {activeTab === 'monday' && (
+            <MondayTab
+              onConfirm={(title, message, onConfirm) => setConfirmState({ open: true, title, message, onConfirm })}
             />
           )}
         </div>

@@ -141,7 +141,7 @@ function rawValue(deal, key) {
     const { compute, path } = field.derive
     return compute ? COMPUTE[compute]?.(deal, field.derive) : get(deal, path)
   }
-  if (field.owner === 'deal' || field.owner === 'gssm') return readPath(deal, key)
+  if (field.owner === 'deal' || field.owner === 'gssm' || field.owner === 'monday') return readPath(deal, key)
   return undefined
 }
 

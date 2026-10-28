@@ -29,9 +29,10 @@ describe('field index (JS loader)', () => {
     expect(canonicalKey(name)).toBe(expected)
   })
 
-  it('keeps sales_stage as its own iSBD field', () => {
+  it('makes sales_stage a monday field stored on the deal', () => {
     expect(canonicalKey('sales_stage')).toBe('sales_stage')
-    expect(ownerOf('sales_stage')).toBe('isbd')
+    expect(ownerOf('sales_stage')).toBe('monday')
+    expect(pathOf('sales_stage')).toBe('sales_stage')
   })
 
   it.each([
@@ -67,5 +68,13 @@ describe('field index (JS loader)', () => {
     expect(isEditable('timelines', {})).toBe(true)
     expect(isEditable('services_revenue', {})).toBe(false)
     expect(isEditable('client_name', {})).toBe(true)
+  })
+
+  it('locks monday fields only once the deal is tied to a board row', () => {
+    expect(isEditable('status', {})).toBe(true)
+    expect(isEditable('status', { monday_item_id: '1' })).toBe(false)
+    expect(isEditable('client_name', { gssm_workbook_id: 7 })).toBe(true)
+    expect(isEditable('timelines', { monday_item_id: '1' })).toBe(true)
+    expect(isEditable('monday_item_id', {})).toBe(false)
   })
 })

@@ -2,6 +2,8 @@ import { useState, useMemo, useCallback } from 'react'
 import Modal from '../../../shared/ui/Modal'
 import { FormField } from '../../../shared/ui/FormField'
 import { dealService } from '../../../shared/services/dealService'
+import { isEditable, isMondayLinked } from '../../../shared/constants/fieldIndex'
+import ClientLogoControl from './ClientLogoControl'
 import {
   getImplementationTypes,
   getDealTypes,
@@ -116,6 +118,15 @@ export default function DealDetailsPanel({ deal, onClose, onUpdate }) {
   const renderField = (field) => {
     const value = formData[field.key] ?? ''
 
+    // Board values on a monday-linked deal are shown as the board has them, never edited here.
+    if (!isEditable(field.key, deal)) {
+      return (
+        <FormField key={field.key} label={field.label}>
+          <input type="text" value={value} readOnly disabled />
+        </FormField>
+      )
+    }
+
     if (field.type === 'select') {
       const opts = field.optionsFn === 'industry'
         ? industryOptions
@@ -159,6 +170,17 @@ export default function DealDetailsPanel({ deal, onClose, onUpdate }) {
 
   return (
     <Modal title="Deal Details" onClose={onClose} className="deal-details-modal">
+      {isMondayLinked(deal) && (
+        <div className="mb-sm">
+          <span className="chip">
+            {`From monday${deal.monday_synced_at ? ` · synced ${new Date(deal.monday_synced_at).toLocaleString()}` : ''}`}
+          </span>
+          {deal.monday_missing_since && (
+            <p className="text-muted">This row is no longer on the monday board. Its last values are kept.</p>
+          )}
+        </div>
+      )}
+      <ClientLogoControl clientName={deal?.client_name} />
       <div className="deal-details-sections">
         {FIELD_SECTIONS.map(section => (
           <div key={section.title} className="deal-details-section">

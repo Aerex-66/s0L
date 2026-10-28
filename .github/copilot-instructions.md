@@ -1,5 +1,13 @@
 # s0L — Deal Tracker
 
+## MCP servers (MANDATORY)
+
+- Load and use the configured MCP servers on every task: **Superpowers**, **context-mode**, **Pylance**. If one is missing from the tool list, tell the user before proceeding — never silently work without it or substitute another approach.
+- **Superpowers**: before any non-trivial task, call `mcp_superpowers_recommend_skills` (or `mcp_superpowers_list_skills`) and follow the matching skill (brainstorming, systematic-debugging, test-driven-development, verification-before-completion).
+- **context-mode**: run large outputs (test runs, logs, builds, big searches/reads) through its sandbox tools so they don't flood the context.
+- **Pylance**: use its MCP tools for Python checks and one-off snippets (`mcp_pylance_mcp_s_pylanceRunCodeSnippet`) instead of scratch scripts.
+- Supabase MCP is not used here — s0L has no cloud backend.
+
 ## Canonical docs — read before structural or visual work
 
 - **[UI_ARCHITECTURE.md](../UI_ARCHITECTURE.md)** — shell/module system, state tiers, data flow, backend structure, extension playbooks, invariants. Consult before adding modules, endpoints, or cross-module data.
@@ -14,7 +22,7 @@
 - **GSSM backend** (port 5175): Express API at `gssm-server/`, entry point `index.js`
 - **Frontend** (port 5120): React 19 + Zustand + Vite at `frontend/`
 - **Data**: JSON file persistence (`deals_data.json`) — no database
-- **Security**: Localhost-only, CORS-restricted, security headers (no CSP yet), no external network
+- **Security**: Localhost-only, CORS-restricted, security headers (no CSP yet). No external network except the sanctioned Outlook/Salesforce/monday.com integrations (see Conventions)
 
 ### Backend structure
 ```
@@ -26,6 +34,7 @@ shared/                      # Cross-runtime contracts (consumed by Flask AND Re
   test-fixtures/             # Fixtures both test suites share (label normalization)
 core/
   app_factory.py             # Flask app creation, CORS, security headers, blueprints
+  shell/frontend.py          # Packaged app only: serves the built frontend + forwards /gssm-api (S0L_FRONTEND_DIST)
   shared/
     state.py                 # JSON persistence (load_data/save_data) + load-time migration w/ backup
     field_index.py           # Loads shared/field_index.json (aliases, owners, iSBD labels, GSSM cells)
@@ -44,28 +53,38 @@ core/
       isbd_maps.py           # iSBD slide-title/table-row maps (field labels live in the index)
       isbd_extract.py        # iSBD field extraction
       isbd_export.py         # iSBD export + native Gantt (uses core.shared.domain)
-      slide_render.py        # Async LibreOffice slide rendering
+      slide_render.py        # Async slide rendering: PowerPoint, else LibreOffice + pdftoppm
       records.py             # Deal ↔ document linkage + iSBD import routing
       onedrive.py            # Windows registry OneDrive discovery
-    settings/settings.py     # Activity/resource structure, approvers, contacts
-    calendar/calendar.py     # Outlook calendar cache reader
+    settings/settings.py     # Activity/resource structure, approvers, contacts, dashboard preferences (my deals / everyone)
+    notices/notices.py       # TT Exec notices (post/remove, exec-checked); stored locally in deals_data.json
+    calendar/calendar.py     # Outlook calendar cache reader (outlook_sync.py fills it in the packaged app)
+    integrations/monday/     # monday.com: OAuth sign-in (oauth.py), DPAPI credentials, board, who you are
+                             # (identity.py: board name picked once; TT Execs), new rows (newdeal.py)
+    integrations/client_logos/ # client logos: Wikidata/website image fetch (fetcher.py), exact-name
+                             # resolver, once-only background worker, local cache, sandboxed image routes,
+                             # review routes (no page; the deal details panel hides/fixes a logo)
+                             # client, field-index mapping, sync (writer.py = only monday-field writer)
 tests/                       # pytest (tmp_store fixture — never touches deals_data.json)
 scripts/build-field-registry.mjs  # Generates FIELD_REGISTRY.md from the index
+packaging/                   # Portable signed build: build.ps1 + launcher/ (s0L.exe tray launcher, C#)
 ```
 
 ### Frontend structure
 ```
 frontend/src/
   App.jsx                    # Shell: deal selection, modals, keyboard shortcuts, module routing
-  AppHeader.jsx              # Top nav: breadcrumb, search, settings, new deal
+  AppHeader.jsx              # Top nav: breadcrumb, search, monday connect/status, settings, new deal
   shell/
     dealShell.js             # Module definitions (Home, iSBD, GSSM, Documents, Metrics, Admin)
     moduleRegistry.js        # Lazy-loaded component registry
+    MondayConnect.jsx        # Header monday icon: click to connect, status dot, click again to sync (mondayBadge.js)
+    NoticeBanner.jsx         # Dashboard (Tile/Metrics) header-center notices: rotate every 6 s, hover = latest five, chevron = all
   features/
     home/                    # Timeline, Activities, Financials, Resources, Calendar, Contacts tabs
     isbd/                    # Full iSBD slide editor (extraction, prefill, undo, export)
     documents/               # Document library, required slots, upload/download
-    deals/                   # DealList, NewDealModal, CommandPalette, Import/Export, useDeals
+    deals/                   # DealList, PipelineMetrics (list + monday people pickers), ExecDashboard (TT Exec view), NewDealModal, CommandPalette, Import/Export, useDeals
     settings/                # Approvers + Contacts tabs
     gssm/                    # GSSM editor: calc/, sheets/, utils/, components/, hooks/ (sync
                              # boundary — see GSSM_SYNC.md) + shell/ (s0L-only orchestration)
@@ -75,6 +94,7 @@ frontend/src/
     useStore.js              # Zustand store (currentDealId, modal state)
     dealStore.js             # Zustand deal-data cache (deals, patchDeal, GSSM syncStatus)
     services/dealService.js  # Canonical deal API client (ALL modules import from here)
+    services/mondayService.js # monday sign-in status + board sync client
     gssmData/                # Sanctioned read-only seam into GSSM engine for other modules
     apiClient.js             # Fetch wrapper (get/post/put/del/postFormData)
     constants/               # fieldIndex.js (loads shared/field_index.json), referenceData.js (dropdowns),
@@ -99,8 +119,9 @@ frontend/src/
 - Constants in `shared/constants/` — single source of truth for dropdowns, colors, thresholds
 - CSS custom properties for theming (`--impl-color`, `--status-*`, `--phase-*`)
 - **SQUARE & SEAMLESS — the seamless law**: no rounded corners (all `--radius-*` are `0px`, and a base.css rule squares hardcoded radii; only status dots/spinners stay round). No seams: surfaces have no outlines, edge lines or divider lines between sections — separate by tone, spacing and soft depth; small controls are tonal blocks on `--control-fill`. Hover = *raise* (cards: `--lift` + `--shadow-raise`, or add `.liquid-raise`) or *highlight* (rows, and cards holding inputs: `--hover-wash`/`--hover-ring`, never a transform), via `transition: var(--transition-liquid)`. Full law in [DESIGN.md](../DESIGN.md).
-- **Light-first**: Arctic Glass (light) is the default theme. Build and verify light-first, then check the two dark themes. Do not default new UI to dark styling.
+- **Dark-first, user-themed**: Obsidian (dark) is the default. A theme is a palette in `shared/ui/ThemeSwitcher.jsx`, and every color derives from `--canvas` / `--surface` / `--ink` / `--accent`. Never hardcode a theme color or a blue: use tokens and `var(--accent)`, with `var(--on-accent)` for text on accent fills. Verify in Obsidian, Frost (light) and a light-accent theme (Aurora or Ember).
 - **Font weight token**: All title/header/label fonts use `--font-weight-thin` (in `base.css :root`). To adjust title thickness globally, change this single token. Currently `400`. All selectors with `-title`, `-label`, `-name`, `-header`, plus `h1`–`h4` inherit it.
+- **Numbers**: one style everywhere, tabular figures in the UI font (set on `body`). Never put amounts or counts in `--font-family-mono`, which is for IDs and codes.
 - **Type scale tokens** (in `base.css :root`): Use these instead of raw `rem` values.
   | Token | Size | Role |
   |---|---|---|
@@ -130,9 +151,11 @@ npm test                     # pytest (tests/) + Vitest (frontend/src/**/*.test.
 npm run registry             # Regenerate FIELD_REGISTRY.md after editing shared/field_index.json
 npm run clean                # Remove dist, __pycache__, .DS_Store
 npm run clean:deep           # Also removes rendered slide folders (documents/*_slides/)
+npm run package              # Signed portable zip -> release\s0L-<version>.zip (az login first; see UI_ARCHITECTURE.md)
+npm run package:unsigned     # Same, unsigned, for local testing
 ```
 
-**Prerequisites**: Node.js 16+, Python 3.8+, LibreOffice + pdftoppm (for PPTX rendering)
+**Prerequisites**: Node.js 16+, Python 3.8+. Slide previews use desktop PowerPoint, or LibreOffice + pdftoppm when PowerPoint is missing.
 
 ## Conventions
 
@@ -144,7 +167,7 @@ npm run clean:deep           # Also removes rendered slide folders (documents/*_
 - **Field ownership**: GSSM values (owner `gssm`) are written only by `PUT /api/deals/:id/gssm-sync` and are never recalculated or edited in Home or iSBD — they must never disagree. Derived values are computed, never stored.
 - **Cross-runtime constants**: Phase codes/colors and service areas live in `shared/domain_constants.json` — consumed by `core/shared/domain.py` (Flask) and `gssmFieldMap.js` (React). Never redefine them per-runtime.
 - **Deal API access**: All frontend modules import `dealService` from `shared/services/dealService.js` — never from another feature folder. Deal records are cached in `shared/dealStore.js`; after a PUT, call `patchDeal(updated)` instead of a full reload where possible.
-- **No external network**: The app is designed for air-gapped localhost use — never add external API calls, CDNs, or analytics. Hand-off links (`mailto:`, `msteams:`) that open the user's installed Outlook/Teams pre-filled are allowed — build them with `features/home/handoff.js`
+- **No external network, one exemption**: The app is localhost-first. Never add CDNs, analytics or external assets. Hand-off links (`mailto:`, `msteams:`) that open the user's installed Outlook/Teams pre-filled are allowed; build them with `features/home/handoff.js`. **Sanctioned integrations are the only exemption:** Microsoft Outlook (Microsoft Graph), Salesforce and monday.com. The Flask backend calls their APIs, never the browser, and only after the user signs in with their own account (OAuth, or a personal access token the user creates). Calls go over HTTPS to those services' own hosts, and tokens stay on the machine. **Client logos** (signed off 2026-10-27) are the other exemption: the backend may query Wikidata's query service (query.wikidata.org) and download a client's logo from Wikimedia's image server (upload.wikimedia.org) or its icon from the client's own website, and, for a Wikipedia article link a person pastes, read that article's summary for its lead image; images only, all through `core/features/integrations/client_logos/fetcher.py`, cached locally. Any other outside service needs the user's explicit sign-off first.
 - **File uploads**: Stored in `documents/` directory; rendered slides go to `documents/{doc_id}_slides/`
 - **iSBD field mapping**: `isbdPrefillMap.js` maps 130+ field name variants — update when adding new iSBD fields
 - **Module independence**: Unless specified, avoid making global code changes across modules. Stop and ask.

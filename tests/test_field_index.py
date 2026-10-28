@@ -6,7 +6,7 @@ import pytest
 from core.shared import field_index as fi
 
 ROOT = Path(__file__).resolve().parents[1]
-OWNERS = {'deal', 'gssm', 'isbd', 'derived', 'system'}
+OWNERS = {'deal', 'gssm', 'monday', 'isbd', 'derived', 'system'}
 
 
 def test_keys_and_aliases_are_unique():
@@ -41,9 +41,26 @@ def test_canonical_key_resolves_old_names(name, expected):
     assert fi.canonical_key(name) == expected
 
 
-def test_sales_stage_is_its_own_isbd_field():
+def test_sales_stage_is_monday_owned_on_the_deal():
     assert fi.canonical_key('sales_stage') == 'sales_stage'
-    assert fi.owner_of('sales_stage') == 'isbd'
+    assert fi.owner_of('sales_stage') == 'monday' and fi.path_of('sales_stage') == 'sales_stage'
+
+
+def test_monday_bindings_cover_the_verified_board_columns():
+    bound = {key for key, _ in fi.monday_bindings()}
+    assert bound >= {
+        'opportunity_number', 'client_name', 'project_name', 'status', 'implementation_type', 'currency',
+        'sector', 'industry', 'deal_type', 'estimated_value', 'project_start_date', 'project_end_date',
+        'lead_ssc', 'solution_consultant_2', 'solution_consultant_3', 'solution_consultant_4', 'tt_executive',
+        'sales_stage', 'swb_stage', 'close_quarter', 'forecast_category', 'lead_sl', 'greenstar_dca_link',
+        'solutioning_pov', 'monday_item_id', 'monday_group',
+    }
+
+
+def test_monday_row_metadata_is_never_deal_editable():
+    for key in ('monday_item_id', 'monday_group', 'monday_synced_at', 'monday_missing_since'):
+        assert not fi.deal_editable(key, {})
+    assert fi.deal_editable('status', {}) and not fi.deal_editable('status', {'monday_item_id': '1'})
 
 
 @pytest.mark.parametrize('label,slide,expected', [

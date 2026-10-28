@@ -8,90 +8,97 @@
 }
 
 /* ── Pipeline command band ──────────────────
-   One glass band: display-size KPIs · type mix · search. */
+   No panel: display-size KPIs · type mix · search sit right on the canvas,
+   closed by a fading underline with a soft gradient shadow below it. */
 .pipeline-band {
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  margin-bottom: 1.25rem;
-  padding: 0.9rem 1.35rem;
+  margin-bottom: 1.75rem;
+  padding: 0.25rem 0 1rem;
   position: relative;
-  background-color: var(--glass-bg);
-  background-image: var(--ambient-field);
-  backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
-  border: 1px solid var(--glass-border);
-  border-top-color: var(--glass-border-top);
-  box-shadow: var(--shadow-glass);
   flex-wrap: wrap;
-  overflow: hidden;
 }
 
-/* Specular top edge */
+/* The underline — accent easing into ink, transparent at both ends */
 .pipeline-band::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 6%;
-  right: 6%;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 1px;
-  background: var(--specular);
-  opacity: 0.85;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 45%, transparent) 15%,
+    color-mix(in srgb, var(--ink) 16%, transparent) 60%,
+    transparent 100%);
   pointer-events: none;
 }
 
-.pband-kpis {
-  display: flex;
-  align-items: stretch;
-  gap: 0.5rem;
+/* The gradient shadow — soft accent light falling off below the line */
+.pipeline-band::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 32px;
+  /* Ellipse spans 0–80% of the width, so it fades out before either edge */
+  background: radial-gradient(40% 100% at 40% 0%, color-mix(in srgb, var(--accent) 12%, transparent) 0%, transparent 100%);
+  pointer-events: none;
 }
 
-.pband-kpi {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0 1.25rem;
-  min-width: 0;
-}
-.pband-kpi:first-child { padding-left: 0; }
-
-.pband-value {
-  font-family: var(--font-family-mono);
-  font-size: var(--type-xl);
-  font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  color: var(--text-primary);
-}
-.pband-value-dim {
-  color: var(--text-tertiary);
-  font-size: var(--type-md);
-  font-weight: 300;
-}
-
-.pband-label {
-  font-size: var(--type-micro);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-tertiary);
-  margin-top: 0.2rem;
-  white-space: nowrap;
-}
-
-.pband-mix {
+/* Quiet stat line — one row of text, numbers in bold, fading hairlines between */
+.pband-stats {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
   flex-wrap: wrap;
-  padding-left: 1rem;
+  gap: 1.25rem;
 }
-.pband-mix .chip strong {
-  font-family: var(--font-family-mono);
-  font-weight: 600;
+.pband-stat {
+  white-space: nowrap;
+  font-size: var(--type-body-lg);
+  color: var(--text-tertiary);
+}
+.pband-stat b {
+  font-size: var(--type-md);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
   color: var(--text-primary);
+}
+.pband-stat b.pband-won { color: var(--ibm-green); }
+.pband-stat b.pband-due { color: var(--status-warning); }
+/* "Welcome, name · Not you?": the board name this monday sign-in picked, and the way to change it */
+.pband-welcome {
+  white-space: nowrap;
+  font-size: var(--type-body-lg);
+  color: var(--text-tertiary);
+}
+.pband-welcome b {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+.pband-not-you {
+  margin-left: 0.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: var(--type-sm);
+  color: var(--accent);
+  cursor: pointer;
+  transition: var(--transition-liquid);
+}
+.pband-not-you:hover {
+  color: var(--text-primary);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.pband-divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 16px;
+  background: var(--divider-fade);
 }
 
 .pipeline-band .deals-search-float { margin-left: auto; }
@@ -105,7 +112,7 @@
 
 .deals-search-float .search-icon {
   position: absolute;
-  left: 0.65rem;
+  left: 0.15rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-tertiary);
@@ -114,13 +121,15 @@
   height: 14px;
 }
 
+/* Underline field — no box, so it melts into the band */
 .search-input-compact {
-  width: 180px;
-  padding: 0.42rem 0.7rem 0.42rem 2rem;
+  width: 200px;
+  padding: 0.4rem 1.4rem 0.4rem 1.6rem;
   font-size: var(--type-sm);
   font-family: var(--font-family-sans);
-  border: 1px solid var(--field-border);
-  background: var(--field-bg);
+  border: none;
+  border-bottom: 1px solid var(--field-border);
+  background: transparent;
   color: var(--text-primary);
   transition: var(--transition-liquid);
 }
@@ -130,14 +139,15 @@
   font-size: var(--type-sm);
 }
 
-.search-input-compact:focus {
+.deals-search-float .search-input-compact:focus {
   outline: none;
-  width: 240px;
-  border-color: var(--ibm-blue);
-  box-shadow: 0 0 0 3px rgba(15, 98, 254, 0.10), var(--glow-subtle);
-  background: var(--field-bg-focus);
+  width: 260px;
+  border-bottom-color: var(--accent);
+  box-shadow: 0 1px 0 var(--accent), 0 12px 16px -14px var(--accent);
+  background: transparent;
   color: var(--text-primary);
 }
+.deals-search-float:focus-within .search-icon { color: var(--accent); }
 
 .deals-search-float .search-clear {
   position: absolute;
@@ -175,11 +185,11 @@
   background: color-mix(in srgb, var(--ibm-blue) 8%, transparent);
   color: var(--ibm-blue);
   margin-bottom: 0.5rem;
-  box-shadow: 0 0 24px rgba(15, 98, 254, 0.12);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 .no-deals p {
   font-size: var(--type-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   letter-spacing: -0.015em;
   color: var(--text-primary);
   margin: 0;
@@ -203,11 +213,10 @@
 
 @media (max-width: 760px) {
   .deals-grid { grid-template-columns: 1fr; }
-  .pipeline-band { gap: 0.75rem; padding: 0.75rem 1rem; }
-  .pband-kpi { padding: 0 0.75rem; }
-  .pband-mix { border-left: none; padding-left: 0; }
+  .pipeline-band { gap: 0.75rem; padding: 0.25rem 0 0.85rem; }
   .pipeline-band .deals-search-float { margin-left: 0; width: 100%; }
-  .pipeline-band .search-input-compact { width: 100%; }
+  .pipeline-band .search-input-compact,
+  .pipeline-band .search-input-compact:focus { width: 100%; }
 }
 
 /* ── Deal card ─────────────────────────── */
@@ -264,17 +273,17 @@
 
 .deal-card-impl-tag {
   font-size: var(--type-micro);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--impl-c, #8d8d8d);
-  background: color-mix(in srgb, var(--impl-c, #8d8d8d) 10%, transparent);
+  color: var(--impl-c, var(--status-gray));
+  background: color-mix(in srgb, var(--impl-c, var(--status-gray)) 10%, transparent);
   padding: 0.14rem 0.5rem;
 }
 
 .deal-card-sector {
   font-size: var(--type-micro);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-tertiary);
@@ -284,7 +293,7 @@
 .deal-card-title {
   margin: 0;
   font-size: var(--type-md);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   letter-spacing: -0.015em;
   line-height: 1.35;
   color: var(--text-primary);
@@ -297,30 +306,13 @@
 
 .deal-card-client {
   font-size: var(--type-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--text-secondary);
 }
 
-/* Stats row: baseline-aligned label·value pairs with dividers */
-.deal-card-stats {
-  display: flex;
-  align-items: baseline;
-  margin-top: 0.55rem;
-  padding-top: 0.55rem;
-}
-
-.deal-card-stat {
-  display: flex;
-  align-items: baseline;
-  gap: 0.35rem;
-  min-width: 0;
-  padding: 0 0.85rem;
-}
-.deal-card-stat:first-child { padding-left: 0; }
-
 .deal-card-stat-value {
   font-size: var(--type-body-lg);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   color: var(--text-primary);
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
@@ -329,15 +321,6 @@
 
 .deal-card-stat-value.tcv {
   color: var(--ibm-green);
-}
-
-.deal-card-stat-label {
-  font-size: var(--type-micro);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-tertiary);
-  white-space: nowrap;
 }
 
 /* Approval progress meter */
@@ -363,7 +346,7 @@
 
 .deal-card-approval-label {
   font-size: var(--type-micro);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--text-tertiary);
   white-space: nowrap;
   flex-shrink: 0;
@@ -383,7 +366,7 @@
   font-size: var(--type-micro);
   letter-spacing: 0.03em;
   color: var(--text-tertiary);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 .deal-archive-link,
@@ -402,6 +385,372 @@
 .deal-archive-link:hover { color: var(--ibm-red); }
 .deal-restore-link:hover { color: var(--ibm-blue); }
 
+/* ── Dashboard tile ─────────────────────────────────────────────
+   Practice-tinted glass: the practice hue lights the top-right corner, a generative
+   deal glyph (square quadtree, seeded by the deal, denser for bigger TCV) sits behind
+   the content, and a glowing meter on the bottom edge shows TCV against the deals on
+   screen. */
+.deal-tile {
+  min-height: 8.25rem;
+  background-image:
+    radial-gradient(70% 115% at 100% 0%, color-mix(in srgb, var(--practice-c) 20%, transparent), transparent 66%),
+    linear-gradient(180deg, color-mix(in srgb, var(--practice-c) 5%, transparent), transparent 40%);
+  box-shadow: var(--shadow-card), inset 0 1px 0 color-mix(in srgb, var(--practice-c) 38%, transparent);
+}
+.deal-tile:hover {
+  background-image:
+    radial-gradient(80% 125% at 100% 0%, color-mix(in srgb, var(--practice-c) 30%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--practice-c) 8%, transparent), transparent 45%);
+  box-shadow:
+    var(--shadow-card-hover),
+    0 0 32px color-mix(in srgb, var(--practice-c) 18%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--practice-c) 65%, transparent);
+}
+
+.deal-glyph {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 9.5rem;
+  height: 9.5rem;
+  pointer-events: none;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--practice-c) 45%, transparent));
+  -webkit-mask-image: radial-gradient(115% 90% at 100% 0%, #000 28%, transparent 68%);
+  mask-image: radial-gradient(115% 90% at 100% 0%, #000 28%, transparent 68%);
+  transform-origin: top right;
+  transition: opacity var(--duration-hover) var(--ease-liquid), transform var(--duration-hover) var(--ease-liquid);
+}
+.deal-tile:hover .deal-glyph { opacity: 1; transform: scale(1.05); }
+.deal-glyph-cell {
+  fill: none;
+  stroke: color-mix(in srgb, var(--practice-c) 42%, transparent);
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+.deal-glyph-lit {
+  fill: color-mix(in srgb, var(--practice-c) 34%, transparent);
+  stroke: color-mix(in srgb, var(--practice-c) 80%, transparent);
+  stroke-width: 0.9;
+  vector-effect: non-scaling-stroke;
+  transition: fill var(--duration-hover) var(--ease-liquid);
+}
+.deal-tile:hover .deal-glyph-lit { fill: color-mix(in srgb, var(--practice-c) 55%, transparent); }
+
+.deal-tile-body {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.85rem 1rem 1rem;
+}
+/* Status line, closed by a rule fading out of the practice hue (the user's call, 2026-10-28) */
+.deal-tile-top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+.deal-tile-top::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--practice-c) 60%, transparent),
+    color-mix(in srgb, var(--ink) 10%, transparent) 55%,
+    transparent);
+  pointer-events: none;
+}
+.deal-tile-status {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--type-xs);
+  font-weight: var(--font-weight-regular);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.deal-status-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--status-c, var(--status-gray));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--status-c, var(--status-gray)) 65%, transparent);
+}
+/* The client is the headline, in the TCV's treatment: heavier, fading into the practice hue with a soft glow.
+   Sized to the name (align-self) so the fade reaches the end of short names too. */
+.deal-tile-client {
+  align-self: flex-start;
+  max-width: 100%;
+  margin: 0.45rem 0 0;
+  font-size: var(--type-xl);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  background: linear-gradient(100deg, var(--text-primary) 45%, var(--practice-c));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--practice-c) 28%, transparent));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The description: what the deal is, without repeating the client; parts split by a practice-hue dot */
+.deal-tile-desc {
+  margin-top: 0.25rem;
+  font-size: var(--type-sm);
+  letter-spacing: -0.005em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.deal-tile-desc-sep {
+  margin: 0 0.45rem;
+  font-style: normal;
+  color: var(--practice-c);
+}
+/* Fixed height, so every tile is the same size whatever sits in it */
+.deal-tile-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  height: 2.2rem;
+  margin-top: auto;
+  padding-top: 0.9rem;
+}
+.deal-tile-figures { display: inline-flex; align-items: center; gap: 0.6rem; min-width: 0; }
+.deal-tile-tcv { display: inline-flex; align-items: baseline; gap: 0.45rem; flex: none; }
+.deal-tile-tcv-value {
+  font-size: var(--type-lg);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  background: linear-gradient(100deg, var(--text-primary) 30%, var(--practice-c));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--practice-c) 32%, transparent));
+}
+.deal-tile-tcv-label,
+.deal-tile-tcv-empty {
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+/* Implementation type: rides the status line after a short fading hairline, in the practice hue */
+.deal-tile-type {
+  position: relative;
+  min-width: 0;
+  padding-left: 0.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--practice-c);
+}
+.deal-tile-type::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 0.95rem;
+  transform: translateY(-50%);
+  background: var(--divider-fade);
+}
+/* The client's own logo (Wikidata or their website): a small add-on in the top-right corner */
+.deal-tile-client-logo {
+  flex: none;
+  display: block;
+  height: 1.5rem;
+  width: auto;
+  max-width: 4.5rem;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 1px color-mix(in srgb, var(--ink) 45%, transparent))
+    drop-shadow(0 0 8px color-mix(in srgb, var(--practice-c) 25%, transparent));
+}
+/* Practice emblem: bottom right, a tonal chip in the practice hue (no outline) */
+.deal-tile-practice {
+  min-width: 0;
+  max-width: 62%;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.55rem 0.25rem 0.45rem;
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--practice-c);
+  background:
+    linear-gradient(color-mix(in srgb, var(--practice-c) 10%, transparent), color-mix(in srgb, var(--practice-c) 10%, transparent)),
+    color-mix(in srgb, var(--surface) 92%, transparent);
+  white-space: nowrap;
+}
+.deal-tile-practice > svg {
+  flex: none;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--practice-c) 55%, transparent));
+}
+.deal-tile-practice-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+/* Vendor logo: the business app's own mark straight on the glass, unframed */
+.deal-tile-logo {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 1.3rem;
+}
+.deal-tile-logo > img { display: block; height: 100%; width: auto; max-width: 5.5rem; object-fit: contain; }
+/* Lead solutioner, shown only when it's someone other than you: in the bottom line after the TCV,
+   behind a short fading hairline, so it never makes a tile taller */
+.deal-tile-lead {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  padding-left: 0.6rem;
+  font-size: var(--type-xs);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+.deal-tile-lead::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 0.95rem;
+  transform: translateY(-50%);
+  background: var(--divider-fade);
+}
+.deal-card-lead-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.deal-card-monogram {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  font-style: normal;
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.04em;
+  color: var(--practice-c, var(--accent));
+  background: color-mix(in srgb, var(--practice-c, var(--accent)) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--practice-c, var(--accent)) 28%, transparent);
+}
+.deal-tile-foot .deal-archive-link,
+.deal-tile-foot .deal-restore-link { flex: none; }
+
+.deal-tile-meter {
+  position: absolute;
+  left: 3px;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+.deal-tile-meter::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--meter, 0) * 100%);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--practice-c) 30%, transparent), var(--practice-c));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--practice-c) 60%, transparent);
+}
+
+/* Pagination under the tiles and the metrics table */
+.deal-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0.4rem 0;
+}
+.deal-pagination-range { font-size: var(--type-sm); color: var(--text-tertiary); }
+.deal-pagination-pages { display: flex; align-items: center; gap: 0.3rem; }
+.deal-pagination-gap { padding: 0 0.2rem; color: var(--text-tertiary); }
+.deal-pagination .chip { min-width: 2rem; justify-content: center; }
+.deal-pagination .chip:disabled { opacity: 0.4; cursor: default; }
+
+/* ── Arranging deals: group (tiles and list), filters and rows (list) ── */
+.deal-toolbar { margin-bottom: 1rem; }
+.deal-filter {
+  max-width: 12rem;
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-family-sans);
+  font-size: var(--type-xs);
+  color: var(--text-secondary);
+  background: var(--control-fill);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-liquid);
+}
+.deal-filter:hover { background: var(--hover-wash); color: var(--text-primary); }
+.deal-filter--set {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  box-shadow: var(--hover-ring);
+}
+
+/* Grouped tiles: one summary row per solutioner, status, practice or TCV band, opening onto its tiles.
+   The bar is the group's TCV against the biggest group's. */
+.deal-groups { display: flex; flex-direction: column; gap: 0.35rem; }
+.deal-group-head {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1rem minmax(9rem, 16rem) 5.5rem minmax(4rem, 1fr) 6rem;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 0.9rem;
+  font-family: var(--font-family-sans);
+  text-align: left;
+  color: var(--text-primary);
+  background: var(--glass-bg);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-liquid);
+}
+.deal-group-head:hover { background: var(--hover-wash); box-shadow: var(--hover-ring); }
+.deal-group-chevron,
+.pm-group-chevron { color: var(--text-tertiary); transition: transform var(--duration-hover) var(--ease-liquid); }
+.deal-group--open .deal-group-chevron,
+.pm-group--open .pm-group-chevron { transform: rotate(90deg); color: var(--accent); }
+.deal-group-name {
+  font-size: var(--type-body-lg);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.deal-group-count { font-size: var(--type-sm); color: var(--text-tertiary); }
+/* Status and practice groups lead with their colour */
+.deal-group-name .deal-status-dot,
+.pm-group-name .deal-status-dot { display: inline-block; margin-right: 0.55rem; vertical-align: middle; }
+.deal-group-bar { position: relative; height: 4px; overflow: hidden; background: var(--control-fill); }
+.deal-group-bar > i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 40%, transparent), var(--accent));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+.deal-group-tcv { text-align: right; font-weight: var(--font-weight-medium); }
+.deal-group .deals-grid { padding: 0.75rem 0 1.25rem; }
+.deal-groups-empty { padding: 2rem 0; text-align: center; color: var(--text-tertiary); }
+
 
 
 /* ══════════════════════════════════════════════════════════════════
@@ -411,14 +760,13 @@
 .opportunity-drawer-header { padding: 1rem 1.15rem; }
 .opportunity-drawer-title { font-size: var(--type-md); font-weight: var(--font-weight-thin); color: var(--text-primary); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
 .opportunity-drawer-meta { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem; }
-.opportunity-drawer-subtitle { font-size: var(--type-xs); font-family: var(--font-family-sans); color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.opportunity-drawer-impl { font-size: var(--type-tiny); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.15rem 0.45rem; background: rgba(15, 98, 254, 0.07); color: var(--ibm-blue); flex-shrink: 0; border: 1px solid rgba(15, 98, 254, 0.10); border-radius: var(--radius-xs); }
+.opportunity-drawer-subtitle { font-size: var(--type-xs); font-family: var(--font-family-mono); color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .opportunity-drawer-nav { display: flex; flex-direction: column; gap: 2px; padding: 0.65rem 0.5rem; flex: 1; }
-.opportunity-drawer-item { display: flex; align-items: center; gap: 0.6rem; border: none; background: transparent; color: var(--text-secondary); text-align: left; padding: 0.65rem 0.75rem; font-size: var(--type-body); font-weight: 500; cursor: pointer; transition: all 0.15s var(--ease-glass); position: relative; border-radius: var(--radius-sm); }
+.opportunity-drawer-item { display: flex; align-items: center; gap: 0.6rem; border: none; background: transparent; color: var(--text-secondary); text-align: left; padding: 0.65rem 0.75rem; font-size: var(--type-body); font-weight: var(--font-weight-medium); cursor: pointer; transition: all 0.15s var(--ease-glass); position: relative; border-radius: var(--radius-sm); }
 .opportunity-drawer-item::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; background: transparent; transition: background 0.15s var(--ease-glass); border-radius: 0 2px 2px 0; }
 .opportunity-drawer-item:hover { background: var(--interactive-hover); color: var(--text-primary); }
-.opportunity-drawer-item.active { background: var(--interactive-active); color: var(--ibm-blue); font-weight: 700; box-shadow: inset 0 0 20px rgba(15, 98, 254, 0.03); }
-.opportunity-drawer-item.active::before { background: var(--ibm-blue); box-shadow: 0 0 8px rgba(15, 98, 254, 0.3); }
+.opportunity-drawer-item.active { background: var(--interactive-active); color: var(--ibm-blue); font-weight: var(--font-weight-bold); box-shadow: inset 0 0 20px color-mix(in srgb, var(--accent) 3%, transparent); }
+.opportunity-drawer-item.active::before { background: var(--ibm-blue); box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 30%, transparent); }
 .drawer-item-icon { width: 1.25rem; text-align: center; font-size: var(--type-md); line-height: 1; flex-shrink: 0; opacity: 0.55; }
 .opportunity-drawer-item.active .drawer-item-icon { opacity: 1; }
 .drawer-item-label { flex: 1; min-width: 0; letter-spacing: -0.005em; }
@@ -426,59 +774,17 @@
 
 /* ═══════════════════════════════════════════════════════════════
    PIPELINE METRICS — Dashboard tracker table
+   Boxless like the band above (which carries the KPIs): the table is drawn
+   with lines only, under a recessed header bar.
    ═══════════════════════════════════════════════════════════════ */
 .pipeline-metrics {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
 }
 
-/* Summary strip */
-.pm-summary {
-  display: flex;
-  gap: 0.5rem;
-}
-.pm-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.6rem 1.2rem;
-  background: var(--glass-bg-heavy);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--glass-border-top);
-  flex: 1;
-  box-shadow: var(--shadow-glass);
-  border-radius: var(--radius-lg);
-  transition: var(--transition-liquid);
-}
-.pm-stat:hover {
-  box-shadow: var(--shadow-raise);
-  transform: var(--lift);
-}
-.pm-stat-value {
-  font-size: var(--type-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-}
-.pm-stat-value.pm-won { color: var(--ibm-green, #198038); }
-.pm-stat-label {
-  font-size: var(--type-2xs);
-  font-weight: var(--font-weight-thin);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-tertiary);
-}
-
-/* Table wrapper */
+/* Table — no box; columns read by their rules */
 .pm-table-wrap {
   overflow-x: auto;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg-heavy);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow: var(--shadow-glass);
 }
 .pm-table {
   width: 100%;
@@ -486,28 +792,39 @@
   border-collapse: collapse;
   font-size: var(--type-2xs);
 }
+/* Header: a recessed bar, darker than the rows, small-caps labels */
 .pm-table th {
-  position: sticky;
-  top: 0;
-  background: var(--bg-secondary);
-  font-size: var(--type-2xs);
-  font-weight: var(--font-weight-thin);
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-tertiary);
-  padding: 0.55rem 0.5rem;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  padding: 0.75rem;
   text-align: left;
+  background: var(--table-head-bg);
   border-bottom: 1px solid var(--border-color);
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
+  transition: color var(--duration-hover) var(--ease-liquid);
+}
+.pm-table th + th,
+.pm-table td + td {
+  border-left: 1px solid var(--border-color);
 }
 .pm-table th:hover { color: var(--text-primary); }
-.pm-table th.pm-sorted { color: var(--ibm-blue); }
-.pm-sort-arrow { font-size: 0.5em; }
+.pm-table th.pm-sorted {
+  color: var(--accent);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+.pm-th {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
 
 .pm-table td {
-  padding: 0.45rem 0.5rem;
+  padding: 0.6rem 0.75rem;
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   white-space: nowrap;
@@ -515,10 +832,96 @@
   text-overflow: ellipsis;
   max-width: 180px;
 }
-.pm-row { cursor: pointer; transition: background 0.15s var(--ease-glass); }
-.pm-row:hover { background: var(--interactive-hover); }
+.pm-row { cursor: pointer; transition: background-color var(--duration-hover) var(--ease-liquid); }
+.pm-row:hover { background: var(--hover-wash); }
+.pm-row:hover td { color: var(--text-primary); }
+/* Group rows in the list: a solutioner or TCV band, opening onto its deals */
+.pm-table .pm-group td {
+  max-width: none;
+  padding: 0.55rem 0.75rem;
+  color: var(--text-primary);
+  background: var(--control-fill);
+  cursor: pointer;
+}
+.pm-group:hover td { background: var(--hover-wash); }
+.pm-group-head { display: inline-flex; align-items: center; gap: 0.75rem; }
+.pm-group-name { font-size: var(--type-sm); font-weight: var(--font-weight-medium); }
+.pm-group-meta { color: var(--text-tertiary); }
+.pm-group-meta.pm-num { color: var(--text-primary); }
+/* SC 2–4: one fixed width each, names ellipsized */
+.pm-clip { display: block; width: 8.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pm-table th.pm-sc { width: 8.5rem; }
+/* People s0L may change on the monday board: a quiet picker in the cell, its chevron shown on hover */
+.pm-assign { display: block; }
+.pm-assign-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: calc(100% + 0.7rem);
+  margin: -0.15rem -0.35rem;
+  padding: 0.15rem 0.35rem;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: var(--transition-liquid);
+}
+.pm-assign-trigger--clip { width: calc(8.5rem + 0.7rem); }
+.pm-assign-trigger:hover,
+.pm-assign-trigger[data-state='open'] {
+  color: var(--text-primary);
+  background: var(--control-fill);
+  box-shadow: var(--hover-ring);
+}
+.pm-assign-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pm-assign-chevron {
+  flex: none;
+  color: var(--text-tertiary);
+  opacity: 0;
+  transition: opacity var(--duration-hover) var(--ease-liquid);
+}
+.pm-row:hover .pm-assign-chevron,
+.pm-assign-trigger:focus-visible .pm-assign-chevron,
+.pm-assign-trigger[data-state='open'] .pm-assign-chevron { opacity: 1; }
+.pm-assign-menu {
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  min-width: var(--radix-select-trigger-width);
+  max-height: min(18rem, var(--radix-select-content-available-height));
+  padding: 0.3rem;
+  font-size: var(--type-sm);
+  color: var(--text-primary);
+  background-color: var(--modal-bg);
+  background-image: var(--ambient-field);
+  backdrop-filter: blur(var(--glass-blur-heavy)) saturate(1.6);
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(1.6);
+  box-shadow: var(--shadow-modal);
+}
+.pm-assign-item {
+  padding: 0.4rem 0.6rem;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  transition: background-color var(--duration-hover) var(--ease-liquid);
+}
+.pm-assign-item[data-highlighted] { background: var(--hover-wash); box-shadow: var(--hover-ring); }
+.pm-assign-item[data-state='checked'] { color: var(--accent); }
+.pm-assign-note { max-width: 18rem; padding: 0.5rem 0.6rem; color: var(--text-tertiary); }
+.pm-assign-note--error,
+.pm-assign-error { color: var(--status-error); }
+.pm-assign-error { display: block; margin-top: 0.75rem; }
 
 .pm-mono { font-family: var(--font-family-mono); }
+.pm-num { font-weight: var(--font-weight-medium); color: var(--text-primary); }
+.pm-table td.pm-empty {
+  max-width: none;
+  padding: 1.5rem 0.75rem;
+  text-align: center;
+  color: var(--text-tertiary);
+}
 .pm-desc {
   max-width: 220px;
   white-space: nowrap;
@@ -527,7 +930,7 @@
 }
 .pm-status {
   font-size: var(--type-micro);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   padding: 0.15rem 0.4rem;
@@ -536,7 +939,106 @@
   border-radius: var(--radius-xs);
 }
 .pm-impl {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.03em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TT EXEC — the team's numbers per period, the open pipeline, and
+   the deals waiting for assignment. Panels are glass; nothing here lifts.
+   ═══════════════════════════════════════════════════════════════ */
+.exec-dashboard { display: flex; flex-direction: column; gap: 12px; }
+.exec-dashboard .toolbar-strip { margin-bottom: 0; }
+.exec-period {
+  min-width: 6.5rem;
+  text-align: center;
+  font-size: var(--type-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+.exec-kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.exec-kpi,
+.exec-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-light)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--glass-blur-light)) saturate(1.4);
+  box-shadow: var(--shadow-card);
+}
+.exec-kpi { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.9rem 1rem; min-width: 0; }
+.exec-kpi-label {
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+.exec-kpi-value {
+  font-size: var(--type-3xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+.exec-kpi--won .exec-kpi-value { color: var(--status-success); }
+.exec-kpi--lost .exec-kpi-value { color: var(--status-error); }
+.exec-kpi-sub { font-size: var(--type-sm); color: var(--text-secondary); }
+.exec-kpi-was { font-size: var(--type-2xs); color: var(--text-tertiary); }
+.exec-panel { padding: 0.9rem 1rem; min-width: 0; }
+.exec-panel-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0 0 0.6rem;
+  font-size: var(--type-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+.exec-panel-note { font-size: var(--type-2xs); font-weight: var(--font-weight-regular); color: var(--text-tertiary); }
+.exec-panel-search { margin-left: auto; font-weight: var(--font-weight-regular); }
+.exec-empty { margin: 0; padding: 0.75rem 0; color: var(--text-tertiary); }
+.exec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 12px; align-items: start; }
+.exec-rows { list-style: none; margin: 0; padding: 0; max-height: 22rem; overflow-y: auto; }
+.exec-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(3rem, 6rem) 4.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.25rem;
+  font-size: var(--type-sm);
+}
+.exec-row:hover { background: var(--hover-wash); }
+.exec-row-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-primary); }
+.exec-row-name .deal-status-dot { display: inline-block; margin-right: 0.5rem; vertical-align: middle; }
+.exec-row-count { text-align: right; color: var(--text-secondary); }
+.exec-row-tcv { text-align: right; font-weight: var(--font-weight-medium); color: var(--text-primary); }
+.exec-bar { position: relative; display: block; height: 4px; overflow: hidden; background: var(--control-fill); }
+.exec-bar > i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--bar-c, var(--accent));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--bar-c, var(--accent)) 50%, transparent);
+}
+.pm-table.exec-table { min-width: 0; }
+.exec-table th { cursor: default; }
+.exec-table .exec-num { text-align: right; }
+.exec-table-current td { color: var(--text-primary); background: var(--hover-wash); }
+.exec-added { display: grid; grid-template-columns: 2rem minmax(4rem, 10rem); align-items: center; gap: 0.6rem; }
+.exec-added-count { text-align: right; }
+.exec-notice-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 0.75rem; }
+.exec-notice-form textarea { width: 100%; padding: 0.5rem 0.65rem; font-size: var(--type-body); resize: vertical; }
+.exec-notice-list { list-style: none; margin: 0.75rem 0 0; padding: 0; max-height: 14rem; overflow-y: auto; }
+.exec-notice {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.45rem 0.25rem;
+  font-size: var(--type-sm);
+}
+.exec-notice + .exec-notice { border-top: 1px solid var(--border-subtle); }
+.exec-notice-date { font-size: var(--type-2xs); color: var(--text-tertiary); }
+.exec-notice-text { color: var(--text-primary); white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 1100px) {
+  .exec-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }

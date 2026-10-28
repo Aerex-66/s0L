@@ -14,6 +14,7 @@
  */
 import { create } from 'zustand'
 import { dealService } from './services/dealService'
+import { mondayService } from './services/mondayService'
 import { migrateTimelineStructure } from './utils/migrateTimelines'
 
 const useDealStore = create((set, get) => ({
@@ -24,6 +25,44 @@ const useDealStore = create((set, get) => ({
 
   // GSSM → deal sync health: 'idle' | 'syncing' | 'ok' | 'error'
   syncStatus: { state: 'idle', at: null, message: '' },
+
+  // monday board → deal sync: 'idle' | 'syncing' | 'ok' | 'error', plus the last summary
+  mondaySync: { state: 'idle', summary: null, message: '', at: null },
+
+  // Who the signed-in monday person is on the board: { email, name, is_exec, names }; null until known.
+  mondayMe: null,
+  namePickerOpen: false,
+
+  loadMondayMe: async () => {
+    try {
+      const me = await mondayService.me()
+      set({ mondayMe: me, namePickerOpen: !me.name })
+      return me
+    } catch {
+      return null
+    }
+  },
+
+  rememberMondayMe: async (name) => {
+    const me = await mondayService.rememberMe(name)
+    set({ mondayMe: me, namePickerOpen: false })
+    return me
+  },
+
+  openNamePicker: () => set({ namePickerOpen: true }),
+  closeNamePicker: () => set({ namePickerOpen: false }),
+
+  runMondaySync: async () => {
+    if (get().mondaySync.state === 'syncing') return
+    set((s) => ({ mondaySync: { ...s.mondaySync, state: 'syncing', message: '' } }))
+    try {
+      const summary = await mondayService.sync()
+      set({ mondaySync: { state: 'ok', summary, message: '', at: new Date().toISOString() } })
+      await get().loadDeals()
+    } catch (error) {
+      set((s) => ({ mondaySync: { ...s.mondaySync, state: 'error', message: error.message } }))
+    }
+  },
 
   /** First load, once per store — a store re-created by hot reload loads again. */
   ensureLoaded: () => {

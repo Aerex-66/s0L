@@ -1,5 +1,7 @@
 import { memo, useMemo } from 'react'
 import PptSlideView from './PptSlideView'
+import { DeckLockContext } from './deckLock'
+import { isEditable, ownerOf } from '../../shared/constants/fieldIndex'
 import { getSlideShapes, getRawSlideShapes, getSlideBackground } from './slideShapeIndex'
 import TimelineBar, { timelinesToLanes } from '../../shared/ui/TimelineBar'
 import ScopeLeversView from './ScopeLeversView'
@@ -44,28 +46,17 @@ const SlideRenderer = memo(function SlideRenderer({
   viewMode = 'template',
   deal,
 }) {
-  if (!slideType) {
-    return <div className="ppt-view ppt-view-empty-inner">No slide type configured</div>
-  }
-
   const isRaw = viewMode === 'original'
-  const shapes = isRaw
-    ? getRawSlideShapes(slideType.id)
-    : getSlideShapes(slideType.id, slideType.title)
-  const bg = getSlideBackground(slideType.id)
-
-  // Original mode is a read-only snapshot — no deal data overlays, no editing,
-  // no template-driven layout overrides. Pure frozen reference view.
-  const effectiveReadOnly = isRaw || readOnly
+  const slideId = slideType?.id
+  const shapes = !slideType ? null : isRaw
+    ? getRawSlideShapes(slideId)
+    : getSlideShapes(slideId, slideType.title)
 
   // Proposed timeline slide: overlay a live TimelineBar in the chart region
   const timelineLanes = useMemo(() => {
-    if (slideType.id !== 'proposed_timeline' || isRaw) return null
+    if (slideId !== 'proposed_timeline' || isRaw) return null
     return timelinesToLanes(deal?.timelines)
-  }, [slideType.id, isRaw, deal?.timelines])
-
-  // RICEFW summary from deal (populated by GSSM sync)
-  const ricefw = (!isRaw && slideType.id === 'proposed_timeline') ? deal?.gssm_ricefw : null
+  }, [slideId, isRaw, deal?.timelines])
 
   // Filter out the image shape for proposed_timeline (replaced by live bar)
   const effectiveShapes = useMemo(() => {
@@ -74,7 +65,7 @@ const SlideRenderer = memo(function SlideRenderer({
   }, [shapes, timelineLanes])
 
   // Levers of Scope slide: overlay structured scope view replacing tables
-  const isScopeSlide = slideType.id === 'scope_summary' && !isRaw
+  const isScopeSlide = slideId === 'scope_summary' && !isRaw
 
   // For scope slides, keep only non-table shapes (title, page number)
   const finalShapes = useMemo(() => {
@@ -82,7 +73,23 @@ const SlideRenderer = memo(function SlideRenderer({
     return effectiveShapes.filter(s => !s.table)
   }, [isScopeSlide, effectiveShapes])
 
+  if (!slideType) {
+    return <div className="ppt-view ppt-view-empty-inner">No slide type configured</div>
+  }
+
+  const bg = getSlideBackground(slideId)
+
+  // Original mode is a read-only snapshot — no deal data overlays, no editing,
+  // no template-driven layout overrides. Pure frozen reference view.
+  const effectiveReadOnly = isRaw || readOnly
+
+  // RICEFW summary from deal (populated by GSSM sync)
+  const ricefw = (!isRaw && slideId === 'proposed_timeline') ? deal?.gssm_ricefw : null
+
+  const isLocked = (fieldKey) => Boolean(ownerOf(fieldKey)) && !isEditable(fieldKey, deal)
+
   return (
+    <DeckLockContext.Provider value={isLocked}>
     <PptSlideView
       shapes={finalShapes}
       data={isRaw ? {} : (slideData || {})}
@@ -134,6 +141,7 @@ const SlideRenderer = memo(function SlideRenderer({
         </div>
       )}
     </PptSlideView>
+    </DeckLockContext.Provider>
   )
 })
 

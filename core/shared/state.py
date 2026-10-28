@@ -9,8 +9,17 @@ from core.shared.defaults import DEFAULT_APPROVERS, APPROVER_KEY_META
 from core.shared.migrations import migrate_store
 
 
-DATA_FILE = 'deals_data.json'
-DOCUMENTS_ROOT = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..', 'documents')
+def resolve_data_root(environ):
+    """Where deals, documents and caches live: S0L_DATA_DIR in the packaged app, else the repo root."""
+    configured = (environ.get('S0L_DATA_DIR') or '').strip()
+    if configured:
+        return os.path.abspath(configured)
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+
+DATA_ROOT = resolve_data_root(os.environ)
+DATA_FILE = os.path.join(DATA_ROOT, 'deals_data.json')
+DOCUMENTS_ROOT = os.path.join(DATA_ROOT, 'documents')
 _data_lock = threading.Lock()
 _migrated = False
 
@@ -87,6 +96,7 @@ def _backup_unlocked():
 def _save_data_unlocked(data):
     """Write to disk without acquiring the lock (caller must hold it)."""
     dir_name = os.path.dirname(os.path.abspath(DATA_FILE))
+    os.makedirs(dir_name, exist_ok=True)
     fd, temp_path = tempfile.mkstemp(suffix='.json', dir=dir_name)
     try:
         with os.fdopen(fd, 'w') as tmp:

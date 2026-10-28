@@ -68,13 +68,23 @@ export function readPath(deal, key) {
   return path.split('.').reduce((obj, part) => (obj == null ? undefined : obj[part]), deal)
 }
 
-/** A deal is linked to GSSM once a workbook is recorded or GSSM has synced to it. */
-export const isGssmLinked = (deal) => Boolean(deal?.gssm_workbook_id || deal?.gssm_synced_at)
+/** Whether a deal is linked to the source that owns a field (mirrors is_linked in field_index.py). */
+export function isLinked(deal, owner) {
+  if (owner === 'gssm') return Boolean(deal?.gssm_workbook_id || deal?.gssm_synced_at)
+  if (owner === 'monday') return Boolean(deal?.monday_item_id)
+  return false
+}
 
-/** Whether s0L screens may edit a field; GSSM values are only editable before a workbook is linked, and only where the index allows. */
+/** A deal is linked to GSSM once a workbook is recorded or GSSM has synced to it. */
+export const isGssmLinked = (deal) => isLinked(deal, 'gssm')
+
+/** A deal is linked to monday once it's tied to a board row. */
+export const isMondayLinked = (deal) => isLinked(deal, 'monday')
+
+/** Whether s0L screens may edit a field; GSSM and monday values are editable only until the deal is linked to their source. */
 export function isEditable(key, deal) {
   const entry = FIELD_INDEX[key]
   if (!entry) return false
   if (entry.owner === 'deal' || entry.owner === 'isbd') return true
-  return Boolean(entry.editable_until_linked && !isGssmLinked(deal))
+  return Boolean(entry.editable_until_linked && !isLinked(deal, entry.owner))
 }

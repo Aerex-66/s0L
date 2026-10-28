@@ -31,6 +31,12 @@ function source(entry) {
   return code(entry.path)
 }
 
+function mondayColumn(block) {
+  if (!block) return '—'
+  if (block.source) return `row ${block.source === 'item_id' ? 'id' : block.source}`
+  return `${cell(block.title)} (${code(block.column_id)}${block.part ? `, ${block.part}` : ''})${block.writable ? ' · s0L writes' : ''}`
+}
+
 const sections = {}
 for (const [key, entry] of Object.entries(index.fields)) {
   (sections[entry.section] ||= []).push([key, entry])
@@ -50,10 +56,10 @@ const lines = [
 ]
 
 for (const [section, fields] of Object.entries(sections)) {
-  lines.push(`## ${section}`, '', '| Key | Label | Owner | Stored at / source | GSSM cell | iSBD labels | Old names |', '|---|---|---|---|---|---|---|')
+  lines.push(`## ${section}`, '', '| Key | Label | Owner | Stored at / source | GSSM cell | monday column | iSBD labels | Old names |', '|---|---|---|---|---|---|---|---|')
   for (const [key, entry] of fields) {
     const owner = entry.editable_until_linked ? `${entry.owner} (deal-editable until linked)` : entry.owner
-    lines.push(`| ${code(key)} | ${cell(entry.label)} | ${owner} | ${source(entry)} | ${code(entry.gssm)} | ${isbdLabels(entry.isbd)} | ${list(entry.aliases)} |`)
+    lines.push(`| ${code(key)} | ${cell(entry.label)} | ${owner} | ${source(entry)} | ${code(entry.gssm)} | ${mondayColumn(entry.monday)} | ${isbdLabels(entry.isbd)} | ${list(entry.aliases)} |`)
   }
   lines.push('')
 }

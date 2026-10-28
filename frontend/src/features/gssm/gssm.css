@@ -13,11 +13,11 @@
 .gssm-module,
 .fte-context-menu {
   /* Core palette */
-  --c-blue-60: #0f62fe;
-  --c-blue-70: #0043ce;
-  --c-blue-80: #002d9c;
-  --c-blue-10: #edf5ff;
-  --c-blue-20: #d0e2ff;
+  --c-blue-60: var(--accent);
+  --c-blue-70: color-mix(in oklab, var(--accent) 80%, var(--ink));
+  --c-blue-80: color-mix(in oklab, var(--accent) 65%, var(--ink));
+  --c-blue-10: color-mix(in srgb, var(--accent) 12%, transparent);
+  --c-blue-20: color-mix(in srgb, var(--accent) 24%, transparent);
 
   --c-gray-100: #161616;
   --c-gray-90: #262626;
@@ -31,54 +31,53 @@
   --c-gray-10: #f4f4f4;
   --c-white: #ffffff;
 
-  --c-green-50: #24a148;
-  --c-green-10: #defbe6;
-  --c-red-60: #da1e28;
-  --c-red-10: #fff1f1;
-  --c-yellow-30: #f1c21b;
-  --c-yellow-10: #fcf4d6;
+  --c-green-50: var(--status-success);
+  --c-green-10: var(--status-success-bg);
+  --c-red-60: var(--status-error);
+  --c-red-10: var(--status-error-bg);
+  --c-yellow-30: var(--status-warning);
+  --c-yellow-10: var(--status-warning-bg);
 
-  /* Semantic tokens */
-  --text-primary: var(--c-gray-100);
-  --text-secondary: var(--c-gray-60);
-  --text-placeholder: var(--c-gray-40);
-  --text-on-dark: var(--c-white);
-  --text-on-color: var(--c-white);
+  /* Semantic tokens — bridged to the s0L theme (s0L-only; the standalone keeps Carbon).
+     --text-primary/--text-secondary and shadows are inherited from the app, not redeclared. */
+  --text-placeholder: var(--text-tertiary);
+  --text-on-dark: #ffffff;
+  --text-on-color: var(--on-accent);
 
-  --bg-page: var(--c-gray-10);
-  --bg-surface: var(--c-white);
-  --bg-hover: rgba(0, 0, 0, 0.04);
-  --bg-selected: var(--c-blue-10);
-  --bg-header: var(--c-gray-100);
+  --bg-page: var(--control-fill);
+  --bg-surface: var(--bg-primary);
+  --bg-hover: var(--hover-wash);
+  --bg-selected: color-mix(in srgb, var(--accent) 14%, transparent);
+  --bg-header: var(--bg-dark);
 
-  --border-subtle: var(--c-gray-20);
-  --border-strong: var(--c-gray-30);
-  --border-focus: var(--c-blue-60);
+  --border-subtle: var(--border-color);
+  --border-strong: color-mix(in srgb, var(--ink) 18%, transparent);
+  --border-focus: var(--accent);
 
-  --interactive: var(--c-blue-60);
-  --interactive-hover: var(--c-blue-70);
+  --interactive: var(--accent);
+  --interactive-hover: var(--accent-strong);
 
   /* Themeable surfaces */
-  --topbar-bg: var(--c-gray-100);
-  --topbar-accent: var(--c-blue-60);
-  --tab-active-border: var(--c-blue-60);
-  --staffing-header-bg: #1e293b;
+  --topbar-bg: var(--bg-dark);
+  --topbar-accent: var(--accent);
+  --tab-active-border: var(--accent);
+  --staffing-header-bg: var(--bg-dark-secondary);
 
   /* Team accordion gradients */
-  --team-grad-from: rgba(230, 236, 245, 0.95);
-  --team-grad-mid1: rgba(218, 228, 242, 0.9);
-  --team-grad-mid2: rgba(210, 222, 240, 0.88);
-  --team-grad-to: rgba(224, 232, 244, 0.95);
-  --team-grad-hover-from: rgba(218, 228, 242, 0.98);
-  --team-grad-hover-mid1: rgba(204, 218, 238, 0.95);
-  --team-grad-hover-mid2: rgba(196, 212, 236, 0.93);
-  --team-grad-hover-to: rgba(214, 226, 242, 0.98);
-  --team-border-top: rgba(203, 213, 225, 0.4);
-  --team-inset-glow: rgba(255, 255, 255, 0.5);
+  --team-grad-from: color-mix(in srgb, var(--accent) 7%, transparent);
+  --team-grad-mid1: color-mix(in srgb, var(--accent) 9%, transparent);
+  --team-grad-mid2: color-mix(in srgb, var(--accent) 10%, transparent);
+  --team-grad-to: color-mix(in srgb, var(--accent) 7%, transparent);
+  --team-grad-hover-from: color-mix(in srgb, var(--accent) 11%, transparent);
+  --team-grad-hover-mid1: color-mix(in srgb, var(--accent) 13%, transparent);
+  --team-grad-hover-mid2: color-mix(in srgb, var(--accent) 14%, transparent);
+  --team-grad-hover-to: color-mix(in srgb, var(--accent) 11%, transparent);
+  --team-border-top: var(--border-color);
+  --team-inset-glow: var(--specular-edge);
 
-  --support-success: var(--c-green-50);
-  --support-error: var(--c-red-60);
-  --support-warning: var(--c-yellow-30);
+  --support-success: var(--status-success);
+  --support-error: var(--status-error);
+  --support-warning: var(--status-warning);
 
   /* Spacing */
   --sp-01: 0.125rem;
@@ -92,13 +91,10 @@
   --sp-09: 3rem;
 
   /* Typography */
-  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: var(--font-family-sans);
   --font-mono: var(--font-sans);
 
-  /* Elevation */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 4px 14px rgba(0, 0, 0, 0.10);
+  /* Elevation — inherited from the app theme (--shadow-sm/md/lg) */
 
   /* Motion */
   --duration-fast: 110ms;
@@ -117,10 +113,7 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  background-color: #e8ebf0;
-  background-image:
-    linear-gradient(135deg, #e0e4eb 0%, #dce4f0 100%);
-  background-attachment: fixed;
+  background: transparent;
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-size: var(--type-body-lg);
@@ -186,7 +179,7 @@
 }
 
 .gssm-topbar-wordmark {
-  font-family: 'IBM Plex Mono', var(--font-sans);
+  font-family: var(--font-family-mono);
   font-weight: 700;
   font-size: var(--type-lg);
   letter-spacing: 0.25em;
@@ -198,13 +191,11 @@
 .gssm-topbar-opp {
   font-size: var(--type-2xs);
   font-weight: 600;
-  font-family: var(--font-sans);
+  font-family: var(--font-family-mono);
   color: var(--c-white);
   padding: 4px 10px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
   /* Raised glass */
-  background: linear-gradient(135deg, rgba(15,98,214,0.55) 0%, rgba(15,98,214,0.3) 100%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 55%, transparent) 0%, color-mix(in srgb, var(--accent) 30%, transparent) 100%);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.18);
@@ -268,7 +259,7 @@
   font-family: var(--font-sans);
   font-weight: 600;
   line-height: 1.2;
-  color: #ff4d4f;
+  color: var(--status-error);
   display: inline-flex;
   align-items: center;
   transition: opacity 150ms ease;
@@ -293,11 +284,11 @@
   background: rgba(241, 194, 27, 0.14);
 }
 .gssm-sync-chip--ok {
-  color: #24a148;
+  color: var(--status-success);
   background: rgba(36, 161, 72, 0.12);
 }
 .gssm-sync-chip--error {
-  color: #ff4d4f;
+  color: var(--status-error);
   background: rgba(255, 77, 79, 0.12);
 }
 
@@ -346,7 +337,7 @@
 .gssm-div {
   width: 1px;
   height: 36px; /* Larger divider spanning the vertical gap */
-  background: rgba(255, 255, 255, 0.15); /* Solid visible white-gray flat line */
+  background: rgba(255, 255, 255, 0.15); /* Solid visible var(--bg-primary)-gray flat line */
   flex-shrink: 0;
 }
 
@@ -398,7 +389,7 @@
 .gssm-btn--accent {
   color: var(--c-white);
   /* Raised glass */
-  background: linear-gradient(135deg, rgba(15,98,214,0.6) 0%, rgba(15,98,214,0.32) 100%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 60%, transparent) 0%, color-mix(in srgb, var(--accent) 32%, transparent) 100%);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.2);
@@ -411,7 +402,7 @@
   transition: all 150ms ease;
 }
 .gssm-btn--accent:hover {
-  background: linear-gradient(135deg, rgba(15,98,214,0.75) 0%, rgba(15,98,214,0.45) 100%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 75%, transparent) 0%, color-mix(in srgb, var(--accent) 45%, transparent) 100%);
   border-color: rgba(255,255,255,0.32);
   box-shadow:
     0 4px 14px rgba(0,0,0,0.45),
@@ -420,7 +411,7 @@
     inset 0 -1px 0 rgba(0,0,0,0.15);
 }
 .gssm-btn--accent:active {
-  background: linear-gradient(135deg, rgba(15,98,214,0.45) 0%, rgba(15,98,214,0.55) 100%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 45%, transparent) 0%, color-mix(in srgb, var(--accent) 55%, transparent) 100%);
   box-shadow:
     0 1px 3px rgba(0,0,0,0.5),
     inset 0 2px 4px rgba(0,0,0,0.3);
@@ -644,7 +635,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--sp-05);
-  background: rgba(244, 244, 244, 0.9);
+  background: var(--control-fill);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
@@ -849,6 +840,7 @@
 .gssm-catalog-opp {
   font-size: var(--type-xs);
   font-weight: 600;
+  font-family: var(--font-family-mono);
   color: var(--interactive);
 }
 
@@ -857,13 +849,13 @@
   display: flex;
   align-items: stretch;
   gap: 0;
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--bg-primary);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-bottom: 2px solid rgba(255, 255, 255, 0.3);
   margin-bottom: var(--sp-05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 var(--specular-edge);
 }
 
 .gssm-tabs-scroll {
@@ -1134,13 +1126,13 @@
 /* â•â•â• Grid panel wrapper (for all AG Grid views) â•â•â• */
 .gssm-grid-panel {
   border: 1px solid rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--bg-primary);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
   height: calc(100vh - 220px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 var(--specular-edge);
   overflow: hidden;
 }
 
@@ -1157,7 +1149,7 @@
   height: 100%;
   border: none;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--glass-bg-light);
 }
 
 .gssm-grid-panel .gssm-grid-shell {
@@ -1214,7 +1206,7 @@
 
 .ag-theme-alpine .ag-cell {
   line-height: 30px;
-  border-right: 1px solid rgba(0, 0, 0, 0.04);
+  border-right: 1px solid var(--border-color);
 }
 
 .ag-theme-alpine .ag-cell-focus {
@@ -1277,7 +1269,7 @@
 
 /* Editable cell tint (applies where CellInput is used inside tables) */
 .td-editable {
-  background: rgba(222, 251, 230, 0.18);
+  background: var(--status-success-bg);
 }
 
 .td-editable .inline-cell-input {
@@ -1286,8 +1278,8 @@
 
 /* Complexity-level coloring for Effort Matrix */
 .td-complexity-high { background: rgba(255, 241, 241, 0.6); color: var(--c-red-60); font-weight: 600; }
-.td-complexity-med { background: rgba(252, 244, 214, 0.6); color: #684e00; font-weight: 500; }
-.td-complexity-low { background: rgba(222, 251, 230, 0.6); color: #0e6027; font-weight: 500; }
+.td-complexity-med { background: rgba(252, 244, 214, 0.6); color: var(--status-warning); font-weight: 500; }
+.td-complexity-low { background: rgba(222, 251, 230, 0.6); color: var(--status-success); font-weight: 500; }
 
 /* Inflation header-row read-only */
 .inflation-header-row td { font-weight: 600; background: var(--c-gray-10); }
@@ -1309,7 +1301,7 @@
 
 /* Rates editable highlight */
 .rates-table td .inline-cell-input {
-  background: rgba(222, 251, 230, 0.2);
+  background: var(--status-success-bg);
 }
 
 /* PMP roster role-type styling */
@@ -1321,14 +1313,14 @@
 /* â•â•â• Sheet form panels (shared â€” glass) â•â•â• */
 .sheet-form-panel {
   border: 1px solid rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--bg-primary);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   padding: var(--sp-05) var(--sp-06);
   display: flex;
   flex-direction: column;
   gap: var(--sp-05);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 var(--specular-edge);
 }
 
 .sheet-form-header h3 {
@@ -1408,8 +1400,8 @@
 
 .stat-badge--green {
   background: var(--c-green-10);
-  color: #0e6027;
-  border: 1px solid #a7f0ba;
+  color: var(--status-success);
+  border: 1px solid color-mix(in srgb, var(--status-success) 40%, transparent);
 }
 
 .stat-badge--gray {
@@ -1420,13 +1412,13 @@
 
 .stat-badge--yellow {
   background: var(--c-yellow-10);
-  color: #684e00;
+  color: var(--status-warning);
   border: 1px solid #f1c21b;
 }
 
 .stat-badge--red {
-  background: #fff1f1;
-  color: #a2191f;
+  background: var(--status-error-bg);
+  color: var(--status-error);
   border: 1px solid #fa4d56;
 }
 
@@ -1488,8 +1480,8 @@
 }
 .field-chip.editable {
   background: var(--c-green-10);
-  color: #0e6027;
-  border: 1px solid #a7f0ba;
+  color: var(--status-success);
+  border: 1px solid color-mix(in srgb, var(--status-success) 40%, transparent);
 }
 .field-chip.readonly {
   background: var(--c-blue-10);
@@ -1638,7 +1630,7 @@
 }
 .sheet-search-input:focus {
   border-color: var(--c-blue-50);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 .sheet-panel-badge {
@@ -1652,11 +1644,11 @@
 }
 .sheet-panel-badge--ref {
   background: rgba(100, 116, 139, 0.15);
-  color: #64748b;
+  color: var(--text-tertiary);
 }
 .sheet-panel-badge--summary {
-  background: rgba(59, 130, 246, 0.12);
-  color: #3b82f6;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
 }
 
 .td-formula {
@@ -1714,7 +1706,7 @@
 /* â•â•â• FS Estimation calculator â•â•â• */
 .sheet-panel-badge--calculator {
   background: rgba(245, 158, 11, 0.12);
-  color: #d97706;
+  color: var(--status-warning);
 }
 .fs-top-grid {
   display: grid;
@@ -1801,7 +1793,7 @@
 .fs-summary-item--primary .fs-summary-value {
   font-size: var(--type-3xl);
   font-weight: 700;
-  color: #16a34a;
+  color: var(--status-success);
 }
 .fs-summary-value {
   display: block;
@@ -1852,7 +1844,7 @@
 .fs-bar-track {
   flex: 1;
   height: 20px;
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--control-fill);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -1925,7 +1917,7 @@
   font-size: var(--type-body-lg);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: #16a34a;
+  color: var(--status-success);
 }
 .fs-year-types {
   display: flex;
@@ -1946,7 +1938,7 @@
 .fs-year-bar-track {
   flex: 1;
   height: 12px;
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--control-fill);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -2009,10 +2001,10 @@
   border-radius: 10px;
   line-height: 1.4;
 }
-.metric-good { background: #dcfce7; color: #166534; }
+.metric-good { background: var(--status-success-bg); color: #166534; }
 .metric-warn { background: #fef9c3; color: #854d0e; }
-.metric-bad { background: #fee2e2; color: #991b1b; }
-.metric-hard { background: #dbeafe; color: #1e40af; }
+.metric-bad { background: var(--status-error-bg); color: #991b1b; }
+.metric-hard { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
 .metric-soft { background: transparent; color: var(--text-tertiary); border: 1px solid var(--border-subtle); }
 
 /* â•â•â• Inline cell inputs (inside tables) â•â•â• */
@@ -2134,7 +2126,7 @@
 /* â•â•â• Staffing â•â•â• */
 .staffing-panel {
   border: 1px solid rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--bg-primary);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   padding: 0;
@@ -2142,7 +2134,7 @@
   flex-direction: column;
   gap: 0;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 var(--specular-edge);
 }
 
 .staffing-panel .sheet-panel-header {
@@ -2198,7 +2190,6 @@
   transition: border-color 0.1s;
 }
 .staffing-header-select:focus { border-color: var(--interactive); }
-.staffing-header-select option { background: var(--bg-surface); color: var(--text-primary); }
 
 .staffing-header-clear {
   height: 26px;
@@ -2258,10 +2249,10 @@
   align-items: center;
   gap: 16px;
   padding: 4px 16px;
-  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  border-top: 1px solid var(--border-color);
   background: rgba(249, 250, 251, 0.7);
   font-size: var(--type-2xs);
-  color: #9ca3af;
+  color: var(--text-tertiary);
   letter-spacing: 0.02em;
 }
 
@@ -2275,8 +2266,8 @@
 /* Filters + Toolbar area (kept for grid form fallback) */
 .staffing-form-grid {
   padding: 8px 16px;
-  border-bottom: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--control-fill);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 8px;
@@ -2284,7 +2275,7 @@
 
 .staffing-form-grid label span {
   font-weight: 500;
-  color: #6b7280;
+  color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-size: var(--type-tiny);
@@ -2296,9 +2287,9 @@
 .staffing-form-grid select {
   height: 28px;
   padding: 0 8px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  background: #fff;
+  background: var(--bg-primary);
   color: var(--text-primary);
   font-size: var(--type-sm);
   transition: border-color 0.1s;
@@ -2306,7 +2297,7 @@
 
 .staffing-form-grid input:focus,
 .staffing-form-grid select:focus {
-  border-color: #3b82f6;
+  border-color: var(--accent);
   box-shadow: inset 0 0 0 1px #3b82f6;
   outline: none;
 }
@@ -2314,13 +2305,13 @@
 .staffing-filter-bar {
   margin: 0;
   padding: 4px 16px;
-  border-bottom: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--control-fill);
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: var(--type-xs);
-  color: #6b7280;
+  color: var(--text-tertiary);
 }
 
 /* Section tabs â€” far right of header */
@@ -2358,11 +2349,11 @@
 /* Table shell */
 .staffing-table-wrap {
   max-height: 68vh;
-  background: #fff;
+  background: var(--bg-primary);
 }
 
 .staffing-table-shell {
-  border-top: 1px solid rgba(148, 163, 184, 0.25);
+  border-top: 1px solid var(--border-color);
   box-shadow: none;
   border-radius: 0;
   overflow: auto;
@@ -2372,7 +2363,7 @@ table.staffing-table th,
 table.staffing-table td { white-space: nowrap; }
 
 table.staffing-table {
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--bg-primary);
   border-collapse: collapse;
   border-spacing: 0;
   width: 100%;
@@ -2380,20 +2371,20 @@ table.staffing-table {
 
 table.staffing-table th,
 table.staffing-table td {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  border-bottom: 1px solid var(--border-color);
 }
 
 table.staffing-table tbody td {
   vertical-align: middle;
   padding: 0 6px;
   height: 26px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-primary);
   font-size: var(--type-xs);
   font-weight: 500;
 }
 
 table.staffing-table tbody tr:nth-child(even):not(.staffing-team-header):not(.staffing-team-add-row) td {
-  background: rgba(248, 250, 252, 0.65);
+  background: var(--control-fill);
 }
 
 table.staffing-table tbody tr:not(.staffing-team-header):not(.staffing-team-add-row):hover td {
@@ -2433,13 +2424,13 @@ table.staffing-table thead th.th-roster.staffing-col-band {
 }
 
 .cell-readonly {
-  color: #9ca3af;
+  color: var(--text-tertiary);
 }
 
 /* â”€â”€ Output columns (Company â€¦ Fees) â”€â”€ */
 /* Visually separated zone: left border on first, right border on last */
 .staffing-output-cell {
-  color: #1e40af;
+  color: var(--accent);
   font-weight: 500;
   font-family: var(--font-sans);
   font-variant-numeric: tabular-nums;
@@ -2459,14 +2450,14 @@ table.staffing-table tbody tr:not(.staffing-team-header):hover td.staffing-outpu
 }
 .staffing-out-company {
   min-width: 48px; max-width: 64px;
-  border-left: 2px solid rgba(147, 197, 253, 0.5) !important;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 35%, transparent) !important;
 }
 .staffing-out-labor-cost { min-width: 56px; max-width: 72px; }
 .staffing-out-man-days { min-width: 56px; max-width: 72px; }
 .staffing-out-hours { min-width: 56px; max-width: 72px; }
 .staffing-out-fees {
   min-width: 78px; max-width: 96px;
-  border-right: 2px solid rgba(147, 197, 253, 0.5) !important;
+  border-right: 2px solid color-mix(in srgb, var(--accent) 35%, transparent) !important;
 }
 
 /* Header row */
@@ -2479,24 +2470,24 @@ table.staffing-table thead th {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 8px 6px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+  border-bottom: 1px solid var(--border-color);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 table.staffing-table thead th.th-roster {
-  background: rgba(241, 245, 249, 0.85);
+  background: var(--control-fill);
   color: var(--text-secondary);
 }
 table.staffing-table thead th.th-output {
   background: rgba(238, 243, 255, 0.85);
-  color: #1e40af;
+  color: var(--accent);
   text-align: center;
 }
 table.staffing-table thead th.th-output.staffing-out-company {
-  border-left: 2px solid rgba(147, 197, 253, 0.5);
+  border-left: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
 }
 table.staffing-table thead th.th-output.staffing-out-fees {
-  border-right: 2px solid rgba(147, 197, 253, 0.5);
+  border-right: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 /* Phase lane rows above FTE headers */
@@ -2554,7 +2545,7 @@ table.staffing-table thead th.th-phase-gap {
 
 table.staffing-table thead th.th-fte {
   background: rgba(240, 253, 244, 0.85);
-  color: #15803d;
+  color: var(--status-success);
   padding: 8px 2px;
   min-width: 56px;
   max-width: 68px;
@@ -2576,7 +2567,7 @@ table.staffing-table td.td-fte {
 }
 
 table.staffing-table td.td-fte:hover {
-  background: rgba(220, 252, 231, 0.5);
+  background: var(--status-success-bg);
 }
 
 table.staffing-table td.td-fte .inline-cell-input {
@@ -2613,24 +2604,24 @@ table.staffing-table td .cell-combo-wrap .inline-cell-input:hover {
 table.staffing-table td .inline-cell-input:focus,
 table.staffing-table td .inline-cell-select:focus,
 table.staffing-table td .cell-combo-wrap .inline-cell-input:focus {
-  background: #fff;
-  border-color: #3b82f6;
+  background: var(--bg-primary);
+  border-color: var(--accent);
   box-shadow: inset 0 0 0 1px #3b82f6;
 }
 
 table.staffing-table td.td-fte .inline-cell-input:hover {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
+  background: var(--status-success-bg);
+  border-color: color-mix(in srgb, var(--status-success) 40%, transparent);
 }
 
 table.staffing-table td.td-fte .inline-cell-input:focus {
-  background: #fff;
+  background: var(--bg-primary);
   border-color: #16a34a;
   box-shadow: inset 0 0 0 1px #16a34a;
 }
 
 table.staffing-table td.cell-readonly {
-  color: #9ca3af;
+  color: var(--text-tertiary);
 }
 
 /* Delete button â€” right edge of row, on hover */
@@ -2650,8 +2641,8 @@ table.staffing-table td.cell-readonly {
   height: 18px;
   border: 1px solid #fca5a5;
   border-radius: var(--radius-full);
-  background: #fff;
-  color: #dc2626;
+  background: var(--bg-primary);
+  color: var(--status-error);
   font-size: var(--type-xs);
   font-weight: 500;
   cursor: pointer;
@@ -2674,20 +2665,20 @@ table.staffing-table tbody tr:hover .staffing-remove-btn {
   display: flex;
   justify-content: flex-start;
   padding: 8px 16px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-color);
 }
 
 /* Per-team inline add button */
 .staffing-team-add-row td {
   background: transparent !important;
-  border-bottom: 1px solid #e5e7eb !important;
+  border-bottom: 1px solid var(--border-color) !important;
   padding: 3px 10px !important;
   height: 26px !important;
 }
 .staffing-team-add-btn {
-  border: 1px dashed #d1d5db;
+  border: 1px dashed var(--border-color);
   background: transparent;
-  color: #9ca3af;
+  color: var(--text-tertiary);
   font-size: var(--type-2xs);
   font-weight: 500;
   cursor: pointer;
@@ -2697,9 +2688,9 @@ table.staffing-table tbody tr:hover .staffing-remove-btn {
   transition: all 0.12s;
 }
 .staffing-team-add-btn:hover {
-  color: #3b82f6;
+  color: var(--accent);
   border-color: #93c5fd;
-  background: #eff6ff;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 .staffing-pagination {
@@ -2708,7 +2699,7 @@ table.staffing-table tbody tr:hover .staffing-remove-btn {
   justify-content: flex-end;
   gap: var(--sp-03);
   font-size: var(--type-body);
-  color: #6b7280;
+  color: var(--text-tertiary);
 }
 
 /* â•â•â• Staffing â€” Drag handle column â•â•â• */
@@ -2717,7 +2708,7 @@ table.staffing-table thead th.th-drag-handle {
   min-width: 28px;
   max-width: 28px;
   padding: 0;
-  background: rgba(241, 245, 249, 0.85);
+  background: var(--control-fill);
   text-align: center;
 }
 table.staffing-table td.td-drag-handle {
@@ -2734,11 +2725,11 @@ table.staffing-table td.td-drag-handle {
   overflow: hidden;
 }
 table.staffing-table td.td-drag-handle:hover {
-  color: #6b7280;
+  color: var(--text-tertiary);
 }
 table.staffing-table td.td-drag-handle:active {
   cursor: grabbing;
-  color: #3b82f6;
+  color: var(--accent);
 }
 .drag-grip {
   display: flex;
@@ -2749,7 +2740,7 @@ table.staffing-table td.td-drag-handle:active {
 
 /* Drag-over drop indicator */
 table.staffing-table tbody tr.staffing-drag-over td {
-  border-top: 2px solid rgba(59, 130, 246, 0.6);
+  border-top: 2px solid color-mix(in srgb, var(--accent) 60%, transparent);
 }
 
 /* â•â•â• Staffing â€” Team section headers â•â•â• */
@@ -2764,7 +2755,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
 }
 .staffing-team-header td {
   background: transparent !important;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.25) !important;
+  border-bottom: 1px solid var(--border-color) !important;
   border-top: 1px solid var(--team-border-top);
   box-shadow: inset 0 1px 0 var(--team-inset-glow);
   padding: 0 8px !important;
@@ -2776,7 +2767,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   color: var(--text-primary);
 }
 .staffing-team-header:hover td {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: inset 0 1px 0 var(--specular-edge), 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 .staffing-team-header[draggable] {
   cursor: grab;
@@ -2836,17 +2827,17 @@ table.staffing-table tbody tr.staffing-drag-over td {
   text-transform: none !important;
 }
 .staffing-team-header td.team-total-output {
-  color: #1e40af !important;
+  color: var(--accent) !important;
   text-align: center !important;
 }
 .staffing-team-header td.team-total-output.staffing-out-company {
-  border-left: 2px solid rgba(147, 197, 253, 0.5) !important;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 35%, transparent) !important;
 }
 .staffing-team-header td.team-header-band {
   border-left: 2px solid rgba(216, 180, 254, 0.45) !important;
 }
 .staffing-team-header td.team-total-output.staffing-out-fees {
-  border-right: 2px solid rgba(147, 197, 253, 0.5) !important;
+  border-right: 2px solid color-mix(in srgb, var(--accent) 35%, transparent) !important;
 }
 .staffing-team-header td.team-total-company {
   font-family: inherit !important;
@@ -2858,7 +2849,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   max-width: 64px;
 }
 .staffing-team-header td.team-total-fte {
-  color: #15803d !important;
+  color: var(--status-success) !important;
   border-left: 1px solid rgba(220, 252, 231, 0.4);
   text-align: center !important;
 }
@@ -2867,8 +2858,8 @@ table.staffing-table tbody tr.staffing-drag-over td {
 .fte-context-menu {
   position: fixed;
   z-index: 9999;
-  background: #fff;
-  border: 1px solid #d1d5db;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   padding: 4px 0;
@@ -2887,16 +2878,16 @@ table.staffing-table tbody tr.staffing-drag-over td {
   text-align: left;
   padding: 6px 14px;
   font-size: var(--type-sm);
-  color: #1e293b;
+  color: var(--text-primary);
   cursor: pointer;
   transition: background 0.08s;
 }
 .fte-context-menu button:hover {
-  background: #f3f4f6;
+  background: var(--control-fill);
 }
 .fte-context-divider {
   height: 1px;
-  background: #e5e7eb;
+  background: var(--control-fill);
   margin: 4px 0;
 }
 
@@ -2925,7 +2916,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
 .staffing-warning-text strong {
   display: block;
   margin-bottom: 2px;
-  color: #92400e;
+  color: var(--status-warning);
   font-size: var(--type-sm);
   font-weight: 500;
   text-transform: uppercase;
@@ -2937,7 +2928,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
 .staffing-warning-dismiss {
   border: none;
   background: transparent;
-  color: #92400e;
+  color: var(--status-warning);
   cursor: pointer;
   font-size: var(--type-body-lg);
   padding: 0 4px;
@@ -2945,7 +2936,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   flex-shrink: 0;
 }
 .staffing-warning-dismiss:hover {
-  color: #dc2626;
+  color: var(--status-error);
 }
 
 /* â•â•â• PTI â•â•â• */
@@ -3129,12 +3120,12 @@ table.staffing-table tbody tr.staffing-drag-over td {
 
 .phase-btn.phase-btn--clear {
   border-color: #f59e0b;
-  background: #fff7ed;
-  color: #9a3412;
+  background: var(--status-warning-bg);
+  color: var(--status-warning);
 }
 .phase-btn.phase-btn--clear:hover:not(:disabled) {
   border-color: #ea580c;
-  background: #ffedd5;
+  background: var(--status-warning-bg);
 }
 .phase-btn.phase-btn--clear.active {
   border-color: #ea580c;
@@ -3629,7 +3620,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   width: 1100px;
   max-width: 95vw;
   height: 80vh;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--bg-primary);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
   backdrop-filter: blur(20px) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.45);
@@ -3646,8 +3637,8 @@ table.staffing-table tbody tr.staffing-drag-over td {
   align-items: center;
   gap: var(--sp-04);
   padding: var(--sp-04) var(--sp-05);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  background: rgba(244, 244, 244, 0.55);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--control-fill);
   flex-shrink: 0;
 }
 
@@ -3692,11 +3683,11 @@ table.staffing-table tbody tr.staffing-drag-over td {
 .pm-sidebar {
   width: 190px;
   min-width: 190px;
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  background: rgba(244, 244, 244, 0.4);
+  background: var(--control-fill);
 }
 
 .pm-section-label {
@@ -3707,7 +3698,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   color: var(--text-secondary);
   padding: var(--sp-03) var(--sp-04) var(--sp-02);
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: var(--sp-02);
 }
 
@@ -3769,7 +3760,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  border-right: 1px solid var(--border-color);
 }
 
 .pm-pivot-list {
@@ -3783,7 +3774,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   width: 100%;
   padding: var(--sp-03) var(--sp-04);
   border: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid var(--border-color);
   background: transparent;
   color: var(--text-primary);
   text-align: left;
@@ -3792,10 +3783,10 @@ table.staffing-table tbody tr.staffing-drag-over td {
   transition: background 0.1s;
 }
 .pm-pivot-btn:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--control-fill);
 }
 .pm-pivot-btn--active {
-  background: rgba(15, 98, 254, 0.08);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
   box-shadow: inset 3px 0 0 var(--c-blue-60);
 }
 
@@ -3820,9 +3811,9 @@ table.staffing-table tbody tr.staffing-drag-over td {
 
 .pm-generate-bar {
   padding: var(--sp-03) var(--sp-03);
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid var(--border-color);
   flex-shrink: 0;
-  background: rgba(244, 244, 244, 0.45);
+  background: var(--control-fill);
 }
 
 .pm-generate-btn {
@@ -3845,7 +3836,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.35);
+  background: var(--glass-bg-light);
 }
 
 .pm-result-empty {
@@ -3905,8 +3896,8 @@ table.staffing-table tbody tr.staffing-drag-over td {
   padding: var(--sp-03) var(--sp-04);
   flex-shrink: 0;
   gap: var(--sp-03);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  background: rgba(244, 244, 244, 0.45);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--control-fill);
 }
 .pm-result-actions {
   display: flex;
@@ -3922,8 +3913,8 @@ table.staffing-table tbody tr.staffing-drag-over td {
   font-size: var(--type-xs);
   color: var(--text-secondary);
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  background: rgba(244, 244, 244, 0.35);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--control-fill);
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -3954,7 +3945,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
 .pm-grid-empty-row td {
   height: 18px;
   border: none;
-  background: #fff;
+  background: var(--bg-primary);
 }
 
 /* Column group header row (Company names, "Data" label) */
@@ -3962,14 +3953,14 @@ table.staffing-table tbody tr.staffing-drag-over td {
   padding: 2px 8px;
   font-weight: 500;
   font-size: var(--type-sm);
-  color: #333;
-  background: #fff;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   border: none;
   white-space: nowrap;
 }
 .pm-grid-group-label {
   border-bottom: 1px solid #8db4e2;
-  color: #1f4e79;
+  color: var(--accent);
 }
 .pm-grid-empty-cell {
   border: none;
@@ -3982,9 +3973,9 @@ table.staffing-table tbody tr.staffing-drag-over td {
   font-size: var(--type-xs);
   text-transform: none;
   white-space: nowrap;
-  background: #dce6f1;
-  border: 1px solid #b4c6e7;
-  color: #1f4e79;
+  background: var(--control-fill);
+  border: 1px solid var(--border-color);
+  color: var(--accent);
 }
 .pm-grid-hdr-label {
   text-align: left;
@@ -3998,8 +3989,8 @@ table.staffing-table tbody tr.staffing-drag-over td {
 /* Data rows */
 .pm-grid-data-row td {
   padding: 2px 8px;
-  border: 1px solid #e2e8f0;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   white-space: nowrap;
 }
 .pm-grid-data-row:hover td {
@@ -4009,7 +4000,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
 /* Cell types */
 .pm-grid-cell-label {
   text-align: left;
-  color: #333;
+  color: var(--text-primary);
   font-weight: 400;
   max-width: 220px;
   overflow: hidden;
@@ -4018,7 +4009,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
 .pm-grid-cell-num {
   text-align: right;
   font-variant-numeric: tabular-nums;
-  color: #1a1a1a;
+  color: var(--text-primary);
 }
 
 /* Subtotal rows ("Team Total", "Company Total") */
@@ -4037,11 +4028,11 @@ table.staffing-table tbody tr.staffing-drag-over td {
 /* Grand Total row */
 .pm-grid-grand-total td {
   padding: 3px 8px;
-  border: 1px solid #b4c6e7;
+  border: 1px solid var(--border-color);
   border-top: 2px solid #4472c4;
-  background: #dce6f1;
+  background: var(--control-fill);
   font-weight: 500;
-  color: #1f4e79;
+  color: var(--accent);
   white-space: nowrap;
 }
 
@@ -4085,8 +4076,8 @@ table.staffing-table tbody tr.staffing-drag-over td {
    ═══════════════════════════════════════════════════════════ */
 
 .rfw-badge {
-  background: rgba(99, 102, 241, 0.12);
-  color: #6366f1;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
 }
 
 /* ── Dashboard: 2-column top grid ── */
@@ -4135,7 +4126,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   padding: 3px 8px;
   font-size: var(--type-xs);
   color: var(--text-primary);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid var(--border-color);
 }
 .rfw-st-td--name {
   font-weight: 500;
@@ -4232,10 +4223,10 @@ table.staffing-table tbody tr.staffing-drag-over td {
   line-height: 1.2;
 }
 .rfw-summary-value--hours {
-  color: #16a34a;
+  color: var(--status-success);
 }
 .rfw-summary-value--avg {
-  color: #6366f1;
+  color: var(--accent);
 }
 .rfw-summary-label {
   font-size: var(--type-2xs);
@@ -4279,7 +4270,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
 .rfw-bar-track {
   flex: 1;
   height: 18px;
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--control-fill);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -4347,7 +4338,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
    ═══════════════════════════════════════════════════ */
 .rfw-section-card {
   border-left: 3px solid var(--rfw-card-accent, #9ca3af);
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--bg-primary);
   border-radius: 0 6px 6px 0;
   margin-bottom: 2px;
   transition: box-shadow 0.12s ease;
@@ -4373,7 +4364,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   transition: background 0.1s ease;
 }
 .rfw-section-header:hover {
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--control-fill);
 }
 .rfw-section-type-badge {
   flex-shrink: 0;
@@ -4412,7 +4403,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   border-radius: 10px;
 }
 .rfw-section-stat--hours {
-  color: #16a34a;
+  color: var(--status-success);
 }
 
 .rfw-card-chevron {
@@ -4429,7 +4420,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
 /* ── Section body with complexity table ── */
 .rfw-section-body {
   padding: 4px 14px 14px;
-  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  border-top: 1px solid var(--border-color);
   animation: rfw-card-open 0.15s ease;
 }
 @keyframes rfw-card-open {
@@ -4458,7 +4449,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   width: 100px;
 }
 .rfw-cx-th--year {
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--control-fill);
   border-left: 1px solid var(--border-subtle);
 }
 .rfw-cx-th--sub {
@@ -4474,7 +4465,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   text-align: center;
   font-variant-numeric: tabular-nums;
   font-size: var(--type-xs);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid var(--border-color);
 }
 .rfw-cx-td--cxlabel {
   text-align: left;
@@ -4516,7 +4507,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   color: var(--text-primary);
 }
 .rfw-cx-count-row {
-  background: rgba(99, 102, 241, 0.04);
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
 }
 .rfw-cx-count-row .rfw-cx-td {
   border-bottom: 2px solid var(--border-subtle);
@@ -4524,7 +4515,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   padding-bottom: 5px;
 }
 .rfw-cx-row .rfw-cx-td {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid var(--border-color);
 }
 .rfw-cx-total-row .rfw-cx-td {
   border-top: 2px solid var(--border-subtle);
@@ -4551,7 +4542,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   color: var(--text-secondary);
 }
 .rfw-cx-val--hours {
-  color: #16a34a;
+  color: var(--status-success);
   font-weight: 600;
 }
 
@@ -4629,7 +4620,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
 
 /* Group header row */
 .rfw-flat-group-row {
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--control-fill);
 }
 .rfw-flat-group-td {
   padding: 5px 8px;
@@ -4654,10 +4645,10 @@ table.staffing-table tbody tr.staffing-drag-over td {
   border-left: 3px solid transparent;
 }
 .rfw-flat-row:hover {
-  background: rgba(0, 0, 0, 0.025);
+  background: var(--control-fill);
 }
 .rfw-flat-row--expanded {
-  background: rgba(99, 102, 241, 0.05);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
   border-left-color: var(--rfw-card-accent, #6b7280);
 }
 .rfw-flat-row--zero .rfw-flat-td--hrs,
@@ -4669,7 +4660,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   padding: 5px 6px;
   font-size: var(--type-xs);
   color: var(--text-primary);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--border-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4710,15 +4701,15 @@ table.staffing-table tbody tr.staffing-drag-over td {
   height: auto;
   border: 1px solid var(--border-subtle);
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-primary);
   border-bottom: 1px solid var(--border-subtle);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .rfw-flat-td--edit .inline-cell-input:focus {
   border-color: var(--interactive);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15), inset 0 1px 2px rgba(0, 0, 0, 0.04);
-  background: #fff;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 15%, transparent), inset 0 1px 2px rgba(0, 0, 0, 0.04);
+  background: var(--bg-primary);
 }
 .rfw-flat-td--hrs {
   text-align: right;
@@ -4738,7 +4729,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   text-align: center;
   border: 1px solid transparent;
   border-radius: 4px;
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--control-fill);
 }
 
 /* Type badge in flat table */
@@ -4771,14 +4762,14 @@ table.staffing-table tbody tr.staffing-drag-over td {
 
 /* ── Inline complexity rows (aligned to parent table columns) ── */
 .rfw-cx-hdr-row {
-  background: rgba(99, 102, 241, 0.06);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
   border-left: 3px solid var(--interactive, #6366f1);
 }
 .rfw-cx-inline-td {
   padding: 3px 6px;
   font-size: var(--type-2xs);
   color: var(--text-tertiary);
-  border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 10%, transparent);
   white-space: nowrap;
 }
 .rfw-cx-inline-td--label {
@@ -4798,11 +4789,11 @@ table.staffing-table tbody tr.staffing-drag-over td {
 }
 
 .rfw-cx-inline-row {
-  background: rgba(99, 102, 241, 0.03);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
   border-left: 3px solid var(--rfw-card-accent, #6b7280);
 }
 .rfw-cx-inline-row:hover {
-  background: rgba(99, 102, 241, 0.06);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
 }
 .rfw-cx-inline-td--name {
   font-weight: 500;
@@ -4823,12 +4814,12 @@ table.staffing-table tbody tr.staffing-drag-over td {
   height: auto;
   border: 1px solid var(--border-subtle);
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-primary);
 }
 .rfw-cx-inline-td--edit .inline-cell-input:focus {
   border-color: var(--interactive);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
-  background: #fff;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 15%, transparent);
+  background: var(--bg-primary);
 }
 .rfw-cx-inline-pct {
   font-size: var(--type-2xs);
@@ -4844,7 +4835,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
 }
 
 .rfw-cx-inline-total {
-  background: rgba(99, 102, 241, 0.05);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
   border-left: 3px solid var(--interactive, #6366f1);
 }
 .rfw-cx-inline-td--total-label {
@@ -4866,22 +4857,22 @@ table.staffing-table tbody tr.staffing-drag-over td {
   background: rgba(255, 255, 255, 0.03);
 }
 [data-gssm-theme="midnight"] .rfw-flat-row--expanded {
-  background: rgba(99, 102, 241, 0.08);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 [data-gssm-theme="midnight"] .rfw-flat-group-row {
   background: rgba(255, 255, 255, 0.03);
 }
 [data-gssm-theme="midnight"] .rfw-cx-hdr-row {
-  background: rgba(99, 102, 241, 0.1);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
 }
 [data-gssm-theme="midnight"] .rfw-cx-inline-row {
-  background: rgba(99, 102, 241, 0.06);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
 }
 [data-gssm-theme="midnight"] .rfw-cx-inline-row:hover {
-  background: rgba(99, 102, 241, 0.1);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
 }
 [data-gssm-theme="midnight"] .rfw-cx-inline-total {
-  background: rgba(99, 102, 241, 0.08);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 [data-gssm-theme="midnight"] .rfw-cx-inline-td--edit .inline-cell-input {
   background: rgba(255, 255, 255, 0.06);
@@ -4949,7 +4940,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   background: rgba(255, 255, 255, 0.03);
 }
 [data-gssm-theme="midnight"] .rfw-cx-count-row {
-  background: rgba(99, 102, 241, 0.08);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 [data-gssm-theme="midnight"] .rfw-st-td {
   border-bottom-color: rgba(255, 255, 255, 0.04);
@@ -4983,7 +4974,7 @@ table.staffing-table tbody tr.staffing-drag-over td {
   align-items: center;
   gap: 12px;
   padding: var(--sp-02) var(--sp-06);
-  background: rgba(255, 255, 255, 0.35);
+  background: var(--glass-bg-light);
   border-top: 1px solid var(--border-subtle);
   flex-shrink: 0;
   min-height: 36px;

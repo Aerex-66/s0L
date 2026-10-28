@@ -36,11 +36,11 @@ def test_import_coerces_deal_numbers_and_reports_what_it_did_not_apply():
     deal = {'id': '1', 'client_name': 'Acme', 'price_to_win': '', 'decision_date': ''}
     skipped = apply_isbd_import(deal, {
         'price_to_win': '$5.2M', 'decision_date': '15/12/2026', 'tcv': '$9M', 'client_name': 'Other Co',
-        'swb_stage': '3',
+        'term': '3',
     })
     assert deal['price_to_win'] == '5200000'
     assert deal['decision_date'] == ''
-    assert deal['isbd_data'] == {'swb_stage': '3'}
+    assert deal['isbd_data'] == {'term': '3'}
     reasons = {item['key']: item['reason'] for item in skipped}
     assert set(reasons) == {'decision_date', 'tcv', 'client_name'}
     assert 'gssm' in reasons['tcv']

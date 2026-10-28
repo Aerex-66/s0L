@@ -12,19 +12,13 @@ def _join(names):
     return ', '.join(sorted(names))
 
 
-def is_gssm_linked(deal):
-    """Linked once a workbook is recorded or GSSM has synced (mirrors isGssmLinked in fieldIndex.js)."""
-    return bool(deal.get('gssm_workbook_id') or deal.get('gssm_synced_at'))
-
-
 def _writable(key, owners, deal):
-    entry = fi.FIELDS[key]
-    if entry['owner'] in owners:
+    if fi.FIELDS[key]['owner'] in owners:
         return True
-    return 'deal' in owners and bool(entry.get('editable_until_linked')) and not is_gssm_linked(deal)
+    return 'deal' in owners and fi.deal_editable(key, deal)
 
 
-def prepare_deal_write(deal, payload, *, owners):
+def prepare_deal_write(deal, payload, *, owners, enforce_required=True):
     """Return (changes, None) on success or (None, (status, message))."""
     if not isinstance(payload, dict):
         return None, (400, 'Expected a JSON object')
@@ -60,6 +54,8 @@ def prepare_deal_write(deal, payload, *, owners):
     if refused:
         return None, (409, f'Field(s) owned by another source: {_join(refused)}')
 
+    if not enforce_required:
+        return changes, None
     cleared = [k for k in fi.required_keys() if k in changes and not str(changes[k] or '').strip()]
     if cleared:
         return None, (400, f'Cannot clear required field(s): {_join(cleared)}')

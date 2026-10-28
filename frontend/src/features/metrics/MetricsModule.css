@@ -145,7 +145,7 @@
   font-size: var(--type-micro);
   font-weight: 600;
   color: var(--ibm-blue);
-  background: rgba(15, 98, 254, 0.08);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
   padding: 0.08rem 0.35rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;

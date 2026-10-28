@@ -212,7 +212,7 @@
 
 .progress-segment.status-in-progress {
   background: var(--ibm-blue);
-  box-shadow: 0 0 8px rgba(15, 98, 254, 0.28);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
 .progress-segment.status-todo {
@@ -275,7 +275,7 @@
 
 .stage-chip.status-in-progress .stage-chip-indicator {
   background: var(--ibm-blue);
-  box-shadow: 0 0 8px rgba(15, 98, 254, 0.5);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 50%, transparent);
   animation: pulseDot 2s ease infinite;
 }
 
@@ -285,8 +285,8 @@
 }
 
 @keyframes pulseDot {
-  0%, 100% { box-shadow: 0 0 4px rgba(15, 98, 254, 0.3); }
-  50% { box-shadow: 0 0 10px rgba(15, 98, 254, 0.6); }
+  0%, 100% { box-shadow: 0 0 4px color-mix(in srgb, var(--accent) 30%, transparent); }
+  50% { box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent); }
 }
 
 .stage-chip-label {
@@ -524,7 +524,7 @@
 }
 
 .workspace-tab.active .workspace-tab-badge {
-  background: rgba(15, 98, 254, 0.10);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--ibm-blue);
 }
 
@@ -534,7 +534,7 @@
 }
 
 .workspace-tab[data-tab="activities"].active .workspace-tab-badge {
-  background: rgba(15, 98, 254, 0.10);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--ibm-blue);
 }
 
@@ -655,7 +655,6 @@
 
 @media (max-width: 480px) {
   .breadcrumb-name { max-width: 130px; }
-  .header-new-deal { padding: 0.3rem 0.5rem; font-size: var(--type-xs); }
 }
 
 
@@ -695,7 +694,7 @@
 }
 
 .summary-stat .stat-num {
-  font-family: var(--font-family-mono);
+  letter-spacing: -0.02em;
   font-size: var(--type-lg);
   font-weight: var(--font-weight-semibold);
   color: var(--stat-color);
@@ -735,8 +734,8 @@
 
 .filter-chip.active {
   background: var(--ibm-blue);
-  color: white;
-  box-shadow: 0 2px 8px rgba(15, 98, 254, 0.25);
+  color: var(--on-accent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
 /* Approval groups */
@@ -1051,7 +1050,7 @@ a.approval-mail:hover {
 .approval-row-input:focus {
   outline: none;
   border-color: var(--ibm-blue);
-  box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.08);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .approval-row-input::placeholder {
@@ -1075,7 +1074,7 @@ a.approval-mail:hover {
 .approval-row-select:focus {
   outline: none;
   border-color: var(--ibm-blue);
-  box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.08);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 @media (max-width: 900px) {
@@ -1158,9 +1157,9 @@ a.approval-mail:hover {
 }
 
 .area-role-badge.sal {
-  background: rgba(15, 98, 254, 0.1);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--ibm-blue);
-  border: 1px solid rgba(15, 98, 254, 0.2);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .area-role-badge.pal {
@@ -1182,7 +1181,7 @@ a.approval-mail:hover {
 .area-approver-input:focus {
   outline: none;
   border-color: var(--ibm-blue);
-  box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.08);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .area-status-select {
@@ -1241,7 +1240,7 @@ a.approval-mail:hover {
 .out-of-scope-chip:hover {
   border-color: var(--ibm-blue);
   color: var(--ibm-blue);
-  background: rgba(15, 98, 254, 0.04);
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
 }
 
 /* ── Activities responsive ── */
@@ -1298,7 +1297,7 @@ a.approval-mail:hover {
 }
 
 .fin-hero-value {
-  font-family: var(--font-family-mono);
+  letter-spacing: -0.02em;
   font-size: var(--type-lg);
   font-weight: 600;
   color: var(--text-primary);
@@ -1377,7 +1376,7 @@ a.approval-mail:hover {
 .fin-field select:focus {
   outline: none;
   border-color: var(--ibm-blue);
-  box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.08);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 /* Financial report table (GSSM PTI output) */
@@ -1415,7 +1414,7 @@ a.approval-mail:hover {
 .fin-report-row input:focus {
   outline: none;
   border-color: var(--ibm-blue);
-  box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.08);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .fin-report-display {
@@ -1458,7 +1457,7 @@ a.approval-mail:hover {
 .fin-link-row input:focus {
   outline: none;
   border-color: var(--ibm-blue);
-  box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.08);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .fin-link-open {
@@ -1590,7 +1589,7 @@ a.approval-mail:hover {
 }
 .cal-cell.today .cal-num {
   background: var(--ibm-blue);
-  color: #fff;
+  color: var(--on-accent);
   width: 22px;
   height: 22px;
   display: flex;
@@ -1634,17 +1633,17 @@ a.approval-mail:hover {
   font-family: var(--font-family-sans);
   font-size: var(--type-sm);
   font-weight: 500;
-  color: #fff;
+  color: var(--on-accent);
   background: var(--ibm-blue);
   border: none;
-  box-shadow: 0 4px 14px -2px rgba(15, 98, 254, 0.30);
+  box-shadow: 0 4px 14px -2px color-mix(in srgb, var(--accent) 30%, transparent);
   cursor: pointer;
   transition: var(--transition-liquid);
 }
 .cal-meet-btn:hover {
   background: var(--ibm-blue-dark);
   transform: var(--lift-sm);
-  box-shadow: 0 8px 22px -3px rgba(15, 98, 254, 0.42);
+  box-shadow: 0 8px 22px -3px color-mix(in srgb, var(--accent) 42%, transparent);
 }
 .cal-export-btn {
   display: inline-flex;
@@ -1797,7 +1796,7 @@ a.approval-mail:hover {
   border-radius: var(--radius-full);
   flex-shrink: 0;
 }
-.cal-ev-type.activity { background: rgba(15, 98, 254, 0.1); color: var(--ibm-blue); }
+.cal-ev-type.activity { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--ibm-blue); }
 .cal-ev-type.milestone { background: rgba(36, 161, 72, 0.1); color: #198038; }
 .cal-ev-type.deadline  { background: rgba(218, 30, 40, 0.1); color: #da1e28; }
 .cal-ev-date {
@@ -1903,7 +1902,7 @@ a.approval-mail:hover {
 .ct-form-grid input:focus {
   outline: none;
   border-color: var(--ibm-blue);
-  box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.08);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .ct-form-actions {
@@ -1930,7 +1929,7 @@ a.approval-mail:hover {
   justify-content: center;
   background: color-mix(in srgb, var(--ibm-blue) 8%, transparent);
   color: var(--ibm-blue);
-  box-shadow: 0 0 24px rgba(15, 98, 254, 0.12);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 .ct-empty p {
@@ -1985,7 +1984,7 @@ a.approval-mail:hover {
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, var(--ibm-blue-light), var(--ibm-blue));
-  color: white;
+  color: var(--on-accent);
   font-size: var(--type-body);
   font-weight: 800;
   border-radius: var(--radius-full);
@@ -2140,7 +2139,7 @@ a.ct-detail:hover {
 }
 
 .ct-act-badge.pending {
-  background: rgba(15, 98, 254, 0.10);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--ibm-blue);
 }
 
@@ -2302,7 +2301,7 @@ a.ct-detail:hover {
 }
 
 .mc-person.is-on .mc-avatar {
-  color: #fff;
+  color: var(--on-accent);
   background: linear-gradient(135deg, var(--ibm-blue-light), var(--ibm-blue));
 }
 
@@ -2399,7 +2398,7 @@ a.ct-detail:hover {
   background: color-mix(in srgb, var(--ibm-blue) 8%, transparent);
   color: var(--ibm-blue);
   margin-bottom: 0.75rem;
-  box-shadow: 0 0 24px rgba(15, 98, 254, 0.12);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 .tab-placeholder h3 {
@@ -2476,7 +2475,7 @@ a.ct-detail:hover {
   letter-spacing: 0.04em;
 }
 .res-hero-value {
-  font-family: var(--font-family-mono);
+  letter-spacing: -0.02em;
   font-size: var(--type-lg);
   font-weight: 600;
   color: var(--text-primary);

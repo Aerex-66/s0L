@@ -4,7 +4,7 @@
  * deal's own format), iSBD-only content goes to isbd_data, and GSSM-owned or
  * derived values are never written from here.
  */
-import { canonicalKey, getField, ownerOf } from '../../shared/constants/fieldIndex'
+import { canonicalKey, getField, isEditable, ownerOf } from '../../shared/constants/fieldIndex'
 import { parseCurrency } from '../../shared/utils/financialsHelpers'
 import { toDisplayCurrency } from './cellValues'
 
@@ -74,7 +74,7 @@ export function splitIsbdSave(flat, deal, edited) {
       isbdData[key] = value
       continue
     }
-    if (owner !== 'deal') continue
+    if (!isEditable(key, deal)) continue
     const field = getField(key)
     if (field.path !== key) continue
     const next = toDealFormat(field, value)

@@ -1,14 +1,22 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mode="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>s0L — Deal Tracker</title>
     <style>
-      /* Preload system font stack to prevent FOUT */
-      body { font-family: 'IBM Plex Sans', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+      /* Pre-CSS paint matches the saved theme mode, so a reload never flashes white.
+         Kept on body (not html) so the body background still propagates under the aurora. */
+      body { background: #08090d; }
+      :where([data-mode="light"]) body { background: #e4eaf4; }
     </style>
+    <script>
+      try {
+        var saved = JSON.parse(localStorage.getItem('s0l-appearance') || 'null')
+        if (saved && saved.mode === 'light') document.documentElement.dataset.mode = 'light'
+      } catch (e) { /* first visit or storage blocked: dark default */ }
+    </script>
   </head>
   <body>
     <div id="root"></div>

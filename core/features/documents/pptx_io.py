@@ -12,14 +12,12 @@ import zipfile
 from defusedxml import ElementTree as ET
 from werkzeug.utils import secure_filename
 
-from core.shared.state import DOCUMENTS_ROOT
+from core.shared.state import DATA_ROOT, DOCUMENTS_ROOT
 
 _logger = logging.getLogger(__name__)
 
-# Repo root (three levels up from core/features/documents/).
-# NOTE: the pre-refactor code computed this as two levels up, which resolved
-# to core/ — breaking resolve_local_source_path and producing '..' relative paths.
-WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+# Stored documents are recorded relative to the data root (the repo root in dev).
+WORKSPACE_ROOT = DATA_ROOT
 
 _A_NS = '{http://schemas.openxmlformats.org/drawingml/2006/main}'
 _SLIDE_PATH_PATTERN = re.compile(r'^ppt/slides/slide(\d+)\.xml$')

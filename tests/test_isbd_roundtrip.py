@@ -48,13 +48,13 @@ def test_extract_uses_index_keys(tmp_path):
 
 
 def test_import_routes_values_to_their_owners():
-    deal = {'id': '1', 'project_name': 'Existing', 'opportunity_owner': '', 'isbd_data': {'swb_stage': '2'}}
+    deal = {'id': '1', 'project_name': 'Existing', 'opportunity_owner': '', 'isbd_data': {'term': '2'}}
     apply_isbd_import(deal, {
         'bid_submission_date': '2026-11-01', 'project_name': 'Deck name', 'opportunity_owner': 'Jane',
         'tcv': '$5M', 'Compliance': [{'compliance_item': 'DPA'}],
     })
     assert deal['isbd_data'] == {
-        'swb_stage': '2', 'bid_submission_date': '2026-11-01', 'Compliance': [{'compliance_item': 'DPA'}],
+        'term': '2', 'bid_submission_date': '2026-11-01', 'Compliance': [{'compliance_item': 'DPA'}],
     }
     assert deal['project_name'] == 'Existing'
     assert deal['opportunity_owner'] == 'Jane'
