@@ -186,3 +186,7 @@ The agent working on the other repo should read this file and apply the changes.
 ### [2026-10-28] s0L — SQLite location from the environment (packaged app)
 - Changed: `gssm-server/storage.js` — `DEFAULT_DB_PATH` honors `GSSM_DB_PATH` when set (the packaged s0L keeps the store in `%LOCALAPPDATA%\s0L\gssm`, outside the app folder). Unset = the old `.gssm/store.sqlite` beside the server. `ENGINE_IMPORT_ROOT` was already an override.
 - Breaking: No — standalone `server/storage.js` can take the same one-line change, or skip it.
+
+### [2026-10-29] s0L — Removed the unused theme hook
+- Removed: `hooks/useTheme.js` — nothing in s0L imported it (its last import was dropped 2026-07-14); s0L's GSSM view follows the app's own theme.
+- Breaking: No — the standalone app keeps its own `useTheme.js` (listed above as not shared).

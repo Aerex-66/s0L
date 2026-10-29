@@ -6,33 +6,21 @@ Defines the complete deal model with all financials, resources, and approval wor
 # Activity Categories and Structure
 ACTIVITY_CATEGORIES = {
     'service_area_approvals': {
-        'name': 'Service Area Lead (SAL) & Process Area Lead (PAL) Approvals',
-        'description': 'Paired SAL/PAL reviews for each service area',
+        'name': 'Service Area Lead (SAL) Approvals',
+        'description': 'Optional SAL reviews per service area; never a gate, and a SAL can delegate the review',
         'activities': [
             {'id': 'rtr_sal', 'name': 'RTR - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'RTR'},
-            {'id': 'rtr_pal', 'name': 'RTR - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'RTR'},
             {'id': 'otc_sal', 'name': 'OTC - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'OTC'},
-            {'id': 'otc_pal', 'name': 'OTC - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'OTC'},
             {'id': 'ptp_ariba_sal', 'name': 'PTP/Ariba - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'PTP/Ariba'},
-            {'id': 'ptp_ariba_pal', 'name': 'PTP/Ariba - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'PTP/Ariba'},
             {'id': 'ftpl_sal', 'name': 'FTP&L - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'FTP&L'},
-            {'id': 'ftpl_pal', 'name': 'FTP&L - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'FTP&L'},
             {'id': 'data_sal', 'name': 'Data - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'Data'},
-            {'id': 'data_pal', 'name': 'Data - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'Data'},
             {'id': 'analytics_sal', 'name': 'Analytics - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'Analytics'},
-            {'id': 'analytics_pal', 'name': 'Analytics - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'Analytics'},
             {'id': 'ibp_sal', 'name': 'IBP - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'IBP'},
-            {'id': 'ibp_pal', 'name': 'IBP - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'IBP'},
             {'id': 'security_sal', 'name': 'Security - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'Security'},
-            {'id': 'security_pal', 'name': 'Security - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'Security'},
             {'id': 'ocm_sal', 'name': 'OCM - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'OCM'},
-            {'id': 'ocm_pal', 'name': 'OCM - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'OCM'},
             {'id': 'epl_sal', 'name': 'EPL - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'EPL'},
-            {'id': 'epl_pal', 'name': 'EPL - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'EPL'},
             {'id': 'group_reporting_sal', 'name': 'Group Reporting - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'Group Reporting'},
-            {'id': 'group_reporting_pal', 'name': 'Group Reporting - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'Group Reporting'},
             {'id': 'sac_sal', 'name': 'SAC - Service Area Lead (SAL) Approval', 'owner_type': 'SAL', 'area': 'SAC'},
-            {'id': 'sac_pal', 'name': 'SAC - Process Area Lead (PAL) Approval', 'owner_type': 'PAL', 'area': 'SAC'},
         ]
     },
     'staffing_approvals': {
@@ -76,10 +64,10 @@ ACTIVITY_CATEGORIES = {
     'formal_gates': {
         'name': 'Formal Review Gates',
         'description': 'Sequential approval gates required for deal progression',
-        'dependencies': ['service_area_approvals', 'specialist_approvals', 'compliance'],
+        'dependencies': ['specialist_approvals', 'compliance'],
         'activities': [
             {'id': 'wsa', 'name': 'Win Strategy Alignment (WSA)', 'required_if': 'rfp and tcv > 5000000', 'owner_type': 'Strategy Lead'},
-            {'id': 'market_srr', 'name': 'Market SRR', 'required_if': 'always', 'depends_on': ['service_area_approvals'], 'owner_type': 'Market Leader'},
+            {'id': 'market_srr', 'name': 'Market SRR', 'required_if': 'always', 'owner_type': 'Market Leader'},
             {'id': 'americas_srr', 'name': 'Americas SRR', 'required_if': 'criteria', 'depends_on': ['market_srr'], 'owner_type': 'Americas Leader'},
             {'id': 'market_prr', 'name': 'Market PRR', 'required_if': 'always', 'depends_on': ['market_srr'], 'owner_type': 'Market Leader'},
             {'id': 'americas_prr', 'name': 'Americas PRR', 'required_if': 'criteria', 'depends_on': ['market_prr'], 'owner_type': 'Americas Leader'},

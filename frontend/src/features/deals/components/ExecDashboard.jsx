@@ -9,9 +9,11 @@ import { groupDeals } from '../grouping'
 import { PERIODS, currentPeriod, needsAssignment, trend, winRate } from '../execStats'
 import { dealTcv } from '../tcv'
 import { useArrangement } from '../useArrangement'
+import { useSalesforceDifferences } from '../useSalesforceDifferences'
 import ArrangeToolbar from './ArrangeToolbar'
 import DealSearch from './DealSearch'
 import PipelineMetrics from './PipelineMetrics'
+import SalesforceCheckPanel from './SalesforceCheckPanel'
 
 const TREND_LENGTH = 6
 const NOTICE_LENGTH = 500
@@ -138,6 +140,7 @@ export default function ExecDashboard({ deals, onSelectDeal }) {
   const open = useMemo(() => deals.filter((deal) => !isClosedDeal(deal)), [deals])
   const waiting = useMemo(() => needsAssignment(deals), [deals])
   const arrangement = useArrangement(waiting, { rememberAs: 's0l-arrange-exec-waiting' })
+  const differences = useSalesforceDifferences()
   const selected = periods[periods.length - 1]
   const previous = periods[periods.length - 2]
   const period = PERIODS.find((option) => option.id === size)
@@ -170,6 +173,14 @@ export default function ExecDashboard({ deals, onSelectDeal }) {
           <span className="pband-stat"><b>{money(openTcv)}</b> pipeline</span>
           <i className="pband-divider" aria-hidden="true" />
           <span className="pband-stat"><b className={cx(waiting.length > 0 && 'pband-due')}>{waiting.length}</b> waiting for assignment</span>
+          {differences.lastCheck && (
+            <>
+              <i className="pband-divider" aria-hidden="true" />
+              <span className="pband-stat" title="Where the monday board and Salesforce disagree">
+                <b className={cx(differences.rows.length > 0 && 'pband-due')}>{differences.rows.length}</b> differ from Salesforce
+              </span>
+            </>
+          )}
           {lastRead && (
             <>
               <i className="pband-divider" aria-hidden="true" />
@@ -277,6 +288,8 @@ export default function ExecDashboard({ deals, onSelectDeal }) {
           </>
         )}
       </section>
+
+      <SalesforceCheckPanel differences={differences} onSelectDeal={onSelectDeal} />
     </div>
   )
 }

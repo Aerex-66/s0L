@@ -9,7 +9,10 @@ import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import Tip from './shared/ui/Tip'
 import ThemeSwitcher from './shared/ui/ThemeSwitcher'
 import MondayConnect from './shell/MondayConnect'
+import SalesforceConnect from './shell/SalesforceConnect'
+import OutlookConnect from './shell/OutlookConnect'
 import NoticeBanner from './shell/NoticeBanner'
+import useUpdateStore, { readyUpdate } from './shared/updateStore'
 
 export default function AppHeader({
   currentDeal,
@@ -32,6 +35,7 @@ export default function AppHeader({
   const headerMode = currentDeal ? 'deal' : 'dashboard'
   // The TT Exec view covers the whole team, active and archived, so whose deals and which list don't apply there.
   const dealFilters = !currentDeal && layoutMode !== 'exec'
+  const updateReady = useUpdateStore((s) => readyUpdate(s.status))
 
   const activeCount = useMemo(() => {
     if (currentDeal) return 0
@@ -194,9 +198,16 @@ export default function AppHeader({
             </Tip>
           )}
           <MondayConnect />
-          <Tip content="Settings (Ctrl+,)">
-            <button className="header-action-btn" onClick={onSettings} aria-label="Settings">
+          <SalesforceConnect />
+          <OutlookConnect />
+          <Tip content={updateReady ? `Settings (Ctrl+,) · s0L ${updateReady} is ready to install` : 'Settings (Ctrl+,)'}>
+            <button
+              className="header-action-btn"
+              onClick={onSettings}
+              aria-label={updateReady ? `Settings: s0L ${updateReady} is ready to install` : 'Settings'}
+            >
               <SettingsIcon />
+              {updateReady && <span className="header-settings-dot" aria-hidden="true" />}
             </button>
           </Tip>
           {!currentDeal && (

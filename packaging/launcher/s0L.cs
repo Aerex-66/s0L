@@ -24,6 +24,12 @@ namespace S0L
         public const int FlaskPort = 5121;
         public const int GssmPort = 5175;
         const string AppUrl = "http://localhost:5121/";
+        public static readonly string Root = AppDomain.CurrentDomain.BaseDirectory;
+
+        // Ownership, not creation, decides the one running launcher: during an update the old
+        // launcher keeps its handle, hands ownership to the new version, and takes it back on a rollback.
+        static Mutex instance;
+        static bool ownsInstance;
 
         [DllImport("user32.dll")]
         static extern bool SetProcessDPIAware();
@@ -31,21 +37,58 @@ namespace S0L
         [STAThread]
         static int Main(string[] args)
         {
+            if (args.Length == 3 && args[0] == "--verify") return Updates.Verify(args[1], args[2]);
+            if (args.Length == 2 && args[0] == "--check-files") return Updates.CheckFiles(args[1]);
+
             bool openBrowser = Array.IndexOf(args, "--no-browser") < 0;
-            bool firstInstance;
-            using (Mutex mutex = new Mutex(true, @"Local\s0L-launcher", out firstInstance))
+            bool afterUpdate = Array.IndexOf(args, "--after-update") >= 0;
+            instance = new Mutex(false, @"Local\s0L-launcher");
+            if (!TakeInstance())
             {
-                if (!firstInstance)
-                {
-                    if (openBrowser) OpenBrowser();
-                    return 0;
-                }
-                SetProcessDPIAware();
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new TrayContext(new Session(), openBrowser));
+                if (openBrowser) OpenBrowser();
                 return 0;
             }
+            SetProcessDPIAware();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new TrayContext(new Session(), openBrowser, afterUpdate));
+            ReleaseInstance();
+            return 0;
+        }
+
+        // Call both on the UI thread: a mutex belongs to the thread that took it.
+        public static bool TakeInstance()
+        {
+            try
+            {
+                ownsInstance = instance.WaitOne(0);
+            }
+            catch (AbandonedMutexException)
+            {
+                ownsInstance = true;
+            }
+            return ownsInstance;
+        }
+
+        public static void ReleaseInstance()
+        {
+            if (!ownsInstance) return;
+            instance.ReleaseMutex();
+            ownsInstance = false;
+        }
+
+        public static string Version()
+        {
+            object[] found = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
+            return found.Length > 0 ? ((AssemblyInformationalVersionAttribute)found[0]).InformationalVersion : null;
+        }
+
+        public static Process StartNewVersion(bool openBrowser)
+        {
+            ProcessStartInfo info = new ProcessStartInfo(Path.Combine(Root, "s0L.exe"), openBrowser ? "--after-update" : "--after-update --no-browser");
+            info.UseShellExecute = false;
+            info.WorkingDirectory = Root;
+            return Process.Start(info);
         }
 
         public static void OpenBrowser()
@@ -105,23 +148,26 @@ namespace S0L
     {
         readonly Session session;
         readonly bool openBrowser;
+        readonly bool afterUpdate;
         readonly NotifyIcon tray;
         readonly Control ui;
         readonly System.Windows.Forms.Timer watchdog;
         bool ready;
         bool quitting;
+        bool updating;
 
-        public TrayContext(Session session, bool openBrowser)
+        public TrayContext(Session session, bool openBrowser, bool afterUpdate)
         {
             this.session = session;
             this.openBrowser = openBrowser;
+            this.afterUpdate = afterUpdate;
             ui = new Control();
             IntPtr handle = ui.Handle;
 
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.Items.Add("Open s0L", null, delegate { if (ready) Launcher.OpenBrowser(); });
             menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add("Quit s0L", null, delegate { Quit(); });
+            menu.Items.Add("Quit s0L", null, delegate { if (!updating) Quit(); });
 
             tray = new NotifyIcon();
             tray.Icon = Launcher.AppIcon();
@@ -132,37 +178,192 @@ namespace S0L
 
             watchdog = new System.Windows.Forms.Timer();
             watchdog.Interval = 2000;
-            watchdog.Tick += delegate { CheckServers(); };
+            watchdog.Tick += delegate { Tick(); };
 
-            Thread starter = new Thread(Start);
-            starter.IsBackground = true;
-            starter.Start();
+            // An update cut off by a crash or power cut is finished or undone before anything runs.
+            if (!afterUpdate && !Updates.RecoverInterruptedSwap())
+            {
+                Background(delegate { ui.BeginInvoke((MethodInvoker)delegate { Fail(Updates.BrokenInstallMessage()); }); });
+                return;
+            }
+
+            // An update the person put off ("Later") installs now, before anything starts.
+            string pending = afterUpdate ? null : Updates.ReadyVersion();
+            if (pending != null)
+            {
+                updating = true;
+                tray.Text = "s0L - updating";
+                Background(delegate { ApplyUpdate(pending, openBrowser); });
+            }
+            else
+            {
+                Background(delegate { StartServers(openBrowser); });
+            }
         }
 
-        void Start()
+        static void Background(ThreadStart work)
         {
-            string error = session.Start();
+            Thread thread = new Thread(work);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        void OnUi(MethodInvoker action)
+        {
+            ui.Invoke(action);
+        }
+
+        // Runs on a background thread.
+        void StartServers(bool openTab)
+        {
+            string error = session.Start(afterUpdate ? 150 : 60);
             ui.BeginInvoke((MethodInvoker)delegate
             {
                 if (error != null) Fail(error);
-                else Ready();
+                else Ready(openTab);
             });
         }
 
-        void Ready()
+        void Ready(bool openTab)
         {
             if (quitting) return;
             ready = true;
+            updating = false;
             tray.Text = "s0L";
             watchdog.Start();
-            if (openBrowser) Launcher.OpenBrowser();
+            if (openTab) Launcher.OpenBrowser();
         }
 
-        void CheckServers()
+        void Tick()
         {
-            if (quitting) return;
+            if (quitting || updating) return;
+            if (Updates.RestartRequested())
+            {
+                string target = Updates.ReadyVersion();
+                if (target == null)
+                {
+                    Updates.ClearRestart();
+                    return;
+                }
+                updating = true;
+                ready = false;
+                watchdog.Stop();
+                tray.Text = "s0L - updating";
+                Background(delegate { ApplyUpdate(target, false); });
+                return;
+            }
             string stopped = session.StoppedServer();
             if (stopped != null) Fail(stopped + " stopped unexpectedly. Details are in " + session.LogDir);
+        }
+
+        // Runs on a background thread. openTab: a start opens the browser as usual; after a restart the
+        // open tab reloads itself.
+        void ApplyUpdate(string target, bool openTab)
+        {
+            string current = Launcher.Version() ?? "?";
+            Updates.Log("Updating " + current + " to " + target + (openTab ? " (start)" : " (restart)"));
+            session.StopAll();
+            Updates.WaitForPortsFree();
+            if (Updates.PortsBusy())
+            {
+                Updates.Log("Port " + Launcher.FlaskPort + " or " + Launcher.GssmPort + " is in use; the update waits");
+                Updates.ClearRestart();
+                StartServers(openTab);
+                return;
+            }
+
+            int verdict = Updates.Verify(Updates.Staging, target);
+            if (verdict != Updates.Ok)
+            {
+                Updates.Log("The staged " + target + " failed its check (" + verdict + ")");
+                Updates.Discard(target, verdict);
+                StartServers(openTab);
+                return;
+            }
+            if (!Updates.Snapshot())
+            {
+                Updates.ClearRestart();
+                StartServers(openTab);
+                return;
+            }
+            Updates.WaitForNothingRunningFromRoot();
+            bool intact;
+            List<string> moved = Updates.Swap(out intact);
+            if (moved == null)
+            {
+                Updates.DropSnapshot();
+                Updates.ClearRestart();
+                if (!intact)
+                {
+                    Broken();
+                    return;
+                }
+                Updates.Log("Could not swap in " + target + "; staying on " + current);
+                StartServers(openTab);
+                return;
+            }
+            Updates.ClearMarkers();
+
+            OnUi(delegate { tray.Visible = false; Launcher.ReleaseInstance(); });
+            Process next = null;
+            try
+            {
+                next = Launcher.StartNewVersion(openTab);
+            }
+            catch (Exception ex)
+            {
+                Updates.Log("Could not start " + target + ": " + ex.Message);
+            }
+            if (next != null && Updates.WaitForVersion(target, next))
+            {
+                Updates.FinishSwap();
+                Updates.Log("Now running " + target);
+                OnUi(delegate { quitting = true; tray.Dispose(); ExitThread(); });
+                return;
+            }
+
+            Updates.Log(target + " did not start; going back to " + current);
+            if (next != null)
+            {
+                try
+                {
+                    if (!next.HasExited) next.Kill();
+                    next.WaitForExit(10000);
+                }
+                catch (Exception)
+                {
+                }
+            }
+            Updates.WaitForNothingRunningFromRoot();
+            Updates.WaitForPortsFree();
+            Updates.KeepFailedLogs(target);
+            if (!Updates.SwapBack(moved))
+            {
+                Broken();
+                return;
+            }
+            Updates.RestoreSnapshot();
+            bool bad = Updates.RecordFailure(target);
+            string note = bad ? "" : " It will try once more later.";
+            OnUi(delegate
+            {
+                Launcher.TakeInstance();
+                tray.Visible = true;
+                tray.Text = "s0L - starting";
+                tray.ShowBalloonTip(10000, "s0L", "s0L couldn't start version " + target + ", so it's back on version " + current + "." + note, ToolTipIcon.Warning);
+            });
+            StartServers(openTab);
+        }
+
+        // Runs on a background thread: the folder is half old, half new, so nothing may start from it.
+        void Broken()
+        {
+            Updates.Log("The s0L folder could not be put back together; not starting");
+            OnUi(delegate
+            {
+                Launcher.TakeInstance();
+                Fail(Updates.BrokenInstallMessage());
+            });
         }
 
         void Fail(string message)
@@ -170,6 +371,13 @@ namespace S0L
             if (quitting) return;
             watchdog.Stop();
             tray.Visible = false;
+            // A first start after an update just exits: the old launcher rolls back and explains.
+            if (afterUpdate && !ready)
+            {
+                Updates.Log("The new version didn't start: " + message);
+                Quit();
+                return;
+            }
             MessageBox.Show(message, "s0L", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Quit();
         }
@@ -211,7 +419,7 @@ namespace S0L
             job = Job.CreateKillOnClose();
         }
 
-        public string Start()
+        public string Start(int flaskWaitSeconds)
         {
             try
             {
@@ -235,14 +443,18 @@ namespace S0L
                 flaskEnv["S0L_DATA_DIR"] = dataDir;
                 flaskEnv["S0L_FRONTEND_DIST"] = Path.Combine(appDir, @"frontend\dist");
                 flaskEnv["S0L_MONDAY_APP"] = Path.Combine(appDir, "monday-app.json");
-                flaskEnv["S0L_OUTLOOK_SYNC"] = "1";
+                string salesforceApp = Path.Combine(appDir, "salesforce-app.json");
+                if (File.Exists(salesforceApp)) flaskEnv["S0L_SALESFORCE_APP"] = salesforceApp;
+                string version = Launcher.Version();
+                if (version != null) flaskEnv["S0L_VERSION"] = version;
+                flaskEnv["S0L_LAUNCHER"] = Application.ExecutablePath;
                 flaskEnv["FRONTEND_PORT"] = Launcher.FlaskPort.ToString();
                 flaskEnv["PYTHONDONTWRITEBYTECODE"] = "1";
                 flaskEnv["PYTHONUTF8"] = "1";
                 flaskEnv["PYTHONUNBUFFERED"] = "1";
                 flask = Spawn(pythonExe, "deal_tracker.py", appDir, "flask.log", flaskEnv);
 
-                if (!Launcher.WaitForFlask(flask, 60))
+                if (!Launcher.WaitForFlask(flask, flaskWaitSeconds))
                     return "s0L didn't start. Details are in " + Path.Combine(LogDir, "flask.log");
                 return null;
             }
@@ -263,9 +475,38 @@ namespace S0L
         {
             Kill(flask);
             Kill(gssm);
+            CloseLogs();
+        }
+
+        // Ends everything the servers started too, and waits, so nothing in the s0L folder stays open.
+        public void StopAll()
+        {
+            Job.Terminate(job);
+            WaitForExit(flask);
+            WaitForExit(gssm);
+            CloseLogs();
+        }
+
+        void CloseLogs()
+        {
             foreach (StreamWriter log in logs)
             {
                 lock (log) log.Dispose();
+            }
+            logs.Clear();
+        }
+
+        static void WaitForExit(Process process)
+        {
+            try
+            {
+                if (process != null) process.WaitForExit(10000);
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
             }
         }
 
@@ -373,6 +614,14 @@ namespace S0L
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AssignProcessToJobObject(IntPtr job, IntPtr process);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool TerminateJobObject(IntPtr job, uint exitCode);
+
+        public static void Terminate(IntPtr job)
+        {
+            TerminateJobObject(job, 1);
+        }
 
         public static IntPtr CreateKillOnClose()
         {

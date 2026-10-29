@@ -27,6 +27,18 @@ describe('computeStageReadiness', () => {
     expect(STAGES.find((s) => s.id === 'solution-staffing').label).toBe('Solution & Staffing')
   })
 
+  it('leaves optional SAL and old PAL sign-offs out of "All approved"', () => {
+    const deal = {
+      ...base,
+      activities: [
+        { activity: 'Market SRR', owner_type: 'Market Leader', status: 'Completed' },
+        { activity: 'RTR - Service Area Lead (SAL) Approval', owner_type: 'SAL', status: 'Not Started' },
+        { activity: 'RTR - Process Area Lead (PAL) Approval', owner_type: 'PAL', status: 'Not Started' },
+      ],
+    }
+    expect(computeStageReadiness(deal).governance.checks).toEqual([true, true, true])
+  })
+
   it('counts timeline and staffing evidence toward that one stage, check by check', () => {
     const deal = {
       ...base,

@@ -7,6 +7,7 @@ import PptSlideView from './PptSlideView'
 import { getRefSlides } from './slideShapeIndex'
 import { formatForDeck, splitIsbdSave } from './isbdSave'
 import { dealService } from '../../shared/services/dealService'
+import { PowerPointLogo } from '../../shared/ui/Icons'
 
 /**
  * Memoized filmstrip thumbnail — only re-renders when its own slide data,
@@ -196,6 +197,7 @@ export default function IsbdModule({ deal, onUpdate }) {
       {/* ── Top bar ── */}
       <header className="isbd-topbar">
         <div className="isbd-topbar-left">
+          <PowerPointLogo size={18} className="module-logo--head" />
           <div className="isbd-doc-toggle">
             {['srr', 'prr'].map(t => (
               <button

@@ -35,6 +35,12 @@ _SET_LABEL_MUTATION = (
     'change_multiple_column_values(board_id: $board, item_id: $item, column_values: $values) { '
     'id column_values(ids: [$column]) { id text } } }'
 )
+# The row's name changes through the same mutation, under the key "name".
+_SET_CELL_MUTATION = (
+    'mutation ($board: ID!, $item: ID!, $column: String!, $values: JSON!) { '
+    'change_multiple_column_values(board_id: $board, item_id: $item, column_values: $values) { '
+    'id name column_values(ids: [$column]) { id text } } }'
+)
 _NO_BOARD = 'The deal board was not found, or this monday account cannot see it.'
 
 
@@ -168,6 +174,23 @@ def set_status_label(item_id, column_id, label_id):
     })
     cells = (data.get('change_multiple_column_values') or {}).get('column_values') or []
     cell = next((c for c in cells if c.get('id') == column_id), None)
+    if cell is None:
+        raise MondayError('api', 'monday did not confirm the change.')
+    return cell.get('text') or ''
+
+
+def set_cell(item_id, column_id, value):
+    """Set one cell of a row (or its name, column 'name'); returns what the board now shows there."""
+    data = graphql(_SET_CELL_MUTATION, {
+        'board': config.BOARD_ID, 'item': str(item_id), 'column': column_id,
+        'values': json.dumps({column_id: value}),
+    })
+    item = data.get('change_multiple_column_values') or {}
+    if column_id == 'name':
+        if 'name' not in item:
+            raise MondayError('api', 'monday did not confirm the change.')
+        return item.get('name') or ''
+    cell = next((c for c in item.get('column_values') or [] if c.get('id') == column_id), None)
     if cell is None:
         raise MondayError('api', 'monday did not confirm the change.')
     return cell.get('text') or ''

@@ -3,6 +3,7 @@ import { Video } from 'lucide-react'
 import { getWorkStatusColor } from '../../../shared/constants'
 import { formatMonthDayYear, formatMonthYear, formatShortDate } from '../../../shared/utils/formatters'
 import { get } from '../../../shared/apiClient'
+import { webLink } from '../../../shared/utils/webLink'
 import { dealLabel } from '../handoff'
 import MeetingComposer from './MeetingComposer'
 
@@ -69,7 +70,7 @@ function collectEvents(deal) {
 
   // Key dates from deal top-level
   if (deal.rfp_submission_date) {
-    events.push({ date: deal.rfp_submission_date.split('T')[0], title: 'RFP Submission', type: 'deadline', status: '', color: 'var(--ibm-red, #da1e28)', detail: '', comments: '' })
+    events.push({ date: deal.rfp_submission_date.split('T')[0], title: 'RFP Submission', type: 'deadline', status: '', color: 'var(--status-error)', detail: '', comments: '' })
   }
 
   return events
@@ -116,6 +117,8 @@ function downloadIcs(content, filename) {
 }
 
 /* ── Outlook event normalizer ────────────────────── */
+const searchable = (text) => String(text || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+
 function normalizeOutlookEvents(raw) {
   if (!Array.isArray(raw)) return []
   return raw.map(ev => {
@@ -124,16 +127,66 @@ function normalizeOutlookEvents(raw) {
     const timeStr = start.includes('T') ? start.split('T')[1]?.slice(0, 5) : ''
     const endTime = ev.end?.includes('T') ? ev.end.split('T')[1]?.slice(0, 5) : ''
     const timePart = ev.isAllDay ? 'All day' : (timeStr && endTime ? `${timeStr} – ${endTime}` : timeStr)
+    const location = String(ev.location || '').trim()
+    // A web address in the location is the online meeting's join link, not a place to print in full
+    const url = location.match(/https?:\/\/\S+/i)?.[0] || ''
+    const joinUrl = webLink(url)
+    const room = location.replace(url, '').replace(/^[\s;,]+|[\s;,]+$/g, '')
+    const place = room || (joinUrl ? (/teams\.microsoft\.com/i.test(joinUrl) ? 'Teams meeting' : 'Online meeting') : '')
+    const title = ev.subject || '(No subject)'
     return {
       date: dateStr,
-      title: ev.subject || '(No subject)',
+      title,
       type: 'outlook',
       status: '',
-      color: 'var(--outlook-blue, #0078d4)',
-      detail: [timePart, ev.location].filter(Boolean).join(' · '),
+      color: 'var(--accent-2)',
+      detail: [timePart, place].filter(Boolean).join(' · '),
       comments: ev.organizer ? `Organizer: ${ev.organizer}` : '',
+      joinUrl,
+      cancelled: /^cancell?ed\b/i.test(title),
+      text: searchable([title, location, ev.organizer].join(' ')),
     }
   }).filter(ev => ev.date)
+}
+
+const LEGAL_WORDS = /\b(inc|incorporated|corp|corporation|co|company|llc|ltd|limited|plc|us|usa)\b/g
+
+/** Words that tie a calendar event to this deal: the client as written, its bracketed or short name, the opportunity number. */
+function dealTerms(deal) {
+  const client = String(deal.client_name || '')
+  const candidates = [
+    client,
+    client.replace(/\(.*?\)/g, ' '),
+    ...(client.match(/\(([^)]+)\)/g) || []),
+    searchable(client).replace(LEGAL_WORDS, ' '),
+    deal.opportunity_number,
+  ]
+  return [...new Set(candidates.map(searchable).map(t => t.replace(/\s+/g, ' ')))].filter(t => t.length >= 3)
+}
+
+function EventItem({ ev, lead, action, showComments = false }) {
+  return (
+    <div className={`cal-ev${ev.cancelled ? ' cancelled' : ''}`} style={{ '--ev-color': ev.color }}>
+      <div className="cal-ev-bar" />
+      <div className="cal-ev-body">
+        <div className="cal-ev-top">
+          {lead}
+          <strong className="cal-ev-title" title={ev.title}>{ev.title}</strong>
+        </div>
+        {ev.status && <span className={`status-badge status-${ev.status.toLowerCase().replace(/\s/g, '-')}`}>{ev.status}</span>}
+        {(ev.detail || ev.joinUrl) && (
+          <p className="cal-ev-detail">
+            {ev.detail}
+            {ev.joinUrl && !ev.cancelled && (
+              <a className="cal-ev-join" href={ev.joinUrl} target="_blank" rel="noopener noreferrer">Join</a>
+            )}
+          </p>
+        )}
+        {showComments && ev.comments && <p className="cal-ev-detail muted">{ev.comments}</p>}
+      </div>
+      {action}
+    </div>
+  )
 }
 
 /* ── component ───────────────────────────────────── */
@@ -141,9 +194,11 @@ export default function Calendar({ deal }) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(null)
   const [outlookEvents, setOutlookEvents] = useState([])
-  const [outlookStatus, setOutlookStatus] = useState('loading') // loading | ok | no_sync | stale | error
+  const [outlookStatus, setOutlookStatus] = useState('loading') // loading | ok | stale | waiting | web | no_app | error
   const [outlookAge, setOutlookAge] = useState(null)
+  const [outlookMessage, setOutlookMessage] = useState('')
   const [composer, setComposer] = useState(null)
+  const [scope, setScope] = useState('deal') // deal | all
 
   // Fetch Outlook calendar events (polls every 60s)
   useEffect(() => {
@@ -152,13 +207,14 @@ export default function Calendar({ deal }) {
       get('/api/calendar/outlook')
         .then(data => {
           if (cancelled) return
+          setOutlookMessage(data.message || '')
           if (data.status === 'ok') {
             setOutlookEvents(normalizeOutlookEvents(data.events))
             setOutlookAge(data.age_seconds)
             setOutlookStatus(data.age_seconds > 300 ? 'stale' : 'ok')
-          } else if (data.status === 'no_sync') {
+          } else if (['web', 'no_app', 'waiting', 'empty'].includes(data.status)) {
             setOutlookEvents([])
-            setOutlookStatus('no_sync')
+            setOutlookStatus(data.status === 'empty' ? 'waiting' : data.status)
           } else {
             setOutlookEvents([])
             setOutlookStatus('error')
@@ -185,7 +241,12 @@ export default function Calendar({ deal }) {
   const isCurrentMonth = month === today.getMonth() && year === today.getFullYear()
 
   const dealEvents = useMemo(() => collectEvents(deal), [deal])
-  const allEvents = useMemo(() => [...dealEvents, ...outlookEvents], [dealEvents, outlookEvents])
+  const terms = useMemo(() => dealTerms(deal), [deal])
+  const shownOutlook = useMemo(
+    () => (scope === 'all' ? outlookEvents : outlookEvents.filter(ev => terms.some(t => ` ${ev.text} `.includes(` ${t} `)))),
+    [scope, outlookEvents, terms],
+  )
+  const allEvents = useMemo(() => [...dealEvents, ...shownOutlook], [dealEvents, shownOutlook])
 
   const eventsByDate = useMemo(() => {
     const map = {}
@@ -251,6 +312,29 @@ export default function Calendar({ deal }) {
     </button>
   )
 
+  const scopeToggle = outlookEvents.length > 0 && (
+    <div className="cal-scope" role="group" aria-label="Which Outlook events to show">
+      {[['deal', 'This deal'], ['all', 'Everything']].map(([id, label]) => (
+        <button
+          key={id}
+          type="button"
+          className={`chip chip--interactive${scope === id ? ' chip--active' : ''}`}
+          aria-pressed={scope === id}
+          onClick={() => setScope(id)}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  )
+
+  const emptyText = (when) => (scope === 'deal' && outlookEvents.length > 0 ? (
+    <>
+      Nothing {when} mentions {deal.client_name || 'this deal'}.{' '}
+      <button type="button" className="cal-link" onClick={() => setScope('all')}>Show everything</button>
+    </>
+  ) : `No events ${when}`)
+
   return (
     <div className="cal-outlook">
       {/* Left: mini calendar */}
@@ -302,9 +386,11 @@ export default function Calendar({ deal }) {
 
         <div className="cal-actions">
           {outlookStatus === 'ok' && <span className="cal-outlook-badge">Outlook synced{outlookAge != null ? ` (${Math.round(outlookAge / 60)}m ago)` : ''}</span>}
-          {outlookStatus === 'stale' && <span className="cal-outlook-badge stale">Outlook data stale</span>}
-          {outlookStatus === 'no_sync' && <span className="cal-outlook-badge error">Run outlook_calendar.ps1</span>}
-          {outlookStatus === 'error' && <span className="cal-outlook-badge error">Outlook error</span>}
+          {outlookStatus === 'stale' && <span className="cal-outlook-badge stale" title="s0L reads the calendar while Outlook is open">Open Outlook to refresh</span>}
+          {outlookStatus === 'waiting' && <span className="cal-outlook-badge stale" title={outlookMessage}>Open Outlook to see your calendar</span>}
+          {outlookStatus === 'web' && <span className="cal-outlook-badge" title={outlookMessage}>Outlook in the browser</span>}
+          {outlookStatus === 'no_app' && <span className="cal-outlook-badge error" title={outlookMessage}>No Outlook app</span>}
+          {outlookStatus === 'error' && <span className="cal-outlook-badge error" title={outlookMessage}>Outlook error</span>}
           {outlookStatus === 'loading' && <span className="cal-outlook-badge">Loading Outlook…</span>}
           <button
             className="cal-meet-btn"
@@ -325,6 +411,7 @@ export default function Calendar({ deal }) {
             <div className="cal-agenda-header">
               <h3>{formatMonthDayYear(new Date(year, month, selectedDate))}</h3>
               <div className="cal-agenda-actions">
+                {scopeToggle}
                 <button
                   className="cal-export-btn small"
                   onClick={() => setComposer({ attendees: [], date: new Date(year, month, selectedDate) })}
@@ -337,27 +424,21 @@ export default function Calendar({ deal }) {
                     .ics
                   </button>
                 )}
-                <button className="cal-close" onClick={() => setSelectedDate(null)}>×</button>
+                <button className="cal-close" onClick={() => setSelectedDate(null)} aria-label="Back to upcoming">×</button>
               </div>
             </div>
             {selectedEvents.length === 0 ? (
-              <p className="cal-empty">No events on this day</p>
+              <p className="cal-empty">{emptyText('on this day')}</p>
             ) : (
               <div className="cal-event-list">
                 {selectedEvents.map((ev, i) => (
-                  <div key={i} className="cal-ev" style={{ '--ev-color': ev.color }}>
-                    <div className="cal-ev-bar" />
-                    <div className="cal-ev-body">
-                      <div className="cal-ev-top">
-                        <span className={`cal-ev-type ${ev.type}`}>{ev.type}</span>
-                        <strong className="cal-ev-title">{ev.title}</strong>
-                      </div>
-                      {ev.status && <span className={`status-badge status-${ev.status.toLowerCase().replace(/\s/g, '-')}`}>{ev.status}</span>}
-                      {ev.detail && <p className="cal-ev-detail">{ev.detail}</p>}
-                      {ev.comments && <p className="cal-ev-detail muted">{ev.comments}</p>}
-                    </div>
-                    {meetButton(ev)}
-                  </div>
+                  <EventItem
+                    key={i}
+                    ev={ev}
+                    lead={<span className={`cal-ev-type ${ev.type}`}>{ev.type}</span>}
+                    action={meetButton(ev)}
+                    showComments
+                  />
                 ))}
               </div>
             )}
@@ -366,25 +447,22 @@ export default function Calendar({ deal }) {
           <>
             <div className="cal-agenda-header">
               <h3>Upcoming</h3>
-              <span className="cal-agenda-range">Next 14 days</span>
+              <div className="cal-agenda-actions">
+                {scopeToggle}
+                <span className="cal-agenda-range">Next 14 days</span>
+              </div>
             </div>
             {upcoming.length === 0 ? (
-              <p className="cal-empty">No upcoming events</p>
+              <p className="cal-empty">{emptyText('in the next 14 days')}</p>
             ) : (
               <div className="cal-event-list">
                 {upcoming.map((ev, i) => (
-                  <div key={i} className="cal-ev" style={{ '--ev-color': ev.color }}>
-                    <div className="cal-ev-bar" />
-                    <div className="cal-ev-body">
-                      <div className="cal-ev-top">
-                        <span className="cal-ev-date">{formatShortDate(ev.date)}</span>
-                        <strong className="cal-ev-title">{ev.title}</strong>
-                      </div>
-                      {ev.status && <span className={`status-badge status-${ev.status.toLowerCase().replace(/\s/g, '-')}`}>{ev.status}</span>}
-                      {ev.detail && <p className="cal-ev-detail">{ev.detail}</p>}
-                    </div>
-                    {meetButton(ev)}
-                  </div>
+                  <EventItem
+                    key={i}
+                    ev={ev}
+                    lead={<span className="cal-ev-date">{formatShortDate(ev.date)}</span>}
+                    action={meetButton(ev)}
+                  />
                 ))}
               </div>
             )}

@@ -1,0 +1,32 @@
+/* GenAI — layout rides the ws-* workspace blocks in home.css */
+
+.genai-mentions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.genai-mention-field {
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-tertiary);
+}
+
+.genai-mention-text {
+  margin: 0.2rem 0 0;
+  font-size: var(--type-body);
+  line-height: 1.55;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.genai-mention-text mark {
+  padding: 0 0.15rem;
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}

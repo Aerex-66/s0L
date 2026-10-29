@@ -21,6 +21,8 @@ DATA_ROOT = resolve_data_root(os.environ)
 DATA_FILE = os.path.join(DATA_ROOT, 'deals_data.json')
 DOCUMENTS_ROOT = os.path.join(DATA_ROOT, 'documents')
 _data_lock = threading.Lock()
+# Held by every route that reloads, changes and saves deals from an outside source (monday, Salesforce).
+SYNC_LOCK = threading.Lock()
 _migrated = False
 
 

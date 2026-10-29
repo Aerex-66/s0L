@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import {
   MAX_LINK_LENGTH,
+  approvalEmail,
   approvalEmailLink,
   approverRecipients,
   buildAgenda,
+  contactEmail,
   dealLabel,
+  groupEmail,
   isoWithOffset,
   mailtoLink,
   nextBusinessDay,
@@ -185,5 +188,43 @@ describe('approvalEmailLink', () => {
 
   it('gives no link when nobody has an email', () => {
     expect(approvalEmailLink({ label: 'Acme', recipients: [], items: [{ who: 'X', activity: 'Y' }] })).toBe('')
+  })
+})
+
+describe('messages for Outlook drafts', () => {
+  const ana = { name: 'Ana Silva', email: 'ana@ibm.com' }
+
+  it('never cuts a character in half when a mailto: link is shortened', () => {
+    const link = mailtoLink({ to: ['ana@ibm.com'], body: '😀'.repeat(1000) })
+    expect(link.length).toBeLessThanOrEqual(MAX_LINK_LENGTH)
+    expect(decodeURIComponent(link)).toContain('…')
+  })
+
+  it('builds the approval message the link carries, untrimmed', () => {
+    const items = [{ who: 'Ana Silva', activity: 'RTR SAL Approval', status: 'In Progress', date: '2026-11-04' }]
+    expect(approvalEmail({ label: 'Acme – S4', recipients: [ana], items })).toEqual({
+      to: ['ana@ibm.com'],
+      subject: 'Acme – S4: RTR SAL Approval',
+      body: 'Hi Ana,\n\nCan you approve this for Acme – S4?\n\n• RTR SAL Approval — In Progress, target Wed 4 Nov\n\nThanks',
+    })
+    expect(approvalEmail({ label: 'Acme', recipients: [], items })).toBe(null)
+    const many = Array.from({ length: 60 }, (_, i) => ({ who: 'Ana Silva', activity: `Item ${i} with a long description`, status: 'Blocked' }))
+    expect(approvalEmail({ label: 'Acme', recipients: [ana], items: many }).body.length).toBeGreaterThan(MAX_LINK_LENGTH)
+  })
+
+  it('writes to one contact about their pending items', () => {
+    expect(contactEmail({
+      contact: { name: 'Ana Silva', email: 'ana@ibm.com' }, label: 'Acme',
+      pending: [{ activity: 'RTR SAL', status: 'Blocked' }, { activity: 'OTC SAL', status: '' }],
+    })).toEqual({
+      to: ['ana@ibm.com'], subject: 'Acme',
+      body: 'Hi Ana,\n\nPending items:\n• RTR SAL (Blocked)\n• OTC SAL (Not Started)\n\nThanks',
+    })
+    expect(contactEmail({ contact: { name: 'Bo', email: 'bo@ibm.com' }, label: 'Acme' }).body).toBe('Hi Bo,\n\nThanks')
+  })
+
+  it('writes to every reachable contact at once', () => {
+    expect(groupEmail({ label: 'Acme', contacts: [ana, { name: 'No mail' }, { name: 'Bo', email: 'bo@ibm.com' }] }))
+      .toEqual({ to: ['ana@ibm.com', 'bo@ibm.com'], subject: 'Acme', body: '' })
   })
 })

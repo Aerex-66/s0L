@@ -1,7 +1,8 @@
 export const DEAL_SHELL_MODULES = [
-  { id: 'home', label: 'Home', exportKey: 'HOME', route: 'home' },
+  { id: 'home', label: 'Overview', exportKey: 'HOME', route: 'home' },
   { id: 'gssm', label: 'GSSM', exportKey: 'GSSM', route: 'gssm' },
   { id: 'isbd', label: 'ISBD', exportKey: 'ISBD', route: 'isbd' },
+  { id: 'genai', label: 'GenAI', exportKey: 'GENAI', route: 'genai' },
   { id: 'greenstar', label: 'Greenstar', exportKey: 'GREENSTAR', route: 'greenstar' },
   { id: 'documents', label: 'Documents', exportKey: 'DOCUMENTS', route: 'documents' },
   { id: 'metrics', label: 'Metrics', exportKey: 'METRICS', route: 'metrics' },
@@ -16,14 +17,16 @@ export const DEFAULT_DEAL_SHELL_MODULE_ID = DEAL_SHELL_MODULES[0]?.id || 'home'
  * Modules look up their tabs via MODULE_TAB_REGISTRIES[moduleId].
  * Components are NOT stored here — they live in the module's own lazy map.
  */
-import { CalendarDays, CheckCircle2, DollarSign, GanttChart, Users, Contact } from 'lucide-react'
+import { CalendarDays, CheckCircle2, ClipboardList, DollarSign, GanttChart, Users, Contact } from 'lucide-react'
+import { requiredApprovals } from '../shared/utils/approvals'
 
 export const MODULE_TAB_REGISTRIES = {
   home: [
+    { id: 'overview',   label: 'Summary',    icon: ClipboardList, badge: null },
     { id: 'timeline',   label: 'Timeline',   icon: GanttChart,    badge: (d) => (d.timelines || []).length || null },
-    { id: 'activities', label: 'Approvals',  icon: CheckCircle2,  badge: (d) => { const p = (d.activities || []).filter(a => a.status !== 'Completed' && a.status !== 'N/A').length; return p || null } },
+    { id: 'activities', label: 'Approvals',  icon: CheckCircle2,  badge: (d) => { const p = requiredApprovals(d.activities).filter(a => a.status !== 'Completed' && a.status !== 'N/A').length; return p || null } },
     { id: 'financials', label: 'Financials', icon: DollarSign,    badge: null },
-    { id: 'resources',  label: 'Resources',  icon: Users,         badge: null, placeholder: true },
+    { id: 'resources',  label: 'Resources',  icon: Users,         badge: null },
     { id: 'calendar',   label: 'Calendar',   icon: CalendarDays,  badge: null },
     { id: 'contacts',   label: 'Contacts',   icon: Contact,       badge: (d) => (d.contacts || []).length || null },
   ],

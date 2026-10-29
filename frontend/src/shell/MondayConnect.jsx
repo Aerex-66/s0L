@@ -9,7 +9,7 @@ import { mondayBadge } from './mondayBadge'
 const POLL_MS = 3000
 const POLL_LIMIT = 100 // five minutes to finish signing in
 
-/** Header icon: one click connects monday; the dot turns green once connected; then a click syncs. */
+/** Header icon: grey until someone signs in; one click connects monday, the dot turns green, then a click syncs. */
 export default function MondayConnect() {
   const [status, setStatus] = useState(null)
   const [connecting, setConnecting] = useState(false)
@@ -68,7 +68,11 @@ export default function MondayConnect() {
 
   return (
     <Tip content={badge.label}>
-      <button className="header-action-btn header-monday" onClick={handleClick} aria-label={badge.label}>
+      <button
+        className={cx('header-action-btn', 'header-monday', !status?.connected && 'header-signed-out')}
+        onClick={handleClick}
+        aria-label={badge.label}
+      >
         <img src={mondayLogo} alt="" className="header-monday-logo" />
         <span className={cx('header-monday-dot', `is-${badge.state}`)} aria-hidden="true" />
       </button>

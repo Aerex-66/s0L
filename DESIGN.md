@@ -59,7 +59,12 @@ them, never by hand-rolling:
   and soft depth. Small controls (chips, pills, secondary actions) are
   **tonal blocks** on `--control-fill`, not outlined boxes.
   Kept on purpose: input field edges (affordance), data-row separators, table
-  column rules and the timeline month grid (reading data). The dashboard pipeline band has no
+  column rules and the timeline month grid (reading data). Inside a deal, the module
+  rail opens with the client's logo, centred (no name: the Home headline carries it), then the
+  centred opportunity number, then the modules, split by fading hairlines that brighten to the
+  accent at the centre (`.opportunity-drawer-divider`, the user's call, 2026-10-29). Module marks
+  stand bare on the glass, never in boxes, lifted by a right/bottom drop shadow (`.drawer-item-icon`,
+  the user's call). The dashboard pipeline band has no
   panel at all: it sits on the canvas, closed by a fading hairline with a soft
   accent gradient shadow below (`.pipeline-band::before` / `::after`), and its
   filter is an underline field. Its stats are one quiet line of text: bold
@@ -171,7 +176,7 @@ A ladder — always take the highest rung that fits:
 | 2 | **Bundled fonts only**, from `@fontsource-variable/*` in `main.jsx`: Geist *(default)*, IBM Plex Sans, Inter, Manrope, Outfit, Plus Jakarta Sans, Space Grotesk, Sora for the UI; Geist Mono for IDs and code. **No CDN fonts, ever.** | Air-gapped policy |
 | 3 | **Square & seamless** (the seamless law). Square corners, no outlines or divider lines, tonal controls, flat accent primary buttons. | Clean and continuous — rounded edges and boxed-in Carbon panels were both retired 2026-10-21 |
 | 4 | **Dark-first.** Obsidian is the default and the reference; Frost is the light option. | The v6 light default read as plain white |
-| 5 | **No external assets of any kind.** All icons come from `lucide-react` via `shared/ui/Icons.jsx` (never raw emoji). The one exception: vendor logos are the vendors' own marks, bundled as files and never fetched: business apps (SAP, Oracle, Salesforce…) in `frontend/src/assets/practice-logos/`, connected services (monday) in `frontend/src/assets/integration-logos/`. | Air-gapped policy + visual consistency |
+| 5 | **No external assets of any kind.** All icons come from `lucide-react` via `shared/ui/Icons.jsx` (never raw emoji). The one exception: vendor logos are the vendors' own marks, bundled as files and never fetched: business apps (SAP, Oracle, Salesforce…) in `frontend/src/assets/practice-logos/`, connected services (monday, Salesforce, Outlook) in `frontend/src/assets/integration-logos/`, and the Office app a module works in (Excel for GSSM, PowerPoint for the iSBD, IBM Bob for GenAI, the Greenstar star for Greenstar, a folder for Documents) in `frontend/src/assets/module-logos/`, shown in full colour in the deal's module rail and the module's own header (`MODULE_ICONS` and `ExcelLogo` / `PowerPointLogo` / `FolderLogo` in `Icons.jsx`). | Air-gapped policy + visual consistency |
 
 ## Motion
 
@@ -240,9 +245,28 @@ dress it:
 | Error boundary / lazy gate | `ErrorBoundary.jsx`, `LazyGate.jsx` | shell plumbing |
 | Tooltip | `Tip.jsx` | Radix-based, dark glass |
 | Appearance panel | `ThemeSwitcher.jsx` | theme · accent · font; owns the palettes |
+| Person lookup | `PersonLookup.jsx` | a name field that shows who Outlook thinks it is as you type: name, email in accent, title · department, on the client picker's opaque list; "Search Outlook's address book…" at the foot. A plain text field without the Outlook app |
+
+The update prompt (`shell/UpdatePrompt.jsx`, packaged app only) is the shared
+Modal with **Restart now** as its one primary action beside **Later**; it adds no
+styles of its own. Until a ready update is installed, the header's Settings icon
+carries an accent dot (`.header-settings-dot`) and Settings opens on an accent-washed
+bar naming the version, with **Restart now** (`.settings-update`), on every tab.
 
 Same promotion bar as the architecture doc: a component becomes a block the
 moment a **second** feature needs it — not before.
+
+**In-deal workspace blocks** (`home.css`, `ws-*`). Every module inside a deal is
+built from the same pieces, so they read as one product: a page head
+(`.ws-page-head`, sentence-case title and a quiet note) for modules without the
+deal hero; KPI tiles (`.ws-kpis`, the TT Exec treatment one size down); panels
+(`.ws-panel`, translucent `--glass-bg-light` that never re-blurs, since they sit
+inside the workspace glass); facts (`.ws-facts`, an eyebrow label over the value);
+label · value rows (`.ws-rows`); people (`.ws-person`, an initials block, open seats
+muted); meters (`.ws-meters`, a thin bar in the status colour); tables (`.ws-table`,
+the list's recessed header bar); and empty states (`.ws-empty`, an accent-washed
+block that says what's missing, why, and where to get it — never a red error for
+something that simply hasn't happened yet).
 
 ## The chrome templates (`components.css`, adopted 2026-07-14)
 
@@ -272,7 +296,10 @@ data table, open deals by status, practice and lead solutioner as rows with a th
 in the status colour, practice hue or accent, and the deals waiting for assignment
 as the list view's own table, search, Group, Filter and Rows (`ArrangeToolbar` + `useArrangement`,
 shared with the dashboard) with its people pickers (TT Execs only), under a Notices panel with a send field
-(TT Execs only; disabled for everyone else). Nothing there lifts. On the Tile and Metrics views (not the
+(TT Execs only; disabled for everyone else). Last comes the Salesforce check: where the board and Salesforce
+disagree, one sentence per difference in a data table per TT Exec (the signed-in exec's own first, Unassigned
+last), with an **Update board** command button (TT Execs only, asked first with `ConfirmDialog`) and an
+**Open in Salesforce** hand-off link; the stat line counts the differences in `--status-warning`. Nothing there lifts. On the Tile and Metrics views (not the
 TT Exec view, not inside a deal) notices show in the middle of the header
 (`NoticeBanner`, between the left and right groups, which share the rest of the row): an accent-washed
 bar with a megaphone, one notice at a time with its date, turning every 6 s; hovering opens
@@ -280,7 +307,17 @@ the latest five with dates and author on solid `--surface` (it sits in the blurr
 the chevron pins the whole list open. monday sits between Appearance and Settings as its own logo with a
 round status dot (`.header-monday-dot`): muted = not connected (a click starts the
 sign-in), accent = signing in or syncing, `--status-success` = connected (a click
-syncs). The tooltip names who is signed in and when the board last synced.
+syncs). The tooltip names who is signed in and when the board last synced. Salesforce
+sits right after it the same way (`.header-salesforce-dot`; accent = signing in or
+checking, a click when connected checks the board's deals against Salesforce). Until
+someone signs in to a service, its mark is grey (`.header-signed-out`). Outlook comes
+last (`.header-outlook-dot`): in colour while s0L uses the Outlook app on the computer,
+its dot `--status-success` while Outlook is open; grey in the browser. A click opens the
+picker ("Which Outlook do you use?"), two tonal choice blocks on `--control-fill`, the one
+in use accent-washed with a ring; the app can't be chosen where it isn't set up. In the app,
+the meeting composer's primary action is **Open in Outlook** and deal documents become
+**Attach** chips; documents gain an **Email in Outlook** action. In the browser the primary
+action opens Outlook on the web instead, and attaching isn't offered.
 
 Under the pipeline band, a toolbar strip arranges the deals. **Group** (None ·
 Solutioner · Status · Practice · TCV; Solutioner only in the team view, which opens on it) works in Tile view and the list alike:

@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import Modal from '../../../shared/ui/Modal'
 import { FormField } from '../../../shared/ui/FormField'
 import { dealService } from '../../../shared/services/dealService'
-import { isEditable, isMondayLinked } from '../../../shared/constants/fieldIndex'
+import { fieldsWhere, isEditable, isMondayLinked, isSalesforceLinked } from '../../../shared/constants/fieldIndex'
 import ClientLogoControl from './ClientLogoControl'
 import {
   getImplementationTypes,
@@ -52,6 +52,9 @@ const FIELD_SECTIONS = [
     ],
   },
 ]
+
+const SALESFORCE_FIELDS = fieldsWhere((entry) => entry.section === 'salesforce' && entry.salesforce?.field)
+  .map(([key, entry]) => ({ key, label: entry.label }))
 
 export default function DealDetailsPanel({ deal, onClose, onUpdate }) {
   const [formData, setFormData] = useState(() => {
@@ -180,6 +183,16 @@ export default function DealDetailsPanel({ deal, onClose, onUpdate }) {
           )}
         </div>
       )}
+      {isSalesforceLinked(deal) && (
+        <div className="mb-sm">
+          <span className="chip">
+            {`From Salesforce${deal.salesforce_checked_at ? ` · checked ${new Date(deal.salesforce_checked_at).toLocaleString()}` : ''}`}
+          </span>
+          {deal.salesforce_lookup !== 'found' && (
+            <p className="text-muted">The last check didn't find this opportunity in Salesforce. Its last values are kept.</p>
+          )}
+        </div>
+      )}
       <ClientLogoControl clientName={deal?.client_name} />
       <div className="deal-details-sections">
         {FIELD_SECTIONS.map(section => (
@@ -190,6 +203,18 @@ export default function DealDetailsPanel({ deal, onClose, onUpdate }) {
             </div>
           </div>
         ))}
+        {isSalesforceLinked(deal) && (
+          <div className="deal-details-section">
+            <h4 className="deal-details-section-title">Salesforce</h4>
+            <div className="deal-details-fields">
+              {SALESFORCE_FIELDS.map((field) => (
+                <FormField key={field.key} label={field.label}>
+                  <input type="text" value={deal[field.key] ?? ''} readOnly disabled />
+                </FormField>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <div className="deal-details-footer">
         <button className="btn btn-ghost" onClick={onClose}>Cancel</button>

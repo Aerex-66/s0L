@@ -27,25 +27,63 @@ function DistBar({ label, count, max }) {
   )
 }
 
+const BOARD_STAFFING = [
+  ['staffing_full', 'Deal staffing full'],
+  ['staffing_bp', 'B&P'],
+  ['staffing_asset', 'Asset'],
+  ['staffing_associates', 'Associates'],
+  ['staffing_total_band', 'Total band'],
+  ['staffing_center_mix', 'Center mix'],
+]
+
+/** The staffing status columns on the monday board; they track the ask, GSSM holds the plan. */
+function BoardStaffing({ deal }) {
+  if (!deal?.monday_item_id) return null
+  return (
+    <section className="ws-panel" aria-labelledby="res-board">
+      <div className="ws-panel-head">
+        <h3 className="ws-panel-title" id="res-board">Staffing on the board</h3>
+        <span className="ws-panel-note">From the monday board</span>
+      </div>
+      <ul className="ws-rows">
+        {BOARD_STAFFING.map(([key, label]) => {
+          const value = String(deal[key] ?? '').trim()
+          const open = !value || value.toUpperCase() === 'N/A'
+          return (
+            <li key={key} className="ws-row">
+              <span className="ws-row-label">{label}</span>
+              <span className={`ws-row-value${open ? ' is-empty' : ''}`}>{value || '\u2014'}</span>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}
+
 export default function Resources({ deal }) {
   const staffing = deal?.staffing
 
   const synced = staffing?.synced_at
   const syncLabel = synced ? `Synced ${new Date(synced).toLocaleString()}` : null
 
-  const fteKeys = useMemo(() => {
-    if (!staffing?.monthly_fte) return []
-    return sortMonthKeys(Object.keys(staffing.monthly_fte))
-  }, [staffing?.monthly_fte])
+  const monthlyFte = staffing?.monthly_fte
+  const fteKeys = useMemo(() => (monthlyFte ? sortMonthKeys(Object.keys(monthlyFte)) : []), [monthlyFte])
 
   if (!staffing || !staffing.total_headcount) {
     return (
-      <div className="tab-placeholder glass-panel">
-        <div className="tab-placeholder-icon">
-          <UsersIcon size={24} strokeWidth={1.5} />
+      <div className="res-container">
+        <div className="ws-empty">
+          <span className="ws-empty-icon" aria-hidden="true"><UsersIcon size={22} strokeWidth={1.5} /></span>
+          <h3 className="ws-empty-title">No staffing plan yet</h3>
+          <p className="ws-empty-text">
+            Headcount, hours, fees, the band and team mix and the monthly FTE come from the Staffing sheet of this deal&apos;s
+            GSSM workbook. Open <strong>GSSM</strong> in the menu on the left and import the workbook to fill this tab.
+          </p>
         </div>
-        <h3>Resources</h3>
-        <p>No staffing data yet. Import a GSSM workbook in the GSSM module to populate this view.</p>
+        <div className="ws-grid">
+          <BoardStaffing deal={deal} />
+        </div>
       </div>
     )
   }
@@ -135,6 +173,8 @@ export default function Resources({ deal }) {
             </div>
           </section>
         )}
+
+        <BoardStaffing deal={deal} />
       </div>
     </div>
   )

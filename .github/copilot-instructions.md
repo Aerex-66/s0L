@@ -35,11 +35,16 @@ shared/                      # Cross-runtime contracts (consumed by Flask AND Re
 core/
   app_factory.py             # Flask app creation, CORS, security headers, blueprints
   shell/frontend.py          # Packaged app only: serves the built frontend + forwards /gssm-api (S0L_FRONTEND_DIST)
+  shell/updates.py           # Packaged app only: finds, downloads and stages s0L updates from monday; /api/updates/*
   shared/
     state.py                 # JSON persistence (load_data/save_data) + load-time migration w/ backup
     field_index.py           # Loads shared/field_index.json (aliases, owners, iSBD labels, GSSM cells)
     domain.py                # Loads shared/domain_constants.json
     migrations.py            # Brings stored deals onto index keys
+    vault.py                 # DPAPI-encrypted secret files (monday + Salesforce credentials)
+    opportunity_ids.py       # Salesforce opportunity IDs: 18-char form, what a board cell holds
+    reconcile.py             # Board vs Salesforce differences + the board value an approved fix writes
+    outlook_app.py           # The classic Outlook app: detection, app/web choice, the open app (COM)
     defaults.py              # Default approvers for 24 service areas
     security.py              # Frontend origin validation
   features/
@@ -58,9 +63,16 @@ core/
       onedrive.py            # Windows registry OneDrive discovery
     settings/settings.py     # Activity/resource structure, approvers, contacts, dashboard preferences (my deals / everyone)
     notices/notices.py       # TT Exec notices (post/remove, exec-checked); stored locally in deals_data.json
-    calendar/calendar.py     # Outlook calendar cache reader (outlook_sync.py fills it in the packaged app)
+    calendar/calendar.py     # Outlook calendar cache reader (outlook_sync.py fills it from the open classic Outlook, dev and packaged)
     integrations/monday/     # monday.com: OAuth sign-in (oauth.py), DPAPI credentials, board, who you are
                              # (identity.py: board name picked once; TT Execs), new rows (newdeal.py)
+                             # s0L's own release item + update download (releases.py), npm run release (publish.py)
+    integrations/salesforce/ # IBM Sales Cloud, read only: OAuth+PKCE sign-in (oauth.py, no secret), DPAPI tokens,
+                             # check of every board deal by opportunity number (check.py; writer.py = only
+                             # salesforce-field writer), npm run salesforce:inventory / salesforce:provision
+    integrations/outlook/    # The classic Outlook app via its local connection (no Graph, no sign-in): app or
+                             # browser choice (routes.py), real drafts/invites with deal documents (drafts.py),
+                             # people lookups as you type + Outlook's address book picker (people.py)
     integrations/client_logos/ # client logos: Wikidata/website image fetch (fetcher.py), exact-name
                              # resolver, once-only background worker, local cache, sandboxed image routes,
                              # review routes (no page; the deal details panel hides/fixes a logo)
@@ -76,25 +88,31 @@ frontend/src/
   App.jsx                    # Shell: deal selection, modals, keyboard shortcuts, module routing
   AppHeader.jsx              # Top nav: breadcrumb, search, monday connect/status, settings, new deal
   shell/
-    dealShell.js             # Module definitions (Home, iSBD, GSSM, Documents, Metrics, Admin)
+    dealShell.js             # Module definitions (Overview (home), GSSM, iSBD, GenAI, Greenstar, Documents, Metrics, Admin)
     moduleRegistry.js        # Lazy-loaded component registry
     MondayConnect.jsx        # Header monday icon: click to connect, status dot, click again to sync (mondayBadge.js)
+    SalesforceConnect.jsx    # Header Salesforce icon: click to connect, status dot, click again to check (salesforceBadge.js)
+    OutlookConnect.jsx       # Header Outlook icon (outlookBadge.js) + OutlookPicker.jsx: the Outlook app or the browser
     NoticeBanner.jsx         # Dashboard (Tile/Metrics) header-center notices: rotate every 6 s, hover = latest five, chevron = all
+    UpdatePrompt.jsx         # Packaged app: "s0L x.y.z is ready · Restart now / Later" (updateOffer.js decides)
   features/
-    home/                    # Timeline, Activities, Financials, Resources, Calendar, Contacts tabs
+    home/                    # "Overview" in the rail: Summary, Timeline, Activities, Financials, Resources, Calendar, Contacts tabs
     isbd/                    # Full iSBD slide editor (extraction, prefill, undo, export)
+    genai/                   # GenAI in the deal: the iSBD's GenAI answer and where the record mentions GenAI (new)
     documents/               # Document library, required slots, upload/download
     deals/                   # DealList, PipelineMetrics (list + monday people pickers), ExecDashboard (TT Exec view), NewDealModal, CommandPalette, Import/Export, useDeals
     settings/                # Approvers + Contacts tabs
     gssm/                    # GSSM editor: calc/, sheets/, utils/, components/, hooks/ (sync
                              # boundary — see GSSM_SYNC.md) + shell/ (s0L-only orchestration)
     greenstar/               # Staffing pivot views over GSSM data (via shared/gssmData)
-    metrics/, admin/         # Metrics dashboard, placeholder stub
+    metrics/, admin/         # This deal against similar deals; the deal record (fields, owners, links)
   shared/
     useStore.js              # Zustand store (currentDealId, modal state)
     dealStore.js             # Zustand deal-data cache (deals, patchDeal, GSSM syncStatus)
+    updateStore.js           # s0L's own update: status, Later, restart (prompt, Settings icon dot, Settings bar)
     services/dealService.js  # Canonical deal API client (ALL modules import from here)
     services/mondayService.js # monday sign-in status + board sync client
+    services/salesforceService.js # Salesforce sign-in status, check, differences client
     gssmData/                # Sanctioned read-only seam into GSSM engine for other modules
     apiClient.js             # Fetch wrapper (get/post/put/del/postFormData)
     constants/               # fieldIndex.js (loads shared/field_index.json), referenceData.js (dropdowns),
@@ -153,6 +171,9 @@ npm run clean                # Remove dist, __pycache__, .DS_Store
 npm run clean:deep           # Also removes rendered slide folders (documents/*_slides/)
 npm run package              # Signed portable zip -> release\s0L-<version>.zip (az login first; see UI_ARCHITECTURE.md)
 npm run package:unsigned     # Same, unsigned, for local testing
+npm run release              # Signed build + upload to s0L's monday item (next version; needs a monday sign-in that may change boards)
+npm run salesforce:provision # Store the Salesforce org address + consumer key on this PC (say yes only for IBM Sales Cloud)
+npm run salesforce:inventory # Write docs/salesforce/inventory.md: what the signed-in account can reach (names only)
 ```
 
 **Prerequisites**: Node.js 16+, Python 3.8+. Slide previews use desktop PowerPoint, or LibreOffice + pdftoppm when PowerPoint is missing.
@@ -167,7 +188,7 @@ npm run package:unsigned     # Same, unsigned, for local testing
 - **Field ownership**: GSSM values (owner `gssm`) are written only by `PUT /api/deals/:id/gssm-sync` and are never recalculated or edited in Home or iSBD — they must never disagree. Derived values are computed, never stored.
 - **Cross-runtime constants**: Phase codes/colors and service areas live in `shared/domain_constants.json` — consumed by `core/shared/domain.py` (Flask) and `gssmFieldMap.js` (React). Never redefine them per-runtime.
 - **Deal API access**: All frontend modules import `dealService` from `shared/services/dealService.js` — never from another feature folder. Deal records are cached in `shared/dealStore.js`; after a PUT, call `patchDeal(updated)` instead of a full reload where possible.
-- **No external network, one exemption**: The app is localhost-first. Never add CDNs, analytics or external assets. Hand-off links (`mailto:`, `msteams:`) that open the user's installed Outlook/Teams pre-filled are allowed; build them with `features/home/handoff.js`. **Sanctioned integrations are the only exemption:** Microsoft Outlook (Microsoft Graph), Salesforce and monday.com. The Flask backend calls their APIs, never the browser, and only after the user signs in with their own account (OAuth, or a personal access token the user creates). Calls go over HTTPS to those services' own hosts, and tokens stay on the machine. **Client logos** (signed off 2026-10-27) are the other exemption: the backend may query Wikidata's query service (query.wikidata.org) and download a client's logo from Wikimedia's image server (upload.wikimedia.org) or its icon from the client's own website, and, for a Wikipedia article link a person pastes, read that article's summary for its lead image; images only, all through `core/features/integrations/client_logos/fetcher.py`, cached locally. Any other outside service needs the user's explicit sign-off first.
+- **No external network, one exemption**: The app is localhost-first. Never add CDNs, analytics or external assets. Hand-off links (`mailto:`, `msteams:`, and Outlook on the web's compose pages) that open the user's installed Outlook/Teams, or their Outlook on the web, pre-filled are allowed; build them with `features/home/handoff.js` and `shared/utils/outlookLinks.js`. The classic Outlook app is reached through its own local connection (COM, `core/shared/outlook_app.py`): no network, no sign-in, no registration. **Sanctioned integrations are the only exemption:** Microsoft Outlook (Microsoft Graph; not used, the user ruled out app registrations), Salesforce and monday.com. The Flask backend calls their APIs, never the browser, and only after the user signs in with their own account (OAuth, or a personal access token the user creates). Calls go over HTTPS to those services' own hosts, and tokens stay on the machine. **Client logos** (signed off 2026-10-27) are the other exemption: the backend may query Wikidata's query service (query.wikidata.org) and download a client's logo from Wikimedia's image server (upload.wikimedia.org) or its icon from the client's own website, and, for a Wikipedia article link a person pastes, read that article's summary for its lead image; images only, all through `core/features/integrations/client_logos/fetcher.py`, cached locally. **s0L updates** (signed off 2026-10-28) are the third: the packaged app's backend downloads s0L's own release zips from monday's file storage (files-monday-com.s3.amazonaws.com), only through the links monday's API hands out, all in `core/features/integrations/monday/releases.py`. Any other outside service needs the user's explicit sign-off first.
 - **File uploads**: Stored in `documents/` directory; rendered slides go to `documents/{doc_id}_slides/`
 - **iSBD field mapping**: `isbdPrefillMap.js` maps 130+ field name variants — update when adding new iSBD fields
 - **Module independence**: Unless specified, avoid making global code changes across modules. Stop and ask.

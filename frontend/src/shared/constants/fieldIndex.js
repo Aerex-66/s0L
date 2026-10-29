@@ -72,6 +72,7 @@ export function readPath(deal, key) {
 export function isLinked(deal, owner) {
   if (owner === 'gssm') return Boolean(deal?.gssm_workbook_id || deal?.gssm_synced_at)
   if (owner === 'monday') return Boolean(deal?.monday_item_id)
+  if (owner === 'salesforce') return Boolean(deal?.salesforce_id)
   return false
 }
 
@@ -81,10 +82,18 @@ export const isGssmLinked = (deal) => isLinked(deal, 'gssm')
 /** A deal is linked to monday once it's tied to a board row. */
 export const isMondayLinked = (deal) => isLinked(deal, 'monday')
 
-/** Whether s0L screens may edit a field; GSSM and monday values are editable only until the deal is linked to their source. */
+/** A deal is linked to Salesforce once the check found its opportunity. */
+export const isSalesforceLinked = (deal) => isLinked(deal, 'salesforce')
+
+/**
+ * Whether s0L screens may edit a field; GSSM and monday values are editable only until the deal is linked to their
+ * source, Salesforce values only until Salesforce supplies that field (mirrors deal_editable in field_index.py).
+ */
 export function isEditable(key, deal) {
   const entry = FIELD_INDEX[key]
   if (!entry) return false
   if (entry.owner === 'deal' || entry.owner === 'isbd') return true
-  return Boolean(entry.editable_until_linked && !isLinked(deal, entry.owner))
+  if (!entry.editable_until_linked) return false
+  if (entry.owner === 'salesforce') return !(deal?.salesforce_supplied || []).includes(key)
+  return !isLinked(deal, entry.owner)
 }

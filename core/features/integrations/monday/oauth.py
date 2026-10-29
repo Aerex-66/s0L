@@ -1,7 +1,7 @@
 """
 Sign-in with s0L's own monday app (monday's OAuth 2.1 flow: PKCE, expiring
-access tokens, rotating refresh tokens). post_json() is the only function in
-s0L that makes an HTTP call to monday.
+access tokens, rotating refresh tokens). post_json() makes every JSON call s0L
+sends to monday; releases.py makes the file upload and the update download.
 """
 import base64
 import hashlib

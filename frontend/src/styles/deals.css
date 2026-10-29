@@ -754,22 +754,69 @@
 
 
 /* ══════════════════════════════════════════════════════════════════
-   OPPORTUNITY DRAWER — Glass sidebar
+   OPPORTUNITY DRAWER — the deal's rail: client logo, opportunity
+   number, then the modules, each mark in the same tonal well
    ══════════════════════════════════════════════════════════════════ */
 .opportunity-drawer { display: flex; flex-direction: column; width: 100%; height: 100%; padding: 0; background: transparent; }
-.opportunity-drawer-header { padding: 1rem 1.15rem; }
-.opportunity-drawer-title { font-size: var(--type-md); font-weight: var(--font-weight-thin); color: var(--text-primary); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
-.opportunity-drawer-meta { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem; }
-.opportunity-drawer-subtitle { font-size: var(--type-xs); font-family: var(--font-family-mono); color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.opportunity-drawer-nav { display: flex; flex-direction: column; gap: 2px; padding: 0.65rem 0.5rem; flex: 1; }
-.opportunity-drawer-item { display: flex; align-items: center; gap: 0.6rem; border: none; background: transparent; color: var(--text-secondary); text-align: left; padding: 0.65rem 0.75rem; font-size: var(--type-body); font-weight: var(--font-weight-medium); cursor: pointer; transition: all 0.15s var(--ease-glass); position: relative; border-radius: var(--radius-sm); }
-.opportunity-drawer-item::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; background: transparent; transition: background 0.15s var(--ease-glass); border-radius: 0 2px 2px 0; }
-.opportunity-drawer-item:hover { background: var(--interactive-hover); color: var(--text-primary); }
-.opportunity-drawer-item.active { background: var(--interactive-active); color: var(--ibm-blue); font-weight: var(--font-weight-bold); box-shadow: inset 0 0 20px color-mix(in srgb, var(--accent) 3%, transparent); }
-.opportunity-drawer-item.active::before { background: var(--ibm-blue); box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 30%, transparent); }
-.drawer-item-icon { width: 1.25rem; text-align: center; font-size: var(--type-md); line-height: 1; flex-shrink: 0; opacity: 0.55; }
-.opportunity-drawer-item.active .drawer-item-icon { opacity: 1; }
-.drawer-item-label { flex: 1; min-width: 0; letter-spacing: -0.005em; }
+.opportunity-drawer-header { display: flex; flex-direction: column; align-items: center; padding: 1.25rem 1rem 0; text-align: center; }
+/* The client's own logo leads the rail; a dark mark keeps a faint ink halo so it reads on dark glass */
+.opportunity-drawer-logo { display: flex; align-items: center; justify-content: center; width: 100%; height: 3.25rem; }
+.opportunity-drawer-logo img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 1px color-mix(in srgb, var(--ink) 45%, transparent)) drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 20%, transparent));
+}
+.opportunity-drawer-logo.is-monogram span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  font-size: var(--type-md);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  box-shadow: inset 0 1px 0 var(--specular-edge), var(--shadow-sm);
+}
+/* Fading hairlines split the logo, the opportunity number and the module list (the user's call, 2026-10-29) */
+.opportunity-drawer-divider {
+  align-self: stretch;
+  height: 1px;
+  margin: 0.85rem 0;
+  border: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--ink) 14%, transparent) 25%,
+    color-mix(in srgb, var(--accent) 50%, transparent) 50%,
+    color-mix(in srgb, var(--ink) 14%, transparent) 75%,
+    transparent 100%);
+}
+.opportunity-drawer-divider--nav { margin: 0.85rem 1rem 0; }
+.opportunity-drawer-meta { display: flex; justify-content: center; width: 100%; }
+.opportunity-drawer-subtitle { font-size: var(--type-2xs); font-family: var(--font-family-mono); letter-spacing: 0.03em; color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.opportunity-drawer-nav { display: flex; flex-direction: column; gap: 2px; padding: 0.75rem 0.6rem 1rem; flex: 1; overflow-y: auto; }
+.opportunity-drawer-item { display: flex; align-items: center; gap: 0.75rem; border: none; background: transparent; color: var(--text-secondary); text-align: left; padding: 0.55rem 0.7rem; font-size: var(--type-body); font-weight: var(--font-weight-medium); cursor: pointer; transition: var(--transition-liquid); position: relative; }
+.opportunity-drawer-item::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; background: transparent; transition: background var(--duration-hover) var(--ease-liquid); }
+.opportunity-drawer-item:hover { background: var(--hover-wash); color: var(--text-primary); }
+.opportunity-drawer-item.active { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--text-primary); }
+.opportunity-drawer-item.active::before { background: var(--accent); box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 45%, transparent); }
+/* Module marks stand bare on the glass, lifted by a right/bottom drop shadow; never boxed (the user's call, 2026-10-29) */
+.opportunity-drawer { --rail-mark-shadow: color-mix(in srgb, var(--table-head-bg) 80%, transparent); }
+.drawer-item-icon { display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; flex-shrink: 0; }
+.drawer-item-icon > * {
+  filter: drop-shadow(1.5px 2px 1.5px var(--rail-mark-shadow));
+  transition: filter var(--duration-hover) var(--ease-liquid), color var(--duration-hover) var(--ease-liquid);
+}
+.drawer-item-icon svg { width: 18px; height: 18px; color: var(--text-secondary); }
+.opportunity-drawer-item:hover .drawer-item-icon svg { color: var(--text-primary); }
+.opportunity-drawer-item.active .drawer-item-icon svg { color: var(--accent); }
+.opportunity-drawer-item.active .drawer-item-icon > * {
+  filter: drop-shadow(1.5px 2px 1.5px var(--rail-mark-shadow)) drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 40%, transparent));
+}
+.drawer-item-label { flex: 1; min-width: 0; letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1025,6 +1072,29 @@
 .exec-table-current td { color: var(--text-primary); background: var(--hover-wash); }
 .exec-added { display: grid; grid-template-columns: 2rem minmax(4rem, 10rem); align-items: center; gap: 0.6rem; }
 .exec-added-count { text-align: right; }
+/* Salesforce check: one table per TT Exec; the deal name opens the deal, actions sit at the row's end */
+.sf-check-group + .sf-check-group { margin-top: 0.9rem; }
+.sf-check-exec {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0 0 0.35rem;
+  font-size: var(--type-sm);
+  color: var(--text-secondary);
+}
+.sf-check-deal {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition-liquid);
+}
+.sf-check-deal:hover { color: var(--accent); }
+.sf-check-actions { white-space: nowrap; text-align: right; }
+.sf-check-actions .cmd-btn + .cmd-btn { margin-left: 0.4rem; }
 .exec-notice-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 0.75rem; }
 .exec-notice-form textarea { width: 100%; padding: 0.5rem 0.65rem; font-size: var(--type-body); resize: vertical; }
 .exec-notice-list { list-style: none; margin: 0.75rem 0 0; padding: 0; max-height: 14rem; overflow-y: auto; }

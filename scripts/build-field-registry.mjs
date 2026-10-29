@@ -37,6 +37,19 @@ function mondayColumn(block) {
   return `${cell(block.title)} (${code(block.column_id)}${block.part ? `, ${block.part}` : ''})${block.writable ? ' · s0L writes' : ''}`
 }
 
+function salesforceField(block) {
+  if (!block) return '—'
+  if (block.source) return `check ${block.source.replace('_', ' ')}`
+  return `${code(block.field)}${block.compare ? ` · compared with ${code(block.compare.with)}` : ''}`
+}
+
+function ownerText(entry) {
+  if (!entry.editable_until_linked) return entry.owner
+  return entry.owner === 'salesforce'
+    ? `${entry.owner} (deal-editable until Salesforce supplies it)`
+    : `${entry.owner} (deal-editable until linked)`
+}
+
 const sections = {}
 for (const [key, entry] of Object.entries(index.fields)) {
   (sections[entry.section] ||= []).push([key, entry])
@@ -56,10 +69,9 @@ const lines = [
 ]
 
 for (const [section, fields] of Object.entries(sections)) {
-  lines.push(`## ${section}`, '', '| Key | Label | Owner | Stored at / source | GSSM cell | monday column | iSBD labels | Old names |', '|---|---|---|---|---|---|---|---|')
+  lines.push(`## ${section}`, '', '| Key | Label | Owner | Stored at / source | GSSM cell | monday column | Salesforce field | iSBD labels | Old names |', '|---|---|---|---|---|---|---|---|---|')
   for (const [key, entry] of fields) {
-    const owner = entry.editable_until_linked ? `${entry.owner} (deal-editable until linked)` : entry.owner
-    lines.push(`| ${code(key)} | ${cell(entry.label)} | ${owner} | ${source(entry)} | ${code(entry.gssm)} | ${mondayColumn(entry.monday)} | ${isbdLabels(entry.isbd)} | ${list(entry.aliases)} |`)
+    lines.push(`| ${code(key)} | ${cell(entry.label)} | ${ownerText(entry)} | ${source(entry)} | ${code(entry.gssm)} | ${mondayColumn(entry.monday)} | ${salesforceField(entry.salesforce)} | ${isbdLabels(entry.isbd)} | ${list(entry.aliases)} |`)
   }
   lines.push('')
 }

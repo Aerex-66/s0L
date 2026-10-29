@@ -1,18 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { mondayService } from '../../../shared/services/mondayService'
 import useDealStore from '../../../shared/dealStore'
+import SummaryList from './SummaryList'
 
 const when = (iso) => (iso ? new Date(iso).toLocaleString() : 'never')
-
-function SummaryList({ title, items }) {
-  if (!items.length) return null
-  return (
-    <details className="mb-sm">
-      <summary>{title} ({items.length})</summary>
-      <ul>{items.map((text, i) => <li key={i}>{text}</li>)}</ul>
-    </details>
-  )
-}
 
 function SyncSummary({ summary, deals }) {
   const dealName = (id) => {

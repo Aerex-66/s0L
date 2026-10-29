@@ -20,9 +20,11 @@ user accepts.
 
 ## Decided by the user
 
-- **Where releases live:** board 9535661088 ("Files"), item 13410016681 ("s0L",
-  group "s0L"), Files column `file_mksmcq4v`. The 1.0.0 zip is already there
-  (asset 3348946343, 71.3 MB).
+- **Where releases live:** the item named "s0L" on board 9535661088 ("Files"),
+  Files column `file_mksmcq4v`. s0L finds the item by name, never by id: the
+  first item (13410016681) was deleted on 2026-10-28 and replaced by 13411298619,
+  and a fixed id would have stranded every installed copy. 1.1.0 was published
+  there on 2026-10-28 (asset 3350262503).
 - **Updates arrive through the app**, and s0L restarts only when the person agrees.
 - **No monday sign-in, no updates.** s0L prompts people to connect.
 - **Whoever can see the Files board gets s0L** (and, inside the zip, the monday
@@ -178,6 +180,8 @@ Publishing: a VS Code command now, GitHub later if wanted (Non-goals).
 - **Check:** extract into a staging folder (refuse any entry that would land
   outside it). Then the running launcher, which is already trusted, checks that:
   - the new `s0L.exe` has a valid signature from the same publisher as itself;
+  - the new `s0L.exe` is the version being installed (an older genuine `s0L.exe`
+    doesn't know the file check, so it must never stand in for a newer package);
   - every staged file matches the manifest (checked by running that new
     `s0L.exe`, which the signature check has just made trustworthy);
   - there are no extra files.

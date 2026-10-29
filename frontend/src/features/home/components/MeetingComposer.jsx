@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react'
 import { addMinutes, format } from 'date-fns'
-import { Copy, Mail, Plus, RotateCcw, Video, X } from 'lucide-react'
+import { CalendarPlus, Copy, Mail, Plus, RotateCcw, Video, X } from 'lucide-react'
 import Modal from '../../../shared/ui/Modal'
 import { FormField } from '../../../shared/ui/FormField'
+import useOutlookStore, { effectiveMode } from '../../../shared/outlookStore'
+import { outlookWebEventLink } from '../../../shared/utils/outlookLinks'
+import { cx } from '../../../shared/utils/cx'
 import {
   buildAgenda, dealLabel, mailtoLink, nextBusinessDay, pendingItemsFor, teamsMeetingLink,
 } from '../handoff'
@@ -11,16 +14,25 @@ const DURATIONS = [15, 30, 45, 60, 90]
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const same = (a, b) => a.toLowerCase() === b.toLowerCase()
 
+const HINTS = {
+  app: 'Outlook opens the invite with everything filled in. Add a Teams link there if you want one, then press Send.',
+  web: 'Outlook on the web opens the invite filled in. Check the invitees there, then press Send.',
+  none: 'Teams opens the form with everything filled in. Nothing is sent until you press Send there.',
+}
+
 function toStart(date, time) {
   const [y, m, d] = date.split('-').map(Number)
   const [hh, mm] = time.split(':').map(Number)
   return new Date(y, m - 1, d, hh, mm)
 }
 
-/** Pre-fills a Teams meeting (or an Outlook email) — the user reviews and sends from the app itself. */
+/** Pre-fills an Outlook invite (or a Teams meeting) — the user reviews and sends from the app itself. */
 export default function MeetingComposer({ deal, initial = {}, onClose }) {
   const label = dealLabel(deal)
   const people = useMemo(() => (deal.contacts || []).filter((c) => c.email), [deal.contacts])
+  const documents = deal.documents || []
+  const mode = useOutlookStore((s) => effectiveMode(s.status))
+  const openInvite = useOutlookStore((s) => s.openInvite)
 
   const [subject, setSubject] = useState(initial.subject || label)
   const [date, setDate] = useState(format(initial.date || nextBusinessDay(), 'yyyy-MM-dd'))
@@ -30,6 +42,8 @@ export default function MeetingComposer({ deal, initial = {}, onClose }) {
   const [draftEmail, setDraftEmail] = useState('')
   const [agendaEdit, setAgendaEdit] = useState(null)
   const [status, setStatus] = useState('')
+  const [attached, setAttached] = useState([])
+  const [opening, setOpening] = useState(false)
 
   const isOn = (email) => attendees.some((a) => same(a, email))
   const guests = attendees.filter((a) => !people.some((p) => same(p.email, a)))
@@ -46,6 +60,8 @@ export default function MeetingComposer({ deal, initial = {}, onClose }) {
 
   const meeting = { attendees, subject: subject.trim(), start, end, content: agenda }
   const teamsLink = valid ? teamsMeetingLink(meeting) : undefined
+  const invite = { attendees, subject: subject.trim(), start, end, body: agenda }
+  const webInvite = valid ? outlookWebEventLink(invite) : undefined
   const mailLink = valid
     ? mailtoLink({
       to: attendees,
@@ -75,8 +91,19 @@ export default function MeetingComposer({ deal, initial = {}, onClose }) {
     }
   }
 
+  const toggleAttached = (id) => setAttached((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]))
+
+  const openInOutlook = async () => {
+    if (!valid || opening) return
+    setOpening(true)
+    setStatus('Opening Outlook…')
+    const opened = await openInvite(invite, { dealId: deal.id, attachments: attached })
+    setOpening(false)
+    setStatus(opened ? 'Outlook opened the invite — check it there and press Send.' : 'Outlook didn’t open the invite. See the message at the top.')
+  }
+
   return (
-    <Modal title="Schedule a Teams meeting" onClose={onClose} className="mc-modal">
+    <Modal title="Schedule a meeting" onClose={onClose} className="mc-modal">
       <div className="mc">
         <FormField label="Subject" required>
           <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} />
@@ -158,29 +185,81 @@ export default function MeetingComposer({ deal, initial = {}, onClose }) {
           <textarea className="mc-agenda" rows={6} value={agenda} onChange={(e) => setAgendaEdit(e.target.value)} />
         </div>
 
+        {mode === 'app' && documents.length > 0 && (
+          <div className="mc-section">
+            <div className="mc-section-head">
+              <span className="mc-caption">Attach</span>
+              <span className="mc-count">{attached.length} of {documents.length} deal documents</span>
+            </div>
+            <div className="mc-attach">
+              {documents.map((doc) => (
+                <button
+                  key={doc.id}
+                  type="button"
+                  className={cx('chip', 'chip--interactive', attached.includes(doc.id) && 'chip--active')}
+                  aria-pressed={attached.includes(doc.id)}
+                  onClick={() => toggleAttached(doc.id)}
+                  title={doc.name}
+                >
+                  {doc.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="mc-footer">
           <p className="mc-hint" role="status">
-            {status || 'Teams opens the form with everything filled in. Nothing is sent until you press Send there.'}
+            {status || HINTS[mode || 'none']}
           </p>
           <div className="mc-actions">
             <button type="button" className="btn btn-ghost btn-sm" onClick={copyWebLink} disabled={!valid}>
               <Copy size={14} /> Copy link
             </button>
-            <a
-              className={`btn btn-secondary btn-sm${valid ? '' : ' is-disabled'}`}
-              href={mailLink}
-              aria-disabled={!valid}
-            >
-              <Mail size={14} /> Email in Outlook
-            </a>
-            <a
-              className={`btn btn-primary btn-sm${valid ? '' : ' is-disabled'}`}
-              href={teamsLink}
-              aria-disabled={!valid}
-              onClick={() => valid && setStatus('Opening Teams — review the meeting there and press Send.')}
-            >
-              <Video size={14} /> Open in Teams
-            </a>
+            {mode ? (
+              <a
+                className={`btn btn-secondary btn-sm${valid ? '' : ' is-disabled'}`}
+                href={teamsLink}
+                aria-disabled={!valid}
+                onClick={() => valid && setStatus('Opening Teams — review the meeting there and press Send.')}
+              >
+                <Video size={14} /> Open in Teams
+              </a>
+            ) : (
+              <a
+                className={`btn btn-secondary btn-sm${valid ? '' : ' is-disabled'}`}
+                href={mailLink}
+                aria-disabled={!valid}
+              >
+                <Mail size={14} /> Email in Outlook
+              </a>
+            )}
+            {mode === 'app' && (
+              <button type="button" className="btn btn-primary btn-sm" onClick={openInOutlook} disabled={!valid || opening}>
+                <CalendarPlus size={14} /> Open in Outlook
+              </button>
+            )}
+            {mode === 'web' && (
+              <a
+                className={`btn btn-primary btn-sm${valid ? '' : ' is-disabled'}`}
+                href={webInvite}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-disabled={!valid}
+              >
+                <CalendarPlus size={14} /> Open in Outlook on the web
+              </a>
+            )}
+            {!mode && (
+              <a
+                className={`btn btn-primary btn-sm${valid ? '' : ' is-disabled'}`}
+                href={teamsLink}
+                aria-disabled={!valid}
+                onClick={() => valid && setStatus('Opening Teams — review the meeting there and press Send.')}
+              >
+                <Video size={14} /> Open in Teams
+              </a>
+            )}
           </div>
         </div>
       </div>

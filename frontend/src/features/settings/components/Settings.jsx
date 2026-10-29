@@ -1,148 +1,31 @@
-import { useState, useEffect } from 'react'
-import { settingsService } from '../settingsService'
-import ApproversTab from './ApproversTab'
-import DirectoryTab from './DirectoryTab'
+import { useState } from 'react'
 import MondayTab from './MondayTab'
+import SalesforceTab from './SalesforceTab'
 import MyViewTab from './MyViewTab'
 import ConfirmDialog from '../../../shared/ui/ConfirmDialog'
 import Modal from '../../../shared/ui/Modal'
-import { useAsyncLoad } from '../../../shared/useAsyncLoad'
+import useUpdateStore, { readyUpdate } from '../../../shared/updateStore'
+
+// People (the old Directory and SAL Defaults) live in the Outlook panel's Quick contacts.
+const SETTINGS_TABS = [
+  { id: 'view', label: 'My view', subtitle: 'Your name and whose deals you see' },
+  { id: 'monday', label: 'monday', subtitle: 'Deal board sync' },
+  { id: 'salesforce', label: 'Salesforce', subtitle: 'IBM Sales Cloud check' },
+]
+
+const CLOSED = { open: false, title: '', message: '', onConfirm: null }
 
 export default function Settings({ onClose, initialTab }) {
-  const [directory, setDirectory] = useState([])
-  const [defaultApprovers, setDefaultApprovers] = useState({})
-  const [activeTab, setActiveTab] = useState(initialTab || 'directory')
-  const [savedKey, setSavedKey] = useState(null)
-  const [savedId, setSavedId] = useState(null)
-  const [saveError, setSaveError] = useState('')
-  const [confirmState, setConfirmState] = useState({
-    open: false,
-    title: '',
-    message: '',
-    onConfirm: null,
-  })
-
-  const { data: loadedDirectory, reload: reloadDirectory } = useAsyncLoad(
-    () => settingsService.getDirectory(),
-    [],
-    []
-  )
-
-  const { data: loadedDefaultApprovers } = useAsyncLoad(
-    () => settingsService.getDefaultApprovers(),
-    [],
-    {}
-  )
-
-  useEffect(() => {
-    if (Array.isArray(loadedDirectory)) setDirectory(loadedDirectory)
-  }, [loadedDirectory])
-
-  useEffect(() => {
-    if (loadedDefaultApprovers && typeof loadedDefaultApprovers === 'object') {
-      setDefaultApprovers(loadedDefaultApprovers)
-    }
-  }, [loadedDefaultApprovers])
-
-  // --- Approvers tab actions (SAL grid) ---
-  const saveIndividualApprover = async (key) => {
-    try {
-      setSaveError('')
-      await settingsService.updateDefaultApprovers(defaultApprovers)
-      setSavedKey(key)
-      setTimeout(() => setSavedKey(null), 2000)
-      reloadDirectory()
-    } catch (error) {
-      console.error('Error saving approver:', error)
-      setSaveError(`Unable to save approver changes: ${error.message}`)
-    }
-  }
-
-  const clearApprover = async (key) => {
-    setConfirmState({
-      open: true,
-      title: 'Clear Approver',
-      message: 'Clear this approver and remove all associated details?',
-      onConfirm: async () => {
-        const clearedApprovers = {
-          ...defaultApprovers,
-          [key]: { name: '', email: '', slack: '', phone: '' }
-        }
-        setDefaultApprovers(clearedApprovers)
-        try {
-          await settingsService.updateDefaultApprovers(clearedApprovers)
-          reloadDirectory()
-        } catch (error) {
-          console.error('Error clearing approver:', error)
-        }
-      },
-    })
-  }
-
-  // --- Directory tab actions ---
-  const addDirectoryContact = async (form) => {
-    try {
-      await settingsService.addDirectoryContact(form)
-      reloadDirectory()
-    } catch (error) {
-      console.error('Error adding contact:', error)
-    }
-  }
-
-  const updateDirectoryContact = async (id, form) => {
-    try {
-      await settingsService.updateDirectoryContact(id, form)
-      setSavedId(id)
-      setTimeout(() => setSavedId(null), 2000)
-      reloadDirectory()
-    } catch (error) {
-      console.error('Error updating contact:', error)
-    }
-  }
-
-  const deleteDirectoryContact = async (id) => {
-    setConfirmState({
-      open: true,
-      title: 'Remove Contact',
-      message: 'Remove this person from the directory?',
-      onConfirm: async () => {
-        try {
-          await settingsService.deleteDirectoryContact(id)
-          reloadDirectory()
-        } catch (error) {
-          console.error('Error deleting contact:', error)
-          setSaveError(`Failed to delete contact: ${error.message}`)
-        }
-      },
-    })
-  }
-
-  const approverRoles = [
-    { key: 'RTR_SAL', label: 'RTR - Service Area Lead' },
-    { key: 'OTC_SAL', label: 'OTC - Service Area Lead' },
-    { key: 'PTP_Ariba_SAL', label: 'PTP/Ariba - Service Area Lead' },
-    { key: 'FTPL_SAL', label: 'FTP&L - Service Area Lead' },
-    { key: 'Data_SAL', label: 'Data - Service Area Lead' },
-    { key: 'Analytics_SAL', label: 'Analytics - Service Area Lead' },
-    { key: 'IBP_SAL', label: 'IBP - Service Area Lead' },
-    { key: 'Security_SAL', label: 'Security - Service Area Lead' },
-    { key: 'OCM_SAL', label: 'OCM - Service Area Lead' },
-    { key: 'EPL_SAL', label: 'EPL - Service Area Lead' },
-    { key: 'Group_Reporting_SAL', label: 'Group Reporting - Service Area Lead' },
-    { key: 'SAC_SAL', label: 'SAC - Service Area Lead' },
-  ]
-
-  const settingsTabs = [
-    { id: 'view', label: 'My view', subtitle: 'Your name and whose deals you see' },
-    { id: 'directory', label: 'Directory', subtitle: 'All people — approvers, leads, contacts', badge: directory.length },
-    { id: 'approvers', label: 'SAL Defaults', subtitle: 'Service area lead routing' },
-    { id: 'monday', label: 'monday', subtitle: 'Deal board sync' },
-  ]
+  const updateReady = useUpdateStore((s) => readyUpdate(s.status))
+  const restartForUpdate = useUpdateStore((s) => s.restartNow)
+  const [activeTab, setActiveTab] = useState(SETTINGS_TABS.some((tab) => tab.id === initialTab) ? initialTab : 'view')
+  const [confirmState, setConfirmState] = useState(CLOSED)
+  const askFirst = (title, message, onConfirm) => setConfirmState({ open: true, title, message, onConfirm })
 
   return (
     <Modal title="Settings" onClose={onClose} className="settings-modal">
       <div className="settings-tabs">
-          {settingsTabs.map((tab) => (
+          {SETTINGS_TABS.map((tab) => (
             <button
               key={tab.id}
               className={`settings-tab ${activeTab === tab.id ? 'active' : ''}`}
@@ -154,44 +37,23 @@ export default function Settings({ onClose, initialTab }) {
                 <span className="settings-tab-label">{tab.label}</span>
                 <span className="settings-tab-subtitle">{tab.subtitle}</span>
               </span>
-              {typeof tab.badge === 'number' && (
-                <span className="settings-tab-badge">{tab.badge}</span>
-              )}
             </button>
           ))}
         </div>
 
         <div className="modal-body">
-          {saveError && <div className="text-danger">{saveError}</div>}
-
-          {activeTab === 'directory' && (
-            <DirectoryTab
-              contacts={directory}
-              onAdd={addDirectoryContact}
-              onUpdate={updateDirectoryContact}
-              onDelete={deleteDirectoryContact}
-              savedId={savedId}
-            />
-          )}
-
-          {activeTab === 'approvers' && (
-            <ApproversTab
-              approverRoles={approverRoles}
-              defaultApprovers={defaultApprovers}
-              setDefaultApprovers={setDefaultApprovers}
-              savedKey={savedKey}
-              saveIndividualApprover={saveIndividualApprover}
-              clearApprover={clearApprover}
-            />
+          {updateReady && (
+            <div className="settings-update" role="status">
+              <span><b>s0L {updateReady} is ready.</b> Restart s0L to use it. Your deals and documents stay as they are.</span>
+              <button className="btn btn-primary" onClick={() => { onClose(); restartForUpdate() }}>Restart now</button>
+            </div>
           )}
 
           {activeTab === 'view' && <MyViewTab />}
 
-          {activeTab === 'monday' && (
-            <MondayTab
-              onConfirm={(title, message, onConfirm) => setConfirmState({ open: true, title, message, onConfirm })}
-            />
-          )}
+          {activeTab === 'monday' && <MondayTab onConfirm={askFirst} />}
+
+          {activeTab === 'salesforce' && <SalesforceTab onConfirm={askFirst} />}
         </div>
 
       <ConfirmDialog
@@ -199,10 +61,10 @@ export default function Settings({ onClose, initialTab }) {
         title={confirmState.title}
         message={confirmState.message}
         confirmLabel="Confirm"
-        onCancel={() => setConfirmState({ open: false, title: '', message: '', onConfirm: null })}
+        onCancel={() => setConfirmState(CLOSED)}
         onConfirm={async () => {
           const runConfirm = confirmState.onConfirm
-          setConfirmState({ open: false, title: '', message: '', onConfirm: null })
+          setConfirmState(CLOSED)
           if (runConfirm) {
             await runConfirm()
           }

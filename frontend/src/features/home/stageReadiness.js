@@ -1,5 +1,6 @@
 /** Home stage readiness — what each deal stage still needs, read from the shared deal record. */
 import { isDoneStatus } from '../../shared/constants/uiStates'
+import { requiredApprovals } from '../../shared/utils/approvals'
 
 export const STAGES = [
   { id: 'intake', label: 'Intake', tabs: ['contacts'], objective: 'Confirm deal identity, ownership, and stakeholders.', events: ['Core identity', 'Stakeholder contacts', 'B&P / ISC trace'] },
@@ -13,6 +14,7 @@ export function computeStageReadiness(deal) {
   if (!deal) return {}
   const manual = deal.workflow_stage_manual || {}
   const activities = deal.activities || []
+  const required = requiredApprovals(activities)
   const actTitle = (a) => `${a.activity || a.name || ''}`.toLowerCase()
   const matchKw = (kws) => activities.filter((a) => kws.some((k) => actTitle(a).includes(k)))
   const hasKw = (kws) => matchKw(kws).length > 0
@@ -34,7 +36,7 @@ export function computeStageReadiness(deal) {
     ],
     'risk-compliance': [hasKw(['risk', 'dprc', 'credit', 'dra', 'tda']), doneKw(['risk', 'dprc', 'credit', 'dra', 'tda']) > 0, Boolean(fin.risk_rating || fin.total_contingency)],
     commercial: [Boolean(deal.estimated_value || deal.price_to_win || deal.rate_card), Boolean(fin.services_revenue && fin.labor_cost), Boolean(fin.price_type || deal.price_to_win)],
-    governance: [hasKw(['srr', 'prr', 'review']), doneKw(['srr', 'prr', 'review']) > 0, activities.length > 0 && activities.every((a) => isDoneStatus(a.status))],
+    governance: [hasKw(['srr', 'prr', 'review']), doneKw(['srr', 'prr', 'review']) > 0, required.length > 0 && required.every((a) => isDoneStatus(a.status))],
   }
 
   const result = {}

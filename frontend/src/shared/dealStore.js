@@ -15,6 +15,7 @@
 import { create } from 'zustand'
 import { dealService } from './services/dealService'
 import { mondayService } from './services/mondayService'
+import { salesforceService } from './services/salesforceService'
 import { migrateTimelineStructure } from './utils/migrateTimelines'
 
 const useDealStore = create((set, get) => ({
@@ -28,6 +29,9 @@ const useDealStore = create((set, get) => ({
 
   // monday board → deal sync: 'idle' | 'syncing' | 'ok' | 'error', plus the last summary
   mondaySync: { state: 'idle', summary: null, message: '', at: null },
+
+  // Salesforce check of the board's deals: 'idle' | 'checking' | 'ok' | 'error', plus the last summary
+  salesforceCheck: { state: 'idle', summary: null, message: '', at: null },
 
   // Who the signed-in monday person is on the board: { email, name, is_exec, names }; null until known.
   mondayMe: null,
@@ -59,8 +63,27 @@ const useDealStore = create((set, get) => ({
       const summary = await mondayService.sync()
       set({ mondaySync: { state: 'ok', summary, message: '', at: new Date().toISOString() } })
       await get().loadDeals()
+      // The board's opportunity numbers are fresh, so check them against Salesforce when signed in there.
+      get().runSalesforceCheck({ ifConnected: true })
     } catch (error) {
       set((s) => ({ mondaySync: { ...s.mondaySync, state: 'error', message: error.message } }))
+    }
+  },
+
+  runSalesforceCheck: async ({ ifConnected = false } = {}) => {
+    const before = get().salesforceCheck
+    if (before.state === 'checking') return
+    set({ salesforceCheck: { ...before, state: 'checking', message: '' } })
+    try {
+      if (ifConnected && !(await salesforceService.status()).connected) {
+        set({ salesforceCheck: before })
+        return
+      }
+      const summary = await salesforceService.check()
+      set({ salesforceCheck: { state: 'ok', summary, message: '', at: new Date().toISOString() } })
+      await get().loadDeals()
+    } catch (error) {
+      set({ salesforceCheck: { ...before, state: 'error', message: error.message, at: new Date().toISOString() } })
     }
   },
 

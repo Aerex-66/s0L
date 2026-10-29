@@ -108,10 +108,11 @@ def test_network_failure_is_plain(signed_in, fake_monday):
     assert error.value.kind == 'network'
 
 
-def test_the_only_writes_set_an_existing_label_or_add_a_row():
+def test_the_only_writes_set_an_existing_label_fix_a_cell_or_add_a_row():
     source = Path(client.__file__).read_text(encoding='utf-8')
-    assert source.count("'mutation") == 2
+    assert source.count("'mutation") == 3
     assert 'create_labels_if_missing' not in client._SET_LABEL_MUTATION
+    assert 'create_labels_if_missing' not in client._SET_CELL_MUTATION
     # Adding labels is a per-call choice (only a TT Exec's new client), never hardcoded on.
     assert 'create_labels_if_missing: $create' in client._CREATE_ITEM_MUTATION
     assert 'create_labels_if_missing: true' not in source

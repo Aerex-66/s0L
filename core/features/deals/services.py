@@ -7,6 +7,7 @@ import shutil
 from datetime import datetime
 
 from deal_structure import ACTIVITY_CATEGORIES
+from core.shared.directory import area_key, sal_people
 from core.shared.state import load_data, DOCUMENTS_ROOT
 from core.features.deals.writes import apply_deal_write
 
@@ -28,50 +29,32 @@ def cleanup_deal_documents(deal):
 
 
 def get_activities_with_defaults(data=None):
-    """Build the initial activity list for a new deal, resolving SAL/PAL
-    approvers from the master contact directory. Returns (activities,
-    auto_contacts) where auto_contacts are directory entries to attach
-    to the deal. Pass `data` when the store is already loaded."""
+    """Build the initial activity list for a new deal; each SAL row names its
+    service area's SALs from the directory (Quick contacts). Returns (activities,
+    auto_contacts) where auto_contacts are those SALs, to attach to the deal.
+    Pass `data` when the store is already loaded."""
     data = data if data is not None else load_data()
-    defaults = data.get('default_approvers', {})
-    directory = data.get('master_contacts', [])
-    # Index directory by approver_key for contact_id lookup
-    dir_by_key = {c['approver_key']: c for c in directory if c.get('approver_key')}
+    by_area = sal_people(data.get('master_contacts', []))
 
     activities = []
-    auto_contacts = []  # contacts to auto-add to the deal
-    seen_contact_ids = set()
+    areas_of = {}  # person id -> (person, the areas they lead), in first-seen order
     act_id = 0
     for category_data in ACTIVITY_CATEGORIES.values():
         for activity in category_data.get('activities', []):
             act = dict(activity)
             act_id += 1
+            act['reviewer_approver'] = ''
+            act['owner'] = ''
 
-            owner_type = activity.get('owner_type', '')
-            if owner_type in ['SAL', 'PAL']:
+            if activity.get('owner_type') == 'SAL':
                 area = activity.get('area', '')
-                key = f"{area.replace('/', '_').replace('&', '')}_{owner_type}"
-                approver_info = defaults.get(key, {})
-                act['reviewer_approver'] = approver_info.get('name', '') if isinstance(approver_info, dict) else approver_info
-                act['owner'] = f"{area} {owner_type}"
-                # Link to directory contact
-                dir_entry = dir_by_key.get(key)
-                if dir_entry and dir_entry.get('name', '').strip():
-                    act['contact_id'] = dir_entry['id']
-                    if dir_entry['id'] not in seen_contact_ids:
-                        seen_contact_ids.add(dir_entry['id'])
-                        auto_contacts.append({
-                            'name': dir_entry.get('name', ''),
-                            'email': dir_entry.get('email', ''),
-                            'role': f"{area} {owner_type}",
-                            'company': dir_entry.get('company', ''),
-                            'phone': dir_entry.get('phone', ''),
-                            'notes': '',
-                            'source_id': dir_entry['id'],
-                        })
-            else:
-                act['reviewer_approver'] = ''
-                act['owner'] = ''
+                people = by_area.get(area_key(area), [])
+                act['owner'] = f'{area} SAL'
+                act['reviewer_approver'] = ' / '.join(person['name'] for person in people)
+                if people:
+                    act['contact_id'] = people[0]['id']
+                for person in people:
+                    areas_of.setdefault(person['id'], (person, []))[1].append(area)
 
             act['id'] = act_id
             act['activity'] = activity['name']
@@ -80,6 +63,15 @@ def get_activities_with_defaults(data=None):
             act['comments'] = ''
             activities.append(act)
 
+    auto_contacts = [{
+        'name': person.get('name', ''),
+        'email': person.get('email', ''),
+        'role': f"{', '.join(areas)} SAL",
+        'company': person.get('company', ''),
+        'phone': person.get('phone', ''),
+        'notes': '',
+        'source_id': person['id'],
+    } for person, areas in areas_of.values()]
     return activities, auto_contacts
 
 

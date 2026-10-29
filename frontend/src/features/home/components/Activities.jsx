@@ -1,9 +1,12 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import { Mail } from 'lucide-react'
 import { dealService } from '../../../shared/services/dealService'
-import { settingsService } from '../../settings/settingsService'
+import { directoryService } from '../../../shared/services/directoryService'
+import { describeRoles } from '../../../shared/utils/directory'
+import { isOptionalApproval } from '../../../shared/utils/approvals'
 import { WORK_STATUS_OPTIONS, getWorkStatusStyle } from '../../../shared/constants'
-import { approvalEmailLink, approverRecipients, dealLabel } from '../handoff'
+import { approvalEmail, approverRecipients, dealLabel } from '../handoff'
+import OutlookEmailButton from './OutlookEmailButton'
 
 // ── Inline autocomplete input for approver names ──
 function ApproverInput({ value, onChange, placeholder, suggestions, className }) {
@@ -49,7 +52,7 @@ function ApproverInput({ value, onChange, placeholder, suggestions, className })
 }
 
 const CATEGORY_META = {
-  service_area: { label: 'Service Area Approvals', description: 'SAL & PAL sign-offs per process area in scope' },
+  service_area: { label: 'Service Area Leads · optional', description: 'SAL sign-offs per area in scope: an extra step, never a gate, and a SAL can delegate' },
   staffing: { label: 'Staffing', description: 'Resource & staffability confirmations' },
   specialist: { label: 'Specialist Reviews', description: 'Technical, risk, and governance reviews' },
   compliance: { label: 'Compliance & Documentation', description: 'Required compliance artifacts' },
@@ -112,6 +115,9 @@ function getServiceAreaPairs(activities) {
   return areas
 }
 
+// PAL is gone: an old PAL row only shows when someone put something in it.
+const isFilled = (a) => Boolean(a && ((a.status && a.status !== 'Not Started') || a.reviewer_approver?.trim() || a.date || a.comments?.trim()))
+
 export default function Activities({ deal, onUpdate, stageReadiness }) {
   const [savingStates, setSavingStates] = useState({})
   const [filter, setFilter] = useState('all')
@@ -125,7 +131,7 @@ export default function Activities({ deal, onUpdate, stageReadiness }) {
 
   // Load global directory for autocomplete + email lookup
   useEffect(() => {
-    settingsService.getDirectory().then(d => { if (Array.isArray(d)) setDirectory(d) }).catch(() => {})
+    directoryService.people().then(d => { if (Array.isArray(d)) setDirectory(d) }).catch(() => {})
   }, [])
 
   // Build autocomplete suggestions from directory + deal contacts (deduped by name)
@@ -136,7 +142,7 @@ export default function Activities({ deal, onUpdate, stageReadiness }) {
     for (const c of directory) {
       if (!c.name?.trim() || seen.has(c.name)) continue
       seen.add(c.name)
-      const meta = [c.role, c.area].filter(Boolean).join(' · ')
+      const meta = describeRoles(c)
       result.push({ id: c.id, name: c.name, email: c.email, meta })
     }
     // Then deal-level contacts
@@ -269,15 +275,13 @@ export default function Activities({ deal, onUpdate, stageReadiness }) {
     return r && r.manualComplete && r.done < r.total
   }, [stageReadiness])
 
-  // Count only in-scope items for summary
+  // Count only required, applicable items for summary (SAL sign-offs are optional)
   const statusCounts = useMemo(() => {
     const c = { total: 0, completed: 0, inProgress: 0, blocked: 0, notStarted: 0, na: 0 }
     activities.forEach(a => {
-      const cat = categorizeActivity(a)
-      // Skip out-of-scope service areas
-      if (cat === 'service_area' && !isAreaInScope(a.area)) return
+      if (isOptionalApproval(a)) return
       // Skip inapplicable specialist reviews
-      if (cat === 'specialist' && !isSpecialistApplicable(a)) return
+      if (categorizeActivity(a) === 'specialist' && !isSpecialistApplicable(a)) return
       const s = a.status || 'Not Started'
       c.total++
       if (s === 'Completed') c.completed++
@@ -287,7 +291,7 @@ export default function Activities({ deal, onUpdate, stageReadiness }) {
       else c.notStarted++
     })
     return c
-  }, [activities, isAreaInScope, isSpecialistApplicable])
+  }, [activities, isSpecialistApplicable])
 
   // One Outlook draft to every in-scope pending approver with an email on file
   const chase = useMemo(() => {
@@ -303,34 +307,35 @@ export default function Activities({ deal, onUpdate, stageReadiness }) {
       items.push({ who: a.reviewer_approver, activity: a.activity, status: a.status, date: a.date })
       found.forEach(r => { if (!recipients.some(x => x.email.toLowerCase() === r.email.toLowerCase())) recipients.push(r) })
     })
-    return { href: approvalEmailLink({ label, recipients, items }), approvers: recipients.length, items: items.length }
+    return { message: approvalEmail({ label, recipients, items }), approvers: recipients.length, items: items.length }
   }, [activities, isAreaInScope, isSpecialistApplicable, people, label])
 
   const mailButton = (a) => {
     const done = a.status === 'Completed' || a.status === 'N/A'
     if (!a.reviewer_approver?.trim() || done) return <span className="approval-mail is-empty" aria-hidden="true" />
     const recipients = approverRecipients(a.reviewer_approver, people)
-    const href = approvalEmailLink({
+    const message = approvalEmail({
       label,
       recipients,
       items: [{ who: a.reviewer_approver, activity: a.activity, status: a.status, date: a.date }],
     })
-    if (!href) {
+    if (!message) {
       return (
-        <span className="approval-mail is-missing" title={`No email on file for ${a.reviewer_approver} — add it in Settings → Directory`}>
+        <span className="approval-mail is-missing" title={`No email on file for ${a.reviewer_approver} — add it in Outlook → Quick contacts`}>
           <Mail size={14} />
         </span>
       )
     }
     return (
-      <a
+      <OutlookEmailButton
         className="approval-mail"
-        href={href}
+        message={message}
+        dealId={deal.id}
         title={`Email ${recipients.map(r => r.name).join(' & ')} in Outlook`}
-        aria-label={`Email ${a.reviewer_approver} about ${a.activity}`}
+        ariaLabel={`Email ${a.reviewer_approver} about ${a.activity}`}
       >
         <Mail size={14} />
-      </a>
+      </OutlookEmailButton>
     )
   }
 
@@ -468,7 +473,7 @@ export default function Activities({ deal, onUpdate, stageReadiness }) {
   const renderAreaCard = (area) => {
     const pair = areaPairs[area]
     const sal = pair.SAL
-    const pal = pair.PAL
+    const pal = isFilled(pair.PAL) ? pair.PAL : null
     const salStatus = sal ? getWorkStatusStyle(sal.status) : null
     const palStatus = pal ? getWorkStatusStyle(pal.status) : null
 
@@ -555,18 +560,19 @@ export default function Activities({ deal, onUpdate, stageReadiness }) {
               </button>
             ))}
           </div>
-          {chase.href ? (
-            <a
+          {chase.message ? (
+            <OutlookEmailButton
               className="btn btn-primary btn-sm"
-              href={chase.href}
+              message={chase.message}
+              dealId={deal.id}
               title={`One Outlook email to ${chase.approvers} approver${chase.approvers === 1 ? '' : 's'} covering ${chase.items} open item${chase.items === 1 ? '' : 's'}`}
             >
               <Mail size={14} /> Email Approvers
-            </a>
+            </OutlookEmailButton>
           ) : (
             <span
               className="btn btn-primary btn-sm is-disabled"
-              title="No pending approvers with an email on file — add emails in Settings → Directory"
+              title="No pending approvers with an email on file — add emails in Outlook → Quick contacts"
             >
               <Mail size={14} /> Email Approvers
             </span>
@@ -604,7 +610,7 @@ export default function Activities({ deal, onUpdate, stageReadiness }) {
                 ? inScopeAreas
                 : inScopeAreas.filter(area => {
                     const pair = areaPairs[area]
-                    return (pair.SAL && filterMatch(pair.SAL)) || (pair.PAL && filterMatch(pair.PAL))
+                    return (pair.SAL && filterMatch(pair.SAL)) || (isFilled(pair.PAL) && filterMatch(pair.PAL))
                   })
               return visible.length > 0 ? (
                 <div className="service-area-grid">

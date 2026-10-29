@@ -1,7 +1,9 @@
 ﻿import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { GanttChart } from 'lucide-react'
 import QuickSetupWizard from './QuickSetupWizard'
 import { dealService } from '../../../shared/services/dealService'
 import ConfirmDialog from '../../../shared/ui/ConfirmDialog'
+import { formatShortDateWithYear } from '../../../shared/utils/formatters'
 import { DEAL_PHASE_TO_CODE, PHASE_CODE_TO_DEAL, PHASE_PALETTE } from '../../../shared/constants/gssmFieldMap'
 import { isEditable } from '../../../shared/constants/fieldIndex'
 import { PHASE_ORDER, matchPhase } from '../../../shared/utils/phases'
@@ -257,16 +259,22 @@ export default function Timeline({ deal, onUpdate }) {
   const locked = !isEditable('timelines', deal)
 
   if (!localTimelines.length && !showAddTimeline) {
+    const boardDates = deal.project_start_date && deal.project_end_date
+      ? ` The board has the project running ${formatShortDateWithYear(deal.project_start_date)} → ${formatShortDateWithYear(deal.project_end_date)}.`
+      : ''
     return (
       <div className="htl-root">
-        <div className="htl-empty">
-          <p>No timelines configured.</p>
+        <div className="ws-empty">
+          <span className="ws-empty-icon" aria-hidden="true"><GanttChart size={22} strokeWidth={1.5} /></span>
+          <h3 className="ws-empty-title">No timeline yet</h3>
           {locked ? (
-            <p className="htl-empty-hint">{GSSM_OWNED_NOTE}</p>
+            <p className="ws-empty-text">{GSSM_OWNED_NOTE}</p>
           ) : (
             <>
-              <p className="htl-empty-hint">Define your project phases and rollout lanes.</p>
-              <button className="btn btn-primary btn-sm" onClick={() => setShowAddTimeline(true)}>+ Add Timeline</button>
+              <p className="ws-empty-text">
+                Lay out the SAP Activate phases and rollout lanes, or link the GSSM workbook and its Imp TL sheet fills this in.{boardDates}
+              </p>
+              <button className="btn btn-primary btn-sm" onClick={() => setShowAddTimeline(true)}>+ Add timeline</button>
             </>
           )}
         </div>

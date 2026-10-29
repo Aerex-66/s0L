@@ -284,14 +284,19 @@
   filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 40%, transparent));
 }
 
-/* monday: the vendor's own mark, plus a status dot that turns green once connected */
-.header-monday-logo {
+/* monday and Salesforce: the vendor's own mark, plus a status dot that turns green once connected */
+.header-monday-logo,
+.header-salesforce-logo,
+.header-outlook-logo {
   width: 20px;
   height: 20px;
   display: block;
 }
 
-.header-monday-dot {
+.header-monday-dot,
+.header-salesforce-dot,
+.header-outlook-dot,
+.header-settings-dot {
   position: absolute;
   top: 5px;
   right: 4px;
@@ -302,13 +307,30 @@
   transition: background var(--duration-normal) var(--ease-glass);
 }
 
-.header-monday-dot.is-connected {
+/* An s0L update is ready to install */
+.header-settings-dot {
+  background: var(--accent);
+}
+
+.header-monday-dot.is-connected,
+.header-salesforce-dot.is-connected,
+.header-outlook-dot.is-connected {
   background: var(--status-success);
 }
 
 .header-monday-dot.is-connecting,
-.header-monday-dot.is-syncing {
+.header-monday-dot.is-syncing,
+.header-salesforce-dot.is-connecting,
+.header-salesforce-dot.is-checking {
   background: var(--accent);
+}
+
+/* Nobody has signed in to this service here yet: its mark stays grey until someone does */
+.header-signed-out .header-monday-logo,
+.header-signed-out .header-salesforce-logo,
+.header-signed-out .header-outlook-logo {
+  filter: grayscale(1);
+  opacity: 0.55;
 }
 
 .header-new-deal {

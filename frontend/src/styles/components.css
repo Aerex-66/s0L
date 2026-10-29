@@ -607,6 +607,102 @@ button[data-radix-collection-item]:not(.header-toggle):not(.workspace-tab) {
   color: var(--accent);
 }
 
+/* Person lookup: who Outlook thinks the typed name is, each with its email so there's no doubt.
+   The client picker's opaque list, two lines a row; nested in a modal's glass, so it never re-blurs. */
+.person-lookup {
+  position: relative;
+}
+
+.person-lookup > input {
+  width: 100%;
+}
+
+.person-lookup-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 30;
+  width: max(100%, 20rem);
+  padding: 0.3rem;
+  font-size: var(--type-sm);
+  color: var(--text-primary);
+  background: var(--surface);
+  box-shadow: var(--shadow-modal);
+}
+
+.person-lookup-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 18rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.person-lookup-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  padding: 0.42rem 0.6rem;
+  cursor: pointer;
+  transition: background-color var(--duration-hover) var(--ease-liquid);
+}
+
+.person-lookup-item:hover,
+.person-lookup-item.is-active {
+  background: var(--hover-wash);
+  box-shadow: var(--hover-ring);
+}
+
+.person-lookup-name {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.person-lookup-email {
+  font-size: var(--type-2xs);
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+
+.person-lookup-meta {
+  font-size: var(--type-2xs);
+  color: var(--text-tertiary);
+}
+
+.person-lookup-note {
+  margin: 0;
+  padding: 0.45rem 0.6rem;
+  color: var(--text-tertiary);
+}
+
+.person-lookup-book {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.45rem 0.6rem;
+  border: 0;
+  font: inherit;
+  font-size: var(--type-2xs);
+  text-align: left;
+  color: var(--text-secondary);
+  background: var(--control-fill);
+  cursor: pointer;
+  transition: var(--transition-liquid);
+}
+
+.person-lookup-book:hover:not(:disabled) {
+  color: var(--accent);
+  background: var(--hover-wash);
+}
+
+.person-lookup-book:disabled {
+  cursor: progress;
+  color: var(--text-tertiary);
+}
+
 /* Name picker: the board's names as one tonal list, the current one in accent */
 .name-picker-filter {
   width: 100%;
@@ -753,7 +849,7 @@ button[data-radix-collection-item]:not(.header-toggle):not(.workspace-tab) {
 
 .settings-tabs {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.5rem;
   padding: 0.85rem 1.5rem;
   background: transparent;
@@ -828,97 +924,87 @@ button[data-radix-collection-item]:not(.header-toggle):not(.workspace-tab) {
   margin-bottom: 1.5rem;
 }
 
-.approvers-list {
+/* A ready s0L update: an accent-washed bar above every Settings tab */
+.settings-update {
   display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--text-primary);
+  font-size: var(--type-body);
 }
 
-.approver-card {
-  background: var(--glass-bg-light);
-  border: 1px solid var(--glass-border);
-  border-top-color: var(--glass-border-top);
-  box-shadow: var(--shadow-sm);
-  padding: 1rem;
-  border-left: 3px solid var(--ibm-blue);
-  border-radius: var(--radius-md);
+/* The Outlook panel: which Outlook (two tonal choice blocks; the one in use is accent-washed with a ring),
+   then Quick contacts. Settings-sized. */
+.outlook-panel-modal {
+  max-width: 1080px;
+  width: 95%;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.outlook-panel-modal .modal-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.1rem 1.5rem 1.5rem;
+}
+
+.outlook-panel-heading {
+  margin: 0 0 0.6rem;
+  font-size: var(--type-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.outlook-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.outlook-choice {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.95rem 1.1rem;
+  border: 0;
+  background: var(--control-fill);
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
   transition: var(--transition-liquid);
 }
 
-.approver-card:hover {
-  border-color: var(--hover-border);
-  border-left-color: var(--ibm-blue);
-  box-shadow: var(--hover-ring), var(--hover-glow);
+.outlook-choice:hover:not(:disabled) {
+  background: var(--hover-wash);
+  box-shadow: var(--hover-ring);
 }
 
-.approver-card h4 {
-  margin: 0 0 1rem 0;
-  color: var(--text-primary);
-  font-size: var(--type-lg);
-  font-weight: 700;
+.outlook-choice.is-current {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
-.approver-card-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+.outlook-choice:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
-.approver-display {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.approver-name-display {
-  padding: 0.75rem 1rem;
-  background: var(--bg-secondary);
-  border-left: 3px solid var(--ibm-blue);
-  font-size: var(--type-xl);
-}
-
-.approver-info-display {
-  padding: 0.75rem 1rem;
-  background: var(--control-fill);
+.outlook-choice-title {
   font-size: var(--type-body-lg);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.outlook-choice-note {
+  font-size: var(--type-sm);
   color: var(--text-secondary);
-}
-
-.save-confirmation {
-  color: var(--status-success);
-  font-weight: 700;
-  font-size: var(--type-body-lg);
-  animation: fadeInOut 2s ease-in-out;
-}
-
-.approver-actions-row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.approver-form-grid {
-  display: grid;
-  grid-template-columns: 2fr 1.5fr 1.5fr;
-  gap: 1rem;
-}
-
-.approver-form-grid-full {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
 }
 
 .required {
@@ -2564,230 +2650,229 @@ button[data-radix-collection-item]:not(.header-toggle):not(.workspace-tab) {
 
 
 /* ═══════════════════════════════════════════════════════════
-   DIRECTORY TAB — dir-* classes (Settings)
+   QUICK CONTACTS — qc-* classes (the Outlook panel, shell/quickContacts/)
+   Rows and sector blocks hold inputs: they highlight, never lift.
    ═══════════════════════════════════════════════════════════ */
 
-.dir-header h3 { margin: 0 0 0.2rem; }
-
-.dir-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0.75rem 0;
-  flex-wrap: wrap;
+.quick-contacts .workspace-tabs {
+  margin: 0 0 1rem;
 }
 
-.dir-filters {
+.qc-tab {
   display: flex;
-  gap: 0.3rem;
+  flex-direction: column;
+  gap: 0.9rem;
 }
 
-.dir-actions {
-  display: flex;
-  gap: 0.4rem;
-  align-items: center;
-}
-
-.dir-search {
-  padding: 0.35rem 0.6rem;
-  border: 1px solid var(--border-color);
+.qc-intro {
+  margin: 0;
+  max-width: 52rem;
   font-size: var(--type-sm);
-  width: 160px;
-  background: transparent;
-  color: var(--text-primary);
-  border-radius: var(--radius-sm);
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
 
-.dir-search:focus {
-  outline: none;
-  border-color: var(--ibm-blue);
-}
-
-.dir-count {
-  font-size: var(--type-xs);
-  color: var(--text-tertiary);
-  margin-bottom: 0.5rem;
-}
-
-.dir-grid {
+/* The add row: name (the Outlook lookup) · email · the tab's own detail · Add */
+.qc-add {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 0.6rem;
-}
-
-.dir-card {
-  background: var(--glass-bg-light);
-  border: 1px solid var(--glass-border);
-  border-top-color: var(--glass-border-top);
-  box-shadow: var(--shadow-sm);
-  padding: 0.75rem;
-  border-radius: var(--radius-md);
-  transition: var(--transition-liquid);
-}
-
-.dir-card.is-approver {
-  border-left: 2px solid color-mix(in srgb, var(--ibm-blue) 45%, transparent);
-}
-
-.dir-card:hover {
-  border-color: var(--hover-border);
-  box-shadow: var(--shadow-raise);
-  transform: var(--lift);
-}
-
-.dir-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.4rem;
-}
-
-.dir-card-identity {
-  display: flex;
+  grid-template-columns: minmax(12rem, 1.4fr) minmax(10rem, 1fr) minmax(10rem, 1fr) auto;
   gap: 0.5rem;
   align-items: center;
+  padding: 0.6rem;
+  background: var(--control-fill);
+}
+
+.qc-add > input,
+.qc-add > select {
+  width: 100%;
   min-width: 0;
 }
 
-.dir-avatar {
-  width: 30px;
-  height: 30px;
-  flex-shrink: 0;
+.qc-people,
+.qc-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--ibm-blue);
-  color: var(--on-accent);
-  font-size: var(--type-sm);
-  font-weight: 800;
-  border-radius: var(--radius-full);
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
-.dir-avatar[data-role="SAL"] { background: var(--ibm-purple, #8a3ffc); color: #fff; }
-.dir-avatar[data-role="PAL"] { background: var(--ibm-teal, #009d9a); color: #fff; }
+.qc-person,
+.qc-row {
+  display: grid;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0.5rem;
+  transition: var(--transition-liquid);
+}
 
-.dir-card-info {
+.qc-person {
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+}
+
+.qc-row {
+  grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr);
+}
+
+.qc-person:hover,
+.qc-row:hover {
+  background: var(--hover-wash);
+}
+
+.qc-person-who {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
-.dir-card-name {
+.qc-person-name {
   font-size: var(--type-body);
-  font-weight: 700;
   color: var(--text-primary);
 }
 
-.dir-card-meta {
-  display: flex;
-  gap: 0.3rem;
-  align-items: center;
-  flex-wrap: wrap;
+.qc-person-email {
+  font-size: var(--type-2xs);
+  color: var(--accent);
+  overflow-wrap: anywhere;
 }
 
-.dir-role-badge {
-  font-size: var(--type-micro);
-  font-weight: 800;
-  padding: 0.08rem 0.3rem;
-  border-radius: 3px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.dir-role-badge.sal { background: rgba(138, 63, 252, 0.15); color: #a97aff; }
-.dir-role-badge.pal { background: rgba(0, 157, 154, 0.15); color: #33b1b0; }
-.dir-role-badge.sldl { background: rgba(255, 131, 43, 0.15); color: #ff832b; }
-.dir-role-badge.other, .dir-role-badge { background: rgba(255, 255, 255, 0.06); color: var(--text-tertiary); }
-
-.dir-card-area {
+.qc-person-meta {
   font-size: var(--type-2xs);
   color: var(--text-tertiary);
 }
 
-.dir-card-actions {
-  display: flex;
-  gap: 0.2rem;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.dir-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding-top: 0.35rem;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.dir-detail {
+.qc-row-label {
   font-size: var(--type-sm);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-secondary);
 }
 
-.dir-detail.link {
-  color: var(--ibm-blue);
-  text-decoration: none;
+.qc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  min-width: 0;
 }
 
-.dir-detail.link:hover { text-decoration: underline; }
-.dir-detail.muted { color: var(--text-tertiary); font-style: italic; }
+.qc-person .qc-chips {
+  justify-content: flex-end;
+}
 
-.dir-card-edit {
+/* A person or a role: a tonal block; its remove mark lights on hover */
+.qc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  max-width: 100%;
+  padding: 0.25rem 0.3rem 0.25rem 0.6rem;
+  font-size: var(--type-sm);
+  color: var(--text-primary);
+  background: var(--control-fill);
+}
+
+.qc-chip-sub {
+  font-size: var(--type-2xs);
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+
+.qc-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border: 0;
+  color: var(--text-tertiary);
+  background: transparent;
+  cursor: pointer;
+  transition: var(--transition-liquid);
+}
+
+.qc-chip-remove:hover {
+  color: var(--status-error);
+  background: var(--hover-wash);
+}
+
+.qc-none,
+.qc-empty {
+  font-size: var(--type-sm);
+  color: var(--text-tertiary);
+}
+
+.qc-empty {
+  margin: 0;
+  padding: 0.75rem 0.5rem;
+}
+
+.qc-warning {
+  font-size: var(--type-sm);
+  color: var(--status-warning);
+}
+
+/* SRR / PRR: one block per sector, in translucent glass that never re-blurs */
+.qc-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  gap: 0.75rem;
+}
+
+.qc-slot {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.65rem;
+  padding: 0.85rem 0.95rem;
+  background: var(--glass-bg-light);
+  transition: var(--transition-liquid);
 }
 
-.dir-form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 0.4rem;
+.qc-slot:hover {
+  box-shadow: var(--hover-ring);
 }
 
-.dir-form-grid.compact {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.dir-form-grid input,
-.dir-form-grid select {
-  padding: 0.38rem 0.55rem;
-  border: 1px solid var(--border-color);
-  font-size: var(--type-sm);
-  background: transparent;
-  color: var(--text-primary);
-  border-radius: var(--radius-sm);
-}
-
-.dir-form-grid input:focus,
-.dir-form-grid select:focus {
-  outline: none;
-  border-color: var(--ibm-blue);
-}
-
-.dir-card-edit-actions {
+.qc-slot-head {
   display: flex;
-  gap: 0.3rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 
-.dir-add-form {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  padding: 0.85rem;
-  margin-bottom: 0.75rem;
-  border-radius: var(--radius-md);
-}
-
-.dir-add-form .dir-form-grid {
-  margin-bottom: 0.5rem;
-}
-
-.dir-empty {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-tertiary);
+.qc-slot-title {
+  margin: 0;
   font-size: var(--type-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.qc-slot-fields,
+.qc-slot-people {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.qc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.qc-field-label {
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 760px) {
+  .outlook-choices,
+  .qc-add {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════

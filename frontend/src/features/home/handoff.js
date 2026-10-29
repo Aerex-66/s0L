@@ -16,13 +16,14 @@ const addresses = (list = []) =>
 
 const query = (pairs) => pairs.filter(([, v]) => v).map(([k, v]) => `${k}=${v}`).join('&')
 
-// Protocol handlers choke on very long URLs — shorten the free text, never the recipients
+// Protocol handlers choke on very long URLs — shorten the free text (whole characters), never the recipients
 function fit(make, text = '') {
+  const characters = Array.from(text)
   let link = make(text)
-  let keep = text.length
+  let keep = characters.length
   while (link.length > MAX_LINK_LENGTH && keep > 0) {
     keep = Math.floor(keep * 0.85)
-    link = make(keep ? `${text.slice(0, keep).trimEnd()}…` : '')
+    link = make(keep ? `${characters.slice(0, keep).join('').trimEnd()}…` : '')
   }
   return link
 }
@@ -127,23 +128,43 @@ function itemLine(item) {
   return `• ${item.activity} — ${item.status || 'Not Started'}${due ? `, target ${due}` : ''}`
 }
 
-/** One approval → a direct ask; several → one chaser grouped by approver. Empty when nobody has an email. */
-export function approvalEmailLink({ label, recipients = [], items = [] }) {
-  if (!recipients.length || !items.length) return ''
+/** One approval → a direct ask; several → one chaser grouped by approver. Null when nobody has an email. */
+export function approvalEmail({ label, recipients = [], items = [] }) {
+  if (!recipients.length || !items.length) return null
   const to = recipients.map((r) => r.email)
   if (items.length === 1) {
-    return mailtoLink({
+    return {
       to,
       subject: `${label}: ${items[0].activity}`,
       body: `${greeting(recipients)}\n\nCan you approve this for ${label}?\n\n${itemLine(items[0])}\n\nThanks`,
-    })
+    }
   }
   const groups = new Map()
   for (const item of items) groups.set(item.who, [...(groups.get(item.who) || []), item])
   const sections = [...groups].map(([who, list]) => `${who}\n${list.map(itemLine).join('\n')}`)
-  return mailtoLink({
+  return {
     to,
     subject: `${label}: approvals needed`,
     body: `${greeting(recipients)}\n\nThese approvals are still open for ${label}:\n\n${sections.join('\n\n')}\n\nThanks`,
-  })
+  }
+}
+
+/** The same message as a mailto: link (its body shortened to fit); empty when nobody has an email. */
+export function approvalEmailLink(args) {
+  const message = approvalEmail(args)
+  return message ? mailtoLink(message) : ''
+}
+
+/** To one contact, listing what's still pending with them. */
+export function contactEmail({ contact, pending = [], label }) {
+  let body = `Hi ${(contact.name || '').split(' ')[0]},\n\n`
+  if (pending.length > 0) {
+    body += `Pending items:\n${pending.map((a) => `• ${a.activity} (${a.status || 'Not Started'})`).join('\n')}\n\n`
+  }
+  return { to: [contact.email], subject: label, body: `${body}Thanks` }
+}
+
+/** To every contact on the deal who has an email. */
+export function groupEmail({ contacts = [], label }) {
+  return { to: contacts.filter((c) => c.email).map((c) => c.email), subject: label, body: '' }
 }

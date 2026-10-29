@@ -19,19 +19,26 @@ export default function GssmLanding({
         onDrop={onDropFile}
       >
         <div className="gssm-drop-inner">
-          <Upload className="gssm-drop-icon" size={48} strokeWidth={1.5} />
-          <p className="gssm-drop-text">Drop a .xlsx or .xlsm workbook here</p>
-          <p className="gssm-drop-hint">or use Browse below</p>
-          <label className="gssm-btn gssm-btn--ghost gssm-browse">
+          <Upload className="gssm-drop-icon" size={40} strokeWidth={1.5} />
+          <h2 className="gssm-drop-text">Link this deal&apos;s GSSM workbook</h2>
+          <p className="gssm-drop-hint">Drop the .xlsx or .xlsm workbook here, or browse for it.</p>
+          <label className="gssm-btn gssm-btn--accent gssm-browse">
             Browse files
             <input type="file" accept=".xlsx,.xlsm" onChange={e => onFile(e.target.files?.[0])} hidden />
           </label>
+          <ul className="gssm-drop-syncs" aria-label="What the workbook fills in on the deal">
+            <li>Revenue, cost, GP and PTI</li>
+            <li>Implementation timeline</li>
+            <li>Staffing plan and FTE</li>
+            <li>Bid metrics</li>
+          </ul>
+          <p className="gssm-drop-note">They sync to the deal as you work and show read-only in Home and the iSBD.</p>
         </div>
       </section>
 
       <aside className="gssm-catalog">
         <h3 className="gssm-catalog-title">Recent workbooks</h3>
-        {catalogItems.length === 0 && <p className="gssm-catalog-empty">No workbooks imported yet.</p>}
+        {catalogItems.length === 0 && <p className="gssm-catalog-empty">No workbooks imported on this computer yet.</p>}
         <ul className="gssm-catalog-list">
           {catalogItems.map(item => (
             <li key={item.id} className="gssm-catalog-item" onClick={() => onReimport(item)}>

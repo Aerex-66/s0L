@@ -19,6 +19,8 @@ import { useDeals } from './features/deals/useDeals'
 import { DEFAULT_DEAL_SHELL_MODULE_ID, DEAL_SHELL_MODULES, emitDealShellSelection } from './shell/dealShell'
 import { MODULE_REGISTRY } from './shell/moduleRegistry'
 import NamePicker from './shell/NamePicker'
+import OutlookPanel from './shell/OutlookPanel'
+import UpdatePrompt from './shell/UpdatePrompt'
 import { cx } from './shared/utils/cx'
 import { initTheme } from './shared/ui/ThemeSwitcher'
 
@@ -39,6 +41,15 @@ const MONDAY_SIGN_IN_ERRORS = {
   bad_state: 'The monday sign-in took too long or was started twice. Click the monday icon at the top to try again.',
   denied: 'monday sign-in was cancelled.',
   exchange_failed: "monday didn't accept the sign-in. Click the monday icon at the top to try again.",
+}
+
+const SALESFORCE_SIGN_IN_ERRORS = {
+  not_configured: "Salesforce isn't set up on this computer yet. Ask whoever manages s0L.",
+  bad_state: 'The Salesforce sign-in took too long or was started twice. Click the Salesforce icon at the top to try again.',
+  denied: 'Salesforce sign-in was cancelled.',
+  not_allowed: "Salesforce didn't let s0L in. IBM's Salesforce admins need to install s0L's app and give you access to it.",
+  no_api: "Your Salesforce profile doesn't have API access yet. IBM's Salesforce admins need to give you s0L's permission set.",
+  exchange_failed: "Salesforce didn't accept the sign-in. Click the Salesforce icon at the top to try again.",
 }
 
 const LAYOUT_KEY = 's0l-layout'
@@ -93,6 +104,7 @@ function App() {
   const { deals, loading, appNotice, loadDeals, createDeal, archiveDeal, restoreDeal } = useDeals()
   const setAppNotice = useDealStore((s) => s.setAppNotice)
   const runMondaySync = useDealStore((s) => s.runMondaySync)
+  const runSalesforceCheck = useDealStore((s) => s.runSalesforceCheck)
   const mondayKnowsMe = useDealStore((s) => Boolean(s.mondayMe))
   const openNamePicker = useDealStore((s) => s.openNamePicker)
 
@@ -122,10 +134,24 @@ function App() {
     mondayService.status()
       .then((status) => {
         if (status.connected) runMondaySync()
-        else if (status.app_configured && status.last_sync) setAppNotice('monday: click the monday icon at the top to sign in again and keep deals in sync.')
+        else if (status.app_configured) setAppNotice('monday: click the monday icon at the top to connect, keep deals in sync and get s0L updates.')
       })
       .catch(() => {})
   }, [runMondaySync, setAppNotice])
+
+  // Salesforce: finish a return from Salesforce's sign-in page, then check the board's deals once.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const result = params.get('salesforce')
+    if (!result) return
+    const reason = params.get('reason')
+    params.delete('salesforce')
+    params.delete('reason')
+    const query = params.toString()
+    window.history.replaceState(null, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`)
+    if (result === 'connected') runSalesforceCheck({ ifConnected: true })
+    else setAppNotice(SALESFORCE_SIGN_IN_ERRORS[reason] || 'Salesforce sign-in failed. Click the Salesforce icon at the top to try again.')
+  }, [runSalesforceCheck, setAppNotice])
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -238,6 +264,8 @@ function App() {
           />
         </LazyGate>
         <NamePicker />
+        <OutlookPanel />
+        <UpdatePrompt />
         <LazyGate when={showSettings}>
           <Settings initialTab={settingsTab} onClose={() => setShowSettings(false)} />
         </LazyGate>

@@ -1,13 +1,16 @@
 import { lazy, Suspense, useState, useMemo } from 'react'
+import { AlertTriangle, Check, Circle, SlidersHorizontal } from 'lucide-react'
 import { dealService } from '../../shared/services/dealService'
 import { MODULE_TAB_REGISTRIES } from '../../shell/dealShell'
 import WorkspaceTabs from '../../shared/ui/WorkspaceTabs'
 import Loader from '../../shared/ui/Loader'
 import useStore from '../../shared/useStore'
 import { formatCompactMillions } from '../../shared/utils/formatters'
-import { isDoneStatus } from '../../shared/constants/uiStates'
+import { dealStatusColor } from '../../shared/constants/uiStates'
 import { STAGES, computeStageReadiness } from './stageReadiness'
+import { daysBetween } from './dates'
 
+const Overview = lazy(() => import('./components/Overview'))
 const Timeline = lazy(() => import('./components/Timeline'))
 const Activities = lazy(() => import('./components/Activities'))
 const Calendar = lazy(() => import('./components/Calendar'))
@@ -17,11 +20,11 @@ const Resources = lazy(() => import('./components/Resources'))
 
 const TABS = MODULE_TAB_REGISTRIES.home
 
-const TAB_COMPONENTS = { timeline: Timeline, activities: Activities, financials: Financials, resources: Resources, calendar: Calendar, contacts: Contacts }
+const TAB_COMPONENTS = { overview: Overview, timeline: Timeline, activities: Activities, financials: Financials, resources: Resources, calendar: Calendar, contacts: Contacts }
 
 /** Home reads the deal from the shared store; every save calls onUpdate so all modules see it. */
 export default function DealView({ deal, onUpdate }) {
-  const [activeTab, setActiveTab] = useState('timeline')
+  const [activeTab, setActiveTab] = useState(TABS[0].id)
   const [selectedStageId, setSelectedStageId] = useState(null)
   const [stageWarning, setStageWarning] = useState(null)
   const { setShowActionModal } = useStore()
@@ -29,7 +32,6 @@ export default function DealView({ deal, onUpdate }) {
   const stageReadiness = useMemo(() => computeStageReadiness(deal), [deal])
 
   const completedStages = Object.values(stageReadiness).filter((s) => s.complete).length
-  const overallPct = STAGES.length > 0 ? Math.round((completedStages / STAGES.length) * 100) : 0
   const selectedStage = STAGES.find(s => s.id === selectedStageId) || null
   const selectedR = selectedStage ? (stageReadiness[selectedStage.id] || { done: 0, total: 3, pct: 0, status: 'todo', manualComplete: false }) : null
 
@@ -60,52 +62,45 @@ export default function DealView({ deal, onUpdate }) {
 
   const ActiveComponent = TAB_COMPONENTS[activeTab]
 
-  // Compute completed activities ratio
-  const totalActivities = (deal.activities || []).length
-  const completedActivities = (deal.activities || []).filter(a => isDoneStatus(a.status)).length
+  const tcv = Number(deal.financials?.tcv || deal.estimated_value || deal.price_to_win) || 0
+  const statusDays = daysBetween(deal.status_changed_at)
 
   return (
     <div className="deal-view">
-      {/* ── Deal Hero with integrated stage rail ── */}
+      {/* ── Deal hero: who the deal is for, what it's worth, how ready it is ── */}
       <section className="deal-hero">
         <div className="deal-hero-top">
-          <div className="deal-hero-stats">
-            {deal.estimated_value && (
-              <div className="hero-stat">
-                <span className="hero-stat-label">Est. Value</span>
-                <span className="hero-stat-value mono">{formatCompactMillions(deal.estimated_value)}</span>
-              </div>
-            )}
-            <div className="hero-stat">
-              <span className="hero-stat-label">Stage</span>
-              <span className="hero-stat-value">{completedStages}/{STAGES.length}</span>
+          <div className="deal-hero-identity">
+            <div className="deal-hero-eyebrow">
+              <span className="deal-hero-status">
+                <i className="deal-status-dot" style={{ '--status-c': dealStatusColor(deal.status) }} aria-hidden="true" />
+                {deal.status || 'No status'}
+                {statusDays != null && (
+                  <span className="deal-hero-since">{statusDays === 0 ? 'since today' : `for ${statusDays} day${statusDays === 1 ? '' : 's'}`}</span>
+                )}
+              </span>
+              {deal.implementation_type && <><i className="deal-hero-sep" aria-hidden="true" /><span>{deal.implementation_type}</span></>}
+              {deal.monday_group && <><i className="deal-hero-sep" aria-hidden="true" /><span>{deal.monday_group}</span></>}
             </div>
-            <div className="hero-stat">
-              <span className="hero-stat-label">Activities</span>
-              <span className="hero-stat-value">{completedActivities}/{totalActivities}</span>
-            </div>
-            <div className="hero-stat">
-              <span className="hero-stat-label">Progress</span>
-              <span className="hero-stat-value">{overallPct}%</span>
-            </div>
+            <h2 className="deal-hero-client">{deal.client_name || deal.project_name || 'Untitled deal'}</h2>
+            {deal.client_name && deal.project_name && <p className="deal-hero-desc">{deal.project_name}</p>}
           </div>
-          <div className="deal-hero-actions">
-            <button className="btn btn-ghost btn-sm" onClick={() => setShowActionModal(true)}>Configure</button>
-          </div>
-        </div>
-
-        {/* Progress track */}
-        <div className="deal-hero-progress">
-          <div className="deal-hero-progress-track">
-            {STAGES.map(stage => {
-              const r = stageReadiness[stage.id] || { status: 'todo' }
-              return <div key={stage.id} className={`progress-segment status-${r.status}`} />
-            })}
+          <div className="deal-hero-side">
+            <div className="deal-hero-tcv">
+              <span className={`deal-hero-tcv-value${tcv ? '' : ' is-empty'}`}>{tcv ? formatCompactMillions(tcv) : 'No TCV yet'}</span>
+              <span className="deal-hero-tcv-label">TCV{deal.currency && deal.currency !== 'USD' ? ` · ${deal.currency}` : ''}</span>
+            </div>
+            <button type="button" className="cmd-btn deal-hero-setup" onClick={() => setShowActionModal(true)}>
+              <SlidersHorizontal size={13} /> Quick setup
+            </button>
           </div>
         </div>
 
-        {/* Always-visible stage rail */}
-        <div className="stage-rail-inline">
+        <div className="deal-hero-readiness">
+          <span className="deal-hero-readiness-title">Readiness</span>
+          <span className="deal-hero-readiness-note">{completedStages} of {STAGES.length} stages complete · pick a stage to see its checks</span>
+        </div>
+        <div className="stage-rail-inline" role="group" aria-label="Deal stages">
           {STAGES.map((stage) => {
             const r = stageReadiness[stage.id] || { status: 'todo', pct: 0, done: 0, total: 3 }
             const isSelected = selectedStageId === stage.id
@@ -113,15 +108,21 @@ export default function DealView({ deal, onUpdate }) {
             return (
               <button
                 key={stage.id}
+                type="button"
+                aria-pressed={isSelected}
+                title={`${stage.label}: ${r.done} of ${r.total} checks done`}
                 className={`stage-chip status-${r.status} ${isSelected ? 'selected' : ''} ${hasIncompleteOverride ? 'has-warning' : ''}`}
                 onClick={() => setSelectedStageId(isSelected ? null : stage.id)}
               >
-                <span className="stage-chip-indicator" />
-                <span className="stage-chip-label">{stage.label}</span>
-                <span className="stage-chip-count">
-                  {r.status === 'complete' ? '✓' : `${r.done}/${r.total}`}
+                <span className="stage-chip-head">
+                  <span className="stage-chip-indicator" />
+                  <span className="stage-chip-label">{stage.label}</span>
+                  <span className="stage-chip-count">
+                    {r.status === 'complete' ? <Check size={12} aria-label="Complete" /> : `${r.done}/${r.total}`}
+                  </span>
+                  {hasIncompleteOverride && <AlertTriangle size={12} className="stage-chip-warn" aria-label="Marked complete with checks open" />}
                 </span>
-                {hasIncompleteOverride && <span className="stage-chip-warn" title={`${r.done}/${r.total} checks done`}>⚠</span>}
+                <span className="stage-chip-bar" aria-hidden="true"><i style={{ width: `${r.complete ? 100 : r.pct}%` }} /></span>
               </button>
             )
           })}
@@ -129,8 +130,8 @@ export default function DealView({ deal, onUpdate }) {
 
         {/* Transient warning banner */}
         {stageWarning && (
-          <div className="stage-warning-banner">
-            <span className="stage-warning-icon">⚠</span>
+          <div className="stage-warning-banner" role="status">
+            <AlertTriangle size={14} className="stage-warning-icon" aria-hidden="true" />
             <span>{stageWarning}</span>
           </div>
         )}
@@ -158,7 +159,7 @@ export default function DealView({ deal, onUpdate }) {
                 className={`btn btn-sm ${selectedR.manualComplete ? 'btn-success' : 'btn-secondary'}`}
                 onClick={() => toggleStageComplete(selectedStage.id)}
               >
-                {selectedR.manualComplete ? '✓ Complete' : 'Mark Complete'}
+                {selectedR.manualComplete ? <><Check size={13} /> Complete</> : 'Mark complete'}
               </button>
             </div>
           </div>
@@ -167,7 +168,7 @@ export default function DealView({ deal, onUpdate }) {
               const done = Boolean(selectedR.checks?.[i])
               return (
                 <span key={ev} className={`stage-check ${done ? 'done' : ''}`}>
-                  <span className="stage-check-icon">{done ? '✓' : '○'}</span>
+                  {done ? <Check size={12} className="stage-check-icon" /> : <Circle size={11} className="stage-check-icon" />}
                   {ev}
                 </span>
               )
@@ -187,7 +188,7 @@ export default function DealView({ deal, onUpdate }) {
       {/* ── Content Area ── */}
       <div className="workspace-content">
         <Suspense fallback={<Loader />}>
-          {ActiveComponent && <ActiveComponent deal={deal} onUpdate={onUpdate} stageReadiness={stageReadiness} />}
+          {ActiveComponent && <ActiveComponent deal={deal} onUpdate={onUpdate} stageReadiness={stageReadiness} onOpenTab={setActiveTab} />}
         </Suspense>
       </div>
     </div>

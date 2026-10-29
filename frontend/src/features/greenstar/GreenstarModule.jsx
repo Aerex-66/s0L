@@ -4,7 +4,9 @@ import {
   parsePivotInfo, executePivotInfoPivot, flattenPivotToGrid,
   extractStaffingRows, detectFteColumns,
 } from '../../shared/gssmData'
-import { FileSpreadsheet, Loader, AlertCircle, RefreshCw, LayoutGrid, Sliders } from 'lucide-react'
+import { FileSpreadsheet, Loader, AlertCircle, RefreshCw, LayoutGrid, Sliders, ExternalLink } from 'lucide-react'
+import { webLink } from '../../shared/utils/webLink'
+import { GreenstarLogo } from '../../shared/ui/Icons'
 import PivotFieldPicker from './PivotFieldPicker'
 import './greenstar.css'
 
@@ -148,10 +150,10 @@ function CustomPivotGrid({ groupByFields, valuesDef, pivotResult }) {
   )
 }
 
-/* ── Load the deal's linked GSSM workbook; { error } when there is none ── */
+/* ── Load the deal's linked GSSM workbook; { missing } when there is none, { error } when it can't be used ── */
 async function loadLinkedWorkbook(deal) {
   const wb = pickWorkbookForDeal(deal, await fetchCatalog())
-  if (!wb) return { error: 'No GSSM workbook linked to this deal. Open one in the GSSM module first.' }
+  if (!wb) return { missing: true }
   const data = await fetchWorkbookData(wb.metadataDir, wb.id)
   if (!data?.rowDataBySheet?.['PivotInfo']) {
     return { error: 'Workbook has no PivotInfo sheet. Re-import a workbook with pivot definitions.' }
@@ -159,10 +161,19 @@ async function loadLinkedWorkbook(deal) {
   return { name: wb.name, data }
 }
 
+/** The deal's Greenstar hand-off links: the one entered in Documents and the one on the monday board. */
+function greenstarLinks(deal) {
+  return [
+    { label: 'Greenstar', href: webLink(deal?.external_links?.greenstar_url) },
+    { label: 'Greenstar estimate / DCA (board)', href: webLink(deal?.greenstar_dca_link) },
+  ].filter((link) => link.href)
+}
+
 /* ── Main Greenstar Module ── */
 export default memo(function GreenstarModule({ deal }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [missing, setMissing] = useState(false)
   const [workbookData, setWorkbookData] = useState(null)
   const [workbookName, setWorkbookName] = useState('')
   const [activeGrouping, setActiveGrouping] = useState(null)
@@ -175,10 +186,12 @@ export default memo(function GreenstarModule({ deal }) {
     let cancelled = false
     setLoading(true)
     setError(null)
+    setMissing(false)
     loadLinkedWorkbook(deal)
       .then((result) => {
         if (cancelled) return
-        if (result.error) setError(result.error)
+        if (result.missing) setMissing(true)
+        else if (result.error) setError(result.error)
         else { setWorkbookName(result.name); setWorkbookData(result.data) }
       })
       .catch((err) => { if (!cancelled) setError(err.message || 'Failed to load workbook data.') })
@@ -260,9 +273,11 @@ export default memo(function GreenstarModule({ deal }) {
     setActivePivotName(null)
     setLoading(true)
     setError(null)
+    setMissing(false)
     loadLinkedWorkbook(deal)
       .then((result) => {
-        if (result.error) setError(result.error)
+        if (result.missing) setMissing(true)
+        else if (result.error) setError(result.error)
         else { setWorkbookName(result.name); setWorkbookData(result.data) }
       })
       .catch(err => setError(err.message))
@@ -281,14 +296,48 @@ export default memo(function GreenstarModule({ deal }) {
     )
   }
 
-  // ── Error state ──
-  if (error) {
+  // ── No workbook yet: say what Greenstar does and where the numbers come from ──
+  if (missing || error) {
+    const links = greenstarLinks(deal)
     return (
-      <div className="gs-module">
-        <div className="gs-empty">
-          <AlertCircle size={32} className="gs-empty-icon" />
-          <p>{error}</p>
+      <div className="ws-page">
+        <div className="ws-page-head">
+          <h2 className="ws-page-title"><GreenstarLogo size={20} className="module-logo--head" />Greenstar</h2>
+          <span className="ws-page-note">Staffing pivots from this deal&apos;s GSSM workbook</span>
         </div>
+        {missing ? (
+          <div className="ws-empty">
+            <span className="ws-empty-icon" aria-hidden="true"><LayoutGrid size={22} strokeWidth={1.5} /></span>
+            <h3 className="ws-empty-title">No GSSM workbook yet</h3>
+            <p className="ws-empty-text">
+              Greenstar turns the Staffing sheet of this deal&apos;s GSSM workbook into pivots: hours, FTE and cost by band,
+              team, location and month, the views a Greenstar estimate needs. Open <strong>GSSM</strong> in the menu on the
+              left and import the workbook; the pivots appear here.
+            </p>
+          </div>
+        ) : (
+          <div className="ws-empty">
+            <span className="ws-empty-icon" aria-hidden="true"><AlertCircle size={22} strokeWidth={1.5} /></span>
+            <h3 className="ws-empty-title">The workbook can&apos;t be read here</h3>
+            <p className="ws-empty-text">{error}</p>
+            <button type="button" className="cmd-btn" onClick={handleRefresh}><RefreshCw size={13} /> Try again</button>
+          </div>
+        )}
+        {links.length > 0 && (
+          <section className="ws-panel" aria-labelledby="gs-links">
+            <div className="ws-panel-head">
+              <h3 className="ws-panel-title" id="gs-links">Greenstar links</h3>
+              <span className="ws-panel-note">They open in your browser</span>
+            </div>
+            <div className="ws-links">
+              {links.map((link) => (
+                <a key={link.label} className="ws-link" href={link.href} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink size={12} /> {link.label}
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     )
   }

@@ -18,7 +18,7 @@ $repo = Split-Path -Parent $PSScriptRoot
 $version = (Get-Content (Join-Path $repo 'package.json') -Raw | ConvertFrom-Json).version
 $release = Join-Path $repo 'release'
 $cache = Join-Path $release 'cache'
-$stage = Join-Path $release "staging\s0L-$version"
+$stage = Join-Path $release 'staging\s0L'
 $app = Join-Path $stage 'app'
 $zip = Join-Path $release $(if ($NoSign) { "s0L-$version-unsigned.zip" } else { "s0L-$version.zip" })
 $csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
@@ -30,6 +30,17 @@ function Step([string]$text) { Write-Host "`n== $text" -ForegroundColor Cyan }
 function Invoke-Checked([string]$exe, [string[]]$arguments) {
     & $exe @arguments
     if ($LASTEXITCODE -ne 0) { throw "$exe failed (exit $LASTEXITCODE)" }
+}
+
+# Needs $signtool, $dlib and $metadata from the signing setup below.
+function Invoke-Signing([string[]]$files) {
+    for ($i = 0; $i -lt $files.Count; $i += 40) {
+        $batch = $files[$i..([Math]::Min($i + 39, $files.Count - 1))]
+        Invoke-Checked $signtool (@('sign', '/fd', 'SHA256', '/tr', 'http://timestamp.acs.microsoft.com', '/td', 'SHA256',
+                '/dlib', $dlib, '/dmdf', $metadata) + $batch)
+    }
+    $bad = @($files | Where-Object { (Get-AuthenticodeSignature $_).Status -ne 'Valid' })
+    if ($bad.Count) { throw "These files are still not signed:`n$($bad -join "`n")" }
 }
 
 function Copy-Tree([string]$from, [string]$to, [string[]]$skipDirs = @(), [string[]]$skipFiles = @()) {
@@ -91,6 +102,9 @@ try {
     }
     $mondayApp = (& python -c "import json; from core.features.integrations.monday import credentials as c; a = c.load_app(); print(json.dumps(a) if a else '')").Trim()
     if (-not $mondayApp) { throw "monday isn't set up on this PC, so colleagues couldn't connect. Run: npm run monday:provision" }
+    # Only an app provisioned as IBM Sales Cloud ships; a test org's never does.
+    $salesforceApp = (& python -c "import json; from core.features.integrations.salesforce import credentials as c; a = c.load_app(); print(json.dumps(a) if a and a['release'] else '')").Trim()
+    if (-not $salesforceApp) { Write-Host 'Salesforce not bundled: no IBM Sales Cloud app is provisioned on this PC (npm run salesforce:provision).' }
     Write-Host "Python $pyVersion ($pyExe), Node $(& $nodeExe -v)"
 
     Step 'Staging'
@@ -110,6 +124,7 @@ try {
     Copy-Tree (Join-Path $repo 'gssm-server') (Join-Path $app 'gssm-server') @('.gssm', 'engine-imports') @('*.log')
     Copy-Tree (Join-Path $repo 'frontend\dist') (Join-Path $app 'frontend\dist')
     [IO.File]::WriteAllText((Join-Path $app 'monday-app.json'), $mondayApp, $utf8)
+    if ($salesforceApp) { [IO.File]::WriteAllText((Join-Path $app 'salesforce-app.json'), $salesforceApp, $utf8) }
 
     Step "Python $pyVersion (embeddable)"
     $embedZip = Join-Path $cache "python-$pyVersion-embed-amd64.zip"
@@ -130,18 +145,6 @@ try {
     Step 'Node'
     New-Item -ItemType Directory -Force (Join-Path $stage 'runtime\node') | Out-Null
     Copy-Item $nodeExe (Join-Path $stage 'runtime\node\node.exe')
-
-    Step 'Launcher'
-    $numeric = (($version -split '[^0-9]+' | Where-Object { $_ }) | Select-Object -First 3) -join '.'
-    $versionFile = Join-Path $cache 'LauncherVersion.cs'
-    [IO.File]::WriteAllText($versionFile, @"
-[assembly: System.Reflection.AssemblyVersion("$numeric.0")]
-[assembly: System.Reflection.AssemblyFileVersion("$numeric.0")]
-[assembly: System.Reflection.AssemblyInformationalVersion("$version")]
-"@, $utf8)
-    Invoke-Checked $csc @('/nologo', '/target:winexe', '/optimize+', "/out:$(Join-Path $stage 's0L.exe')",
-        "/win32icon:$(Join-Path $PSScriptRoot 'launcher\s0L.ico')", '/r:System.Windows.Forms.dll', '/r:System.Drawing.dll',
-        (Join-Path $PSScriptRoot 'launcher\s0L.cs'), $versionFile)
 
     Step 'Checking nothing private is in the package'
     $private = @(Get-ChildItem $app -Recurse -Force -File | Where-Object {
@@ -173,13 +176,33 @@ try {
         $unsigned = @(Get-ChildItem $stage -Recurse -File -Include *.exe, *.dll, *.pyd, *.node |
                 Where-Object { (Get-AuthenticodeSignature $_.FullName).Status -ne 'Valid' } | ForEach-Object FullName)
         Write-Host "$($unsigned.Count) files to sign"
-        for ($i = 0; $i -lt $unsigned.Count; $i += 40) {
-            $batch = $unsigned[$i..([Math]::Min($i + 39, $unsigned.Count - 1))]
-            Invoke-Checked $signtool (@('sign', '/fd', 'SHA256', '/tr', 'http://timestamp.acs.microsoft.com', '/td', 'SHA256',
-                    '/dlib', $dlib, '/dmdf', $metadata) + $batch)
-        }
-        $bad = @($unsigned | Where-Object { (Get-AuthenticodeSignature $_).Status -ne 'Valid' })
-        if ($bad.Count) { throw "These files are still not signed:`n$($bad -join "`n")" }
+        Invoke-Signing $unsigned
+    }
+
+    # The launcher checks updates against this list, and signing s0L.exe covers it.
+    Step 'Fingerprinting the package'
+    $manifest = Join-Path $cache 's0L.manifest'
+    [string[]]$entries = @(Get-ChildItem $stage -Recurse -File -Force | ForEach-Object {
+            '{0} {1}' -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(),
+            $_.FullName.Substring($stage.Length + 1) })
+    [Array]::Sort($entries, [StringComparer]::Ordinal)
+    [IO.File]::WriteAllLines($manifest, $entries, $utf8)
+    Write-Host "$($entries.Count) files listed"
+
+    Step 'Launcher'
+    $numeric = (($version -split '[^0-9]+' | Where-Object { $_ }) | Select-Object -First 3) -join '.'
+    $versionFile = Join-Path $cache 'LauncherVersion.cs'
+    [IO.File]::WriteAllText($versionFile, @"
+[assembly: System.Reflection.AssemblyVersion("$numeric.0")]
+[assembly: System.Reflection.AssemblyFileVersion("$numeric.0")]
+[assembly: System.Reflection.AssemblyInformationalVersion("$version")]
+"@, $utf8)
+    Invoke-Checked $csc @('/nologo', '/target:winexe', '/optimize+', "/out:$(Join-Path $stage 's0L.exe')",
+        "/win32icon:$(Join-Path $PSScriptRoot 'launcher\s0L.ico')", '/r:System.Windows.Forms.dll', '/r:System.Drawing.dll',
+        "/resource:$manifest,s0L.manifest",
+        (Join-Path $PSScriptRoot 'launcher\s0L.cs'), (Join-Path $PSScriptRoot 'launcher\Updates.cs'), $versionFile)
+    if (-not $NoSign) {
+        Invoke-Signing @((Join-Path $stage 's0L.exe'))
         Write-Host ('s0L.exe signed by: ' + (Get-AuthenticodeSignature (Join-Path $stage 's0L.exe')).SignerCertificate.Subject)
     }
 

@@ -8,6 +8,7 @@ import { lazy } from 'react'
 export const MODULE_REGISTRY = {
   home:      lazy(() => import('../features/home/HomeModule')),
   isbd:      lazy(() => import('../features/isbd/IsbdModule')),
+  genai:     lazy(() => import('../features/genai/GenAIModule')),
   gssm:      lazy(() => import('../features/gssm/GssmModule')),
   greenstar: lazy(() => import('../features/greenstar/GreenstarModule')),
   documents: lazy(() => import('../features/documents/DocumentsModule')),

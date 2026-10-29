@@ -88,7 +88,7 @@ def test_connect_redirects_to_monday(tmp_store, vault):
     query, location = _connect(tmp_store)
     assert location.startswith(config.AUTHORIZE_URL)
     assert query['client_id'] == ['cid'] and query['redirect_uri'] == [config.REDIRECT_URI]
-    assert query['scope'] == ['me:read boards:read boards:write'] and query['subdomain'] == ['ibm'] and query['state']
+    assert query['scope'] == ['me:read boards:read boards:write assets:read'] and query['subdomain'] == ['ibm'] and query['state']
     assert query['code_challenge_method'] == ['S256'] and len(query['code_challenge'][0]) == 43
     assert 'sec-XYZ' not in location
 

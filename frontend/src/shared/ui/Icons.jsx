@@ -7,6 +7,7 @@
 import {
   Search,
   Settings,
+  Mail,
   Upload,
   ArrowUpFromLine,
   Download,
@@ -18,10 +19,7 @@ import {
   FolderOpen,
   FileUp,
   SquarePen,
-  Home,
-  Table2,
-  Image,
-  Star,
+  LayoutDashboard,
   FileText,
   BarChart3,
   CloudUpload,
@@ -52,6 +50,11 @@ import {
   ExternalLink,
   X,
 } from 'lucide-react'
+import excelLogo from '../../assets/module-logos/excel.svg'
+import powerpointLogo from '../../assets/module-logos/powerpoint.svg'
+import folderLogo from '../../assets/module-logos/folder.svg'
+import bobLogo from '../../assets/module-logos/ibm-bob.webp'
+import greenstarLogo from '../../assets/module-logos/greenstar.webp'
 
 // Wrapper to match our old API: { size, className } with sensible defaults
 const wrap = (LucideIcon, defaultSize = 16) => {
@@ -96,6 +99,7 @@ export const ExternalLinkIcon = wrap(ExternalLink, 11)
 export const CloseIcon = wrap(X, 12)
 export const BackIcon = wrap(ArrowLeft, 16)
 export const CloudUploadIcon = wrap(CloudUpload, 12)
+export const MailIcon = wrap(Mail, 12)
 export const FolderOpenIcon = wrap(FolderOpen, 14)
 export const ChevronRightIcon = wrap(ChevronRight, 14)
 export const ChevronLeftIcon = wrap(ChevronLeft, 14)
@@ -114,13 +118,25 @@ export const FormDocIcon = wrap(FileText, 12)
 export const WorkflowBranchIcon = wrap(GitBranch, 12)
 export const BoxObjectIcon = wrap(Box, 12)
 
+/** A module's own app mark, bundled with s0L (DESIGN.md brand law 5); full colour, decorative next to its label */
+const moduleLogo = (src) => ({ size = 16, className = '' } = {}) => (
+  <img src={src} width={size} height={size} alt="" draggable="false" className={className ? `module-logo ${className}` : 'module-logo'} />
+)
+
+export const ExcelLogo = moduleLogo(excelLogo)
+export const PowerPointLogo = moduleLogo(powerpointLogo)
+export const FolderLogo = moduleLogo(folderLogo)
+export const BobLogo = moduleLogo(bobLogo)
+export const GreenstarLogo = moduleLogo(greenstarLogo)
+
 /** Module navigation icons (used by OpportunityDrawer) */
 export const MODULE_ICONS = {
-  home:      (p) => <Home size={14} {...p} />,
-  gssm:      (p) => <Table2 size={14} {...p} />,
-  isbd:      (p) => <Image size={14} {...p} />,
-  greenstar: (p) => <Star size={14} {...p} />,
-  documents: (p) => <FileText size={14} {...p} />,
-  metrics:   (p) => <BarChart3 size={14} {...p} />,
-  admin:     (p) => <Settings size={14} {...p} />,
+  home:      (p) => <LayoutDashboard size={18} {...p} />,
+  gssm:      (p) => <ExcelLogo size={18} {...p} />,
+  isbd:      (p) => <PowerPointLogo size={18} {...p} />,
+  genai:     (p) => <BobLogo size={21} {...p} />,
+  greenstar: (p) => <GreenstarLogo size={19} {...p} />,
+  documents: (p) => <FolderLogo size={18} {...p} />,
+  metrics:   (p) => <BarChart3 size={18} {...p} />,
+  admin:     (p) => <Settings size={18} {...p} />,
 }

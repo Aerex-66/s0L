@@ -1,12 +1,22 @@
 ﻿import { useState, useMemo, useEffect } from 'react'
 import { Mail, MessageSquare, Phone, Video } from 'lucide-react'
 import { dealService } from '../../../shared/services/dealService'
-import { settingsService } from '../../settings/settingsService'
-import { dealLabel, mailtoLink, teamsCallLink, teamsChatLink } from '../handoff'
+import { directoryService } from '../../../shared/services/directoryService'
+import { describeRoles } from '../../../shared/utils/directory'
+import { contactEmail, dealLabel, groupEmail, teamsCallLink, teamsChatLink } from '../handoff'
 import { ContactIcon } from '../../../shared/ui/Icons'
+import PersonLookup from '../../../shared/ui/PersonLookup'
 import MeetingComposer from './MeetingComposer'
+import OutlookEmailButton from './OutlookEmailButton'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+/** First and last initial of the first person named ("Dan C Berard / Matt Langer" -> DB). */
+function contactInitials(name) {
+  const words = String(name || '').split('/')[0].trim().split(/\s+/).filter(Boolean)
+  if (!words.length) return '?'
+  return (words[0][0] + (words.length > 1 ? words[words.length - 1][0] : '')).toUpperCase()
+}
 
 export default function Contacts({ deal, onUpdate }) {
   const [showForm, setShowForm] = useState(false)
@@ -25,7 +35,7 @@ export default function Contacts({ deal, onUpdate }) {
 
   // Load global directory for "Add from directory"
   useEffect(() => {
-    settingsService.getDirectory().then(d => { if (Array.isArray(d)) setDirectory(d) }).catch(() => {})
+    directoryService.people().then(d => { if (Array.isArray(d)) setDirectory(d) }).catch(() => {})
   }, [])
 
   // Map contact names → their pending activities
@@ -67,7 +77,7 @@ export default function Contacts({ deal, onUpdate }) {
       await dealService.addContact(deal.id, {
         name: dirContact.name,
         email: dirContact.email || '',
-        role: [dirContact.role, dirContact.area].filter(Boolean).join(' · '),
+        role: describeRoles(dirContact),
         company: dirContact.company || '',
         phone: dirContact.phone || '',
         notes: '',
@@ -84,15 +94,6 @@ export default function Contacts({ deal, onUpdate }) {
     catch (err) { setError(`Delete failed: ${err.message || 'Unknown error'}`) }
   }
 
-  const contactMailto = (c, pending) => {
-    let body = `Hi ${(c.name || '').split(' ')[0]},\n\n`
-    if (pending.length > 0) {
-      body += `Pending items:\n${pending.map(a => `• ${a.activity} (${a.status || 'Not Started'})`).join('\n')}\n\n`
-    }
-    body += 'Thanks'
-    return mailtoLink({ to: [c.email], subject: label, body })
-  }
-
   return (
     <div className="ct-container">
       <div className="ct-toolbar">
@@ -100,13 +101,14 @@ export default function Contacts({ deal, onUpdate }) {
         <div className="ct-toolbar-actions">
           {reachable.length > 0 && (
             <>
-              <a
+              <OutlookEmailButton
                 className="btn btn-ghost btn-sm"
-                href={mailtoLink({ to: reachable.map(c => c.email), subject: label })}
+                message={groupEmail({ contacts: reachable, label })}
+                dealId={deal.id}
                 title="One Outlook email to every contact on this deal"
               >
                 <Mail size={14} /> Email all
-              </a>
+              </OutlookEmailButton>
               <button className="btn btn-secondary btn-sm" onClick={() => setComposer({})}>
                 <Video size={14} /> Schedule meeting
               </button>
@@ -114,11 +116,11 @@ export default function Contacts({ deal, onUpdate }) {
           )}
           {availableFromDirectory.length > 0 && (
             <button className="btn btn-secondary btn-sm" onClick={() => setShowDirectory(!showDirectory)}>
-              {showDirectory ? 'Hide Directory' : `+ From Directory (${availableFromDirectory.length})`}
+              {showDirectory ? 'Hide directory' : `+ From directory (${availableFromDirectory.length})`}
             </button>
           )}
           <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
-            {showForm ? 'Cancel' : '+ Add Contact'}
+            {showForm ? 'Cancel' : '+ Add contact'}
           </button>
         </div>
       </div>
@@ -131,7 +133,7 @@ export default function Contacts({ deal, onUpdate }) {
             {availableFromDirectory.map(d => (
               <button key={d.id} className="ct-directory-chip" onClick={() => addFromDirectory(d)} disabled={saving}>
                 <span className="ct-directory-chip-name">{d.name}</span>
-                {d.role && <span className="ct-directory-chip-meta">{d.role}{d.area ? ` · ${d.area}` : ''}</span>}
+                {describeRoles(d) && <span className="ct-directory-chip-meta">{describeRoles(d)}</span>}
               </button>
             ))}
           </div>
@@ -142,7 +144,19 @@ export default function Contacts({ deal, onUpdate }) {
         <form className="ct-form" onSubmit={addContact}>
           {error && <div className="ct-form-error">{error}</div>}
           <div className="ct-form-grid">
-            <input type="text" placeholder="Name *" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+            <PersonLookup
+              value={form.name}
+              onChange={(name) => setForm({ ...form, name })}
+              onPick={(person) => setForm((current) => ({
+                ...current,
+                name: person.name,
+                email: person.email,
+                company: person.company || current.company,
+                phone: person.phone || current.phone,
+              }))}
+              placeholder="Name * (start typing)"
+              required
+            />
             <input type="email" placeholder="Email *" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
             <input type="text" placeholder="Role" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} />
             <input type="text" placeholder="Company" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} />
@@ -162,7 +176,7 @@ export default function Contacts({ deal, onUpdate }) {
             <ContactIcon size={24} strokeWidth={1.5} />
           </span>
           <p>No contacts yet. Add stakeholders, approvers, and project leads.</p>
-          <button className="btn btn-primary btn-sm" onClick={() => setShowForm(true)}>+ Add First Contact</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setShowForm(true)}>+ Add first contact</button>
         </div>
       ) : (
         <div className="ct-grid">
@@ -174,14 +188,18 @@ export default function Contacts({ deal, onUpdate }) {
               <div key={c.id} className="ct-card">
                 <div className="ct-card-top">
                   <div className="ct-card-identity">
-                    <div className="ct-avatar">{(c.name || '?')[0].toUpperCase()}</div>
+                    <div className="ct-avatar" aria-hidden="true">{contactInitials(c.name)}</div>
                     <div>
                       <div className="ct-name">{c.name}</div>
                       {c.role && <div className="ct-role">{c.role}</div>}
                     </div>
                   </div>
                   <div className="ct-card-top-actions">
-                    <button className={`ct-del ${deleteConfirm === c.id ? 'confirm' : ''}`} onClick={() => deleteContact(c.id)}>
+                    <button
+                      className={`ct-del ${deleteConfirm === c.id ? 'confirm' : ''}`}
+                      onClick={() => deleteContact(c.id)}
+                      aria-label={deleteConfirm === c.id ? `Confirm removing ${c.name}` : `Remove ${c.name} from this deal`}
+                    >
                       {deleteConfirm === c.id ? 'Confirm?' : '\u00d7'}
                     </button>
                   </div>
@@ -211,9 +229,14 @@ export default function Contacts({ deal, onUpdate }) {
                 )}
                 {c.email && (
                   <div className="ct-comms">
-                    <a className="ct-comm" href={contactMailto(c, pending)} title={`Email ${c.name} in Outlook`}>
+                    <OutlookEmailButton
+                      className="ct-comm"
+                      message={contactEmail({ contact: c, pending, label })}
+                      dealId={deal.id}
+                      title={`Email ${c.name} in Outlook`}
+                    >
                       <Mail size={13} /> Email
-                    </a>
+                    </OutlookEmailButton>
                     <a
                       className="ct-comm"
                       href={teamsChatLink({ users: [c.email], message: `Hi ${(c.name || '').split(' ')[0]}, re ${label}: ` })}

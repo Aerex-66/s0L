@@ -13,6 +13,8 @@ Worked out with the user on 2026-10-28. Companion to
   live elsewhere, often on a deal team member's OneDrive. Duplicates are fine.
 - **Greenstar (user).** Estimates have to be built in Greenstar, a tool inside
   Salesforce, so the team works them out in GSSM and the iSBD first.
+  - Each estimate is a child record of its opportunity.
+  - Each opportunity and each estimate has its own currency (user, 2026-10-28).
 - **Why connect Salesforce:** to read IBM's own values for the deals the team tracks on
   monday, so that:
   1. the board stays accurate. Where it disagrees with Salesforce, the TT Execs see it
@@ -148,7 +150,9 @@ the same rule about uninstalled apps and needs an install on every machine.
   exists anywhere.
 - **Tokens.** The access token, refresh token, instance URL and the signed-in person's
   name and email are stored DPAPI-encrypted in `%LOCALAPPDATA%\s0L\salesforce`.
-  - Calls go only to the provisioned org's host.
+  - Calls go only to Salesforce hosts: the provisioned org for sign-in, then the
+    instance Salesforce names in its token answer, which must be HTTPS on a Salesforce
+    domain.
   - Salesforce doesn't say when an access token expires, so s0L refreshes when Salesforce
     answers "session expired" and retries once.
   - If a refresh returns a new refresh token, the newest one is kept.
@@ -181,9 +185,12 @@ the same rule about uninstalled apps and needs an install on every machine.
 - **The command.** `npm run salesforce:inventory` is a dev command the user runs after
   signing in. It writes `docs/salesforce/inventory.md`, which covers:
   - every object the account can query (API name and label);
-  - for Opportunity, Account, and any object whose name or label mentions Greenstar or
-    estimates, every field the account can see: API name, label, type, and the values of
-    any pick list.
+  - every field the account can see (API name, label, type, and the values of any pick
+    list) for:
+    - Opportunity;
+    - Account;
+    - Opportunity's child objects, which is where estimates live (user);
+    - any object whose name or label mentions Greenstar or estimates.
 
   There are never any record values. The user decides whether to commit the file.
 - **The user's report.** The exported report the user will share later ("what little they
@@ -214,6 +221,13 @@ the same rule about uninstalled apps and needs an install on every machine.
        precision, date to the board's quarter) are built for the pairs the user picks.
      - Noisy pairs aren't compared. For example, board client names are short and
        Salesforce account names are legal names.
+     - **Amounts and currency.**
+       - Each opportunity and each estimate has its own currency (user).
+       - An amount is compared in its opportunity's own currency, and only when the
+         board's Currency column names that same currency.
+       - A different currency is itself a difference.
+       - My reading, to correct if wrong: the board's TCV ($M) is in the currency its
+         Currency column names.
   2. **Fill fields (my call).** Things only Salesforce has, which s0L or the iSBD needs.
      Likely candidates, to confirm from the list:
      - Opportunity Owner, Account Classification and Opportunity Type, owned by `deal`
@@ -291,12 +305,16 @@ the same rule about uninstalled apps and needs an install on every machine.
   - **The board keeps its own words (my call).**
     - Salesforce values are translated into the board's own labels through a small table
       on each compare pair in the index, filled in when the pairs are chosen.
+    - The table is the opt-in. A pair without one is compared but never fixed from s0L,
+      so no column gets an Update button until someone writes its table.
     - s0L never adds Salesforce's wording to the board.
     - A value with no translation is shown for investigation only, with no Update
       button.
-  - The columns involved become `writable` in the index.
+  - The fix route checks a label column's value against the board's active labels before
+    writing. People-picker `writable` flags are unchanged.
 - **Open in Salesforce.** Opens the opportunity in the browser. It's a hand-off link, and
-  s0L makes no request.
+  s0L makes no request. It's offered only for the opportunity the board's cell names now,
+  never one an earlier number matched.
 - **Investigating** needs no button. The row stays until the values agree.
 - **Computed on request, never stored.** Differences are worked out when asked for
   (`GET /api/salesforce/differences`), because derived values are never stored.
@@ -420,16 +438,15 @@ the board is proven with recorded samples in the tests.
 
 ## Open items for the user
 
-- **Who to send the request to.** Who administers IBM Sales Cloud, and the channel for
-  this kind of request.
+- **Who sends the request, and to whom.** Only the administrators who run IBM Sales
+  Cloud can install s0L's app and switch on API access, so the request has to reach
+  them. If you don't know who they are, whoever your team asks for Sales Cloud access
+  will. This doesn't hold up the build, because the test org doesn't need them.
 - **The Tiger Team names** for the permission set.
 - **The org's address,** when it's time to switch from the test org.
 - **The exported report,** whenever it's convenient.
-- **When choosing pairs:**
-  - Is TCV ($M) in US dollars, or in the deal's own currency (the board has a Currency
-    column)? Salesforce's Amount is in the opportunity's currency. Until this is
-    answered, amounts aren't compared.
-  - The board's own word for each Salesforce value: the translation tables.
+- **When choosing pairs:** the board's own word for each Salesforce value (the
+  translation tables).
 
 ## Left to the builder
 

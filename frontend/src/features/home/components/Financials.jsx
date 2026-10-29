@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { dealService } from '../../../shared/services/dealService'
 import { formatCompactCurrency, formatCurrency } from '../../../shared/utils/financialsHelpers'
+import { formatCompactMillions, formatShortDateWithYear } from '../../../shared/utils/formatters'
 import { VOCABULARIES } from '../../../shared/constants/fieldIndex'
+import { DollarSign } from 'lucide-react'
 import { financialRows } from '../financialRows'
 
 /*
@@ -33,6 +35,43 @@ function SourceChip({ state, syncedAt }) {
     return <span className="chip fin-sync-badge">{'Entered before GSSM was linked · replaced on first sync'}</span>
   }
   return null
+}
+
+/** What the monday board and Salesforce say about the money, whether or not a workbook is linked. */
+function CommercialPanel({ deal }) {
+  const rows = [
+    ['TCV on the board', formatCompactMillions(deal.estimated_value) !== '—' ? formatCompactMillions(deal.estimated_value) : null, deal.currency],
+    ['Close quarter', deal.close_quarter],
+    ['Call / upside', deal.forecast_category],
+    ['Sales stage', deal.sales_stage],
+  ]
+  if (deal.salesforce_lookup === 'found') {
+    rows.push(
+      ['Salesforce amount', deal.sf_amount ? formatCurrency(deal.sf_amount) : null, deal.sf_currency],
+      ['Salesforce stage', deal.sf_stage],
+      ['Salesforce forecast', deal.sf_forecast_category],
+      ['Salesforce close date', formatShortDateWithYear(deal.sf_close_date)],
+    )
+  }
+  return (
+    <section className="ws-panel" aria-labelledby="fin-commercial">
+      <div className="ws-panel-head">
+        <h3 className="ws-panel-title" id="fin-commercial">Commercial</h3>
+        <span className="ws-panel-note">{deal.salesforce_lookup === 'found' ? 'From the monday board and Salesforce' : 'From the monday board'}</span>
+      </div>
+      <ul className="ws-rows">
+        {rows.map(([label, value, sub]) => (
+          <li key={label} className="ws-row">
+            <span className="ws-row-label">{label}</span>
+            <span className={`ws-row-value${value ? '' : ' is-empty'}`}>
+              {value || '—'}
+              {value && sub && <span className="ws-row-sub">{sub}</span>}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
 }
 
 export default function Financials({ deal, onUpdate }) {
@@ -71,10 +110,14 @@ export default function Financials({ deal, onUpdate }) {
       <SourceChip state={state} syncedAt={deal.gssm_synced_at} />
 
       {state === 'unlinked' ? (
-        <section className="fin-section">
-          <h3>No GSSM numbers yet</h3>
-          <p>Open this deal&apos;s workbook in the GSSM module. Revenue, cost, GP and PTI appear here automatically once it syncs.</p>
-        </section>
+        <div className="ws-empty">
+          <span className="ws-empty-icon" aria-hidden="true"><DollarSign size={22} strokeWidth={1.5} /></span>
+          <h3 className="ws-empty-title">No GSSM numbers yet</h3>
+          <p className="ws-empty-text">
+            Revenue, cost, GP and PTI come from this deal&apos;s GSSM workbook. Open <strong>GSSM</strong> in the menu on the
+            left and import the workbook: the numbers appear here as soon as it syncs, read-only, so Home and GSSM never disagree.
+          </p>
+        </div>
       ) : (
         <>
           <div className="fin-hero">
@@ -104,15 +147,22 @@ export default function Financials({ deal, onUpdate }) {
         </>
       )}
 
-      <section className="fin-section">
-        <h3>Target</h3>
-        <div className="fin-fields">
-          <label className="fin-field">
+      <div className="ws-grid fin-board">
+        <CommercialPanel deal={deal} />
+        <section className="ws-panel" aria-labelledby="fin-target">
+          <div className="ws-panel-head">
+            <h3 className="ws-panel-title" id="fin-target">Target</h3>
+            <span className="ws-panel-note">A GP % under this target shows in red</span>
+          </div>
+          <label className="fin-field fin-target">
             <span>{target.label}</span>
-            <input type="number" value={targetDraft} onChange={(e) => saveTarget(e.target.value)} placeholder="%" />
+            <span className="fin-target-input">
+              <input type="number" inputMode="decimal" value={targetDraft} onChange={(e) => saveTarget(e.target.value)} placeholder="e.g. 32" />
+              <i aria-hidden="true">%</i>
+            </span>
           </label>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   )
 }

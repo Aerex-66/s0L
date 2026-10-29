@@ -1,0 +1,103 @@
+/* Admin — the deal record. Layout rides the ws-* workspace blocks in home.css. */
+
+/* The owner tiles double as filters: they highlight, never lift */
+.admin-kpi {
+  appearance: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition-liquid);
+}
+
+.admin-kpi:hover {
+  background: color-mix(in srgb, var(--accent) 6%, var(--glass-bg-light));
+  box-shadow: var(--shadow-glass), var(--hover-ring);
+}
+
+.admin-kpi.is-active {
+  background: color-mix(in srgb, var(--accent) 12%, var(--glass-bg-light));
+  box-shadow: var(--shadow-glass), var(--hover-ring);
+}
+
+.admin-kpi.is-active .ws-kpi-label {
+  color: var(--accent);
+}
+
+.admin-toolbar {
+  margin-bottom: 0.6rem;
+  padding-top: 0;
+}
+
+.admin-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--type-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.admin-search {
+  width: 13rem;
+  padding: 0.32rem 0.6rem;
+  font-size: var(--type-sm);
+}
+
+.admin-table-wrap {
+  max-height: 34rem;
+  overflow-y: auto;
+}
+
+.admin-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.admin-table td.admin-value {
+  max-width: 22rem;
+  color: var(--text-primary);
+}
+
+.admin-table td.admin-muted {
+  color: var(--text-tertiary);
+}
+
+/* Owner tags: the two you can edit in s0L wear the accent */
+.admin-owner {
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+}
+
+.admin-owner--deal,
+.admin-owner--isbd {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.admin-owners {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.admin-owners-row {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.admin-owners-row dt,
+.admin-owners-row dd {
+  margin: 0;
+}
+
+.admin-owners-row dd {
+  font-size: var(--type-sm);
+  line-height: 1.45;
+  color: var(--text-secondary);
+}

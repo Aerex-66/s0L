@@ -85,3 +85,19 @@ def test_gssm_sync_refuses_monday_fields(tmp_store):
 def test_monday_writer_may_clear_required_fields():
     changes, error = prepare_deal_write({}, {'client_name': ''}, owners={'monday'}, enforce_required=False)
     assert error is None and changes == {'client_name': ''}
+
+
+def test_opportunity_owner_editable_until_salesforce_supplies_it(tmp_store):
+    deal_id = _seed(tmp_store, salesforce_id='006A0000006Vm9rIAC')
+    assert tmp_store.put(f'/api/deals/{deal_id}', json={'opportunity_owner': 'Ann Lee'}).status_code == 200
+    data = state.load_data()
+    state.get_deal_by_id(data, deal_id)['salesforce_supplied'] = ['opportunity_owner']
+    state.save_data(data)
+    response = tmp_store.put(f'/api/deals/{deal_id}', json={'opportunity_owner': 'Ann Lee'})
+    assert response.status_code == 409 and 'opportunity_owner' in response.get_json()['error']
+
+
+def test_salesforce_values_never_client_writable(tmp_store):
+    deal_id = _seed(tmp_store)
+    for payload in ({'sf_stage': 'Won'}, {'salesforce_id': '006A0000006Vm9rIAC'}, {'salesforce_supplied': []}):
+        assert tmp_store.put(f'/api/deals/{deal_id}', json=payload).status_code == 409

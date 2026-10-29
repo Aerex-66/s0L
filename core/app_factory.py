@@ -8,10 +8,13 @@ from core.features.documents.documents import documents_blueprint
 from core.features.settings.settings import settings_blueprint
 from core.features.calendar.calendar import calendar_blueprint
 from core.features.integrations.monday.routes import monday_blueprint
+from core.features.integrations.salesforce.routes import salesforce_blueprint
+from core.features.integrations.outlook.routes import outlook_blueprint
 from core.features.integrations.client_logos.routes import client_logos_blueprint
 from core.features.notices.notices import notices_blueprint
 from core.shared.security import parse_frontend_origins
 from core.shell.frontend import create_frontend_blueprint
+from core.shell.updates import updates_blueprint
 
 
 def create_app():
@@ -57,8 +60,11 @@ def create_app():
     app.register_blueprint(settings_blueprint)
     app.register_blueprint(calendar_blueprint)
     app.register_blueprint(monday_blueprint)
+    app.register_blueprint(salesforce_blueprint)
+    app.register_blueprint(outlook_blueprint)
     app.register_blueprint(client_logos_blueprint)
     app.register_blueprint(notices_blueprint)
+    app.register_blueprint(updates_blueprint)
 
     dist_dir = os.environ.get('S0L_FRONTEND_DIST', '').strip()
     if dist_dir and os.path.isfile(os.path.join(dist_dir, 'index.html')):

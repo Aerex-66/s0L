@@ -447,7 +447,7 @@ body::after {
    (status dots, spinners), are the only exceptions. */
 *, *::before, *::after { border-radius: 0 !important; }
 .docs-upload-spinner, .gssm-spinner, .fs-type-dot, .isbd-status-dot, .stage-chip-indicator, .deal-status-dot,
-.header-monday-dot, .isbd-thumb.dirty .isbd-thumb-index::after, .slv-items li::before {
+.header-monday-dot, .header-salesforce-dot, .header-outlook-dot, .header-settings-dot, .isbd-thumb.dirty .isbd-thumb-index::after, .slv-items li::before {
   border-radius: 50% !important;
 }
 

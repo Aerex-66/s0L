@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import labelCases from '../../../../shared/test-fixtures/label_cases.json'
 import {
-  FIELD_INDEX, canonicalKey, gssmCell, isEditable, isbdKeyFor, normalizeLabel, ownerOf, pathOf,
+  FIELD_INDEX, canonicalKey, gssmCell, isEditable, isLinked, isSalesforceLinked, isbdKeyFor, normalizeLabel, ownerOf, pathOf,
 } from './fieldIndex'
 
 describe('field index (JS loader)', () => {
@@ -52,11 +52,16 @@ describe('field index (JS loader)', () => {
     expect(gssmCell('opportunity_number')).toEqual({ sheet: 'Home', row: 21, col: 9 })
   })
 
-  it.each(['opportunity_owner', 'service_line', 'decision_date', 'client_type', 'engagement_type', 'engagement_source', 'review_status'])(
+  it.each(['service_line', 'decision_date', 'client_type', 'engagement_type', 'engagement_source', 'review_status'])(
     '%s is deal-owned at its own path', (key) => {
       expect(ownerOf(key)).toBe('deal')
       expect(pathOf(key)).toBe(key)
     })
+
+  it('fills opportunity_owner from Salesforce at its own path', () => {
+    expect(ownerOf('opportunity_owner')).toBe('salesforce')
+    expect(pathOf('opportunity_owner')).toBe('opportunity_owner')
+  })
 
   it('normalizes labels exactly like the Python loader', () => {
     for (const [raw, expected] of labelCases) expect(normalizeLabel(raw)).toBe(expected)
@@ -76,5 +81,14 @@ describe('field index (JS loader)', () => {
     expect(isEditable('client_name', { gssm_workbook_id: 7 })).toBe(true)
     expect(isEditable('timelines', { monday_item_id: '1' })).toBe(true)
     expect(isEditable('monday_item_id', {})).toBe(false)
+  })
+
+  it('locks a Salesforce fill field only once Salesforce supplies it', () => {
+    expect(isEditable('opportunity_owner', {})).toBe(true)
+    expect(isEditable('opportunity_owner', { salesforce_id: '006A0000006Vm9rIAC' })).toBe(true)
+    expect(isEditable('opportunity_owner', { salesforce_supplied: ['opportunity_owner'] })).toBe(false)
+    expect(isEditable('sf_stage', {})).toBe(false)
+    expect(isSalesforceLinked({ salesforce_id: '006A0000006Vm9rIAC' })).toBe(true)
+    expect(isLinked({ monday_item_id: '1' }, 'salesforce')).toBe(false)
   })
 })

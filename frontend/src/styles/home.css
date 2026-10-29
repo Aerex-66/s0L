@@ -13,6 +13,13 @@
   min-height: 0;
 }
 
+/* Tall tab content scrolls the workspace; it must never squeeze the hero or the tab row */
+.deal-view > .deal-hero,
+.deal-view > .stage-detail,
+.deal-view > .workspace-tabs {
+  flex-shrink: 0;
+}
+
 .window-workspace {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
@@ -51,16 +58,11 @@
    ═══════════════════════════════════════════════════════════ */
 
 .deal-hero {
-  padding: 0.85rem 1.1rem 0.6rem;
+  padding: 1rem 1.15rem 0.85rem;
   position: relative;
   background-color: var(--glass-bg-light);
   background-image: var(--ambient-field);
-  backdrop-filter: blur(var(--glass-blur-light)) saturate(1.5);
-  -webkit-backdrop-filter: blur(var(--glass-blur-light)) saturate(1.5);
-  border: 1px solid var(--glass-border);
-  border-top-color: var(--glass-border-top);
   box-shadow: var(--shadow-glass);
-  border-radius: var(--radius-md);
   margin-bottom: 0.5rem;
   overflow: hidden;
 }
@@ -94,129 +96,149 @@
 }
 
 .deal-hero-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.deal-hero-identity h2 {
-  margin: 0;
-  font-size: var(--type-lg);
-  font-weight: var(--font-weight-thin, 300);
-  color: var(--text-primary);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.deal-hero-tags {
-  display: flex;
-  gap: 0.35rem;
-  margin-top: 0.25rem;
-  flex-wrap: wrap;
-}
-
-.impl-tag {
-  font-size: var(--type-2xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 0.2rem 0.55rem;
-  background: color-mix(in srgb, var(--impl-color, #0f62fe) 10%, transparent);
-  color: var(--impl-color, #0f62fe);
-  border: 1px solid color-mix(in srgb, var(--impl-color, #0f62fe) 22%, transparent);
-  border-radius: var(--radius-xs);
-}
-
-.sector-tag {
-  font-size: var(--type-2xs);
-  font-weight: 600;
-  padding: 0.2rem 0.55rem;
-  background: var(--glass-bg);
-  color: var(--text-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.30);
-  border-radius: var(--radius-xs);
-  backdrop-filter: blur(var(--glass-blur-light));
-  -webkit-backdrop-filter: blur(var(--glass-blur-light));
-}
-
-.deal-hero-actions {
-  display: flex;
-  gap: 0.4rem;
-  flex-shrink: 0;
   position: relative;
   z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
 }
 
-.deal-hero-stats {
+.deal-hero-identity {
+  min-width: 0;
+}
+
+/* Status | type | practice — the deal tile's status line */
+.deal-hero-eyebrow {
   display: flex;
-  gap: 0.15rem;
+  align-items: center;
   flex-wrap: wrap;
-  align-items: center;
+  gap: 0.3rem 0.6rem;
+  font-size: var(--type-sm);
+  color: var(--text-secondary);
 }
 
-.hero-stat {
-  display: flex;
+.deal-hero-status {
+  display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.2rem 0.5rem;
-  background: transparent;
-  border: none;
-  transition: all 0.15s ease;
-}
-
-.hero-stat:hover {
+  gap: 0.45rem;
   color: var(--text-primary);
 }
 
-.hero-stat-label {
-  font-size: var(--type-2xs);
-  font-weight: 600;
+.deal-hero-since {
   color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
-.hero-stat-value {
-  font-size: var(--type-body);
-  font-weight: 700;
+.deal-hero-sep {
+  width: 1px;
+  height: 0.85rem;
+  background: var(--divider-fade);
+}
+
+.deal-hero-client {
+  margin: 0.35rem 0 0.1rem;
+  font-size: var(--type-2xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
   color: var(--text-primary);
 }
 
-.hero-stat-value.mono {
-  font-family: var(--font-family-sans);
+.deal-hero-desc {
+  margin: 0;
+  font-size: var(--type-body);
+  color: var(--text-secondary);
 }
 
-/* Progress track */
-.deal-hero-progress {
-  margin-top: 0.55rem;
-}
-
-.deal-hero-progress-track {
+/* TCV and the setup action sit to the right of the headline */
+.deal-hero-side {
   display: flex;
-  gap: 2px;
-  height: 4px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.deal-hero-tcv {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.deal-hero-tcv-value {
+  font-size: var(--type-3xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--text-primary);
+}
+
+.deal-hero-tcv-value.is-empty {
+  font-size: var(--type-lg);
+  font-weight: var(--font-weight-regular);
+  color: var(--text-tertiary);
+}
+
+.deal-hero-tcv-label {
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.deal-hero-setup.cmd-btn {
+  padding: 0.3rem 0.75rem;
+  font-size: var(--type-2xs);
+}
+
+/* Readiness caption over the stage cells */
+.deal-hero-readiness {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin-top: 1rem;
+}
+
+.deal-hero-readiness-title {
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.deal-hero-readiness-note {
+  font-size: var(--type-2xs);
+  color: var(--text-tertiary);
+}
+
+/* Each stage cell carries its own progress bar (pick one for its checks) */
+.stage-chip-bar {
+  display: block;
+  height: 3px;
   overflow: hidden;
-  background: var(--control-fill);
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
-.progress-segment {
-  flex: 1;
-  transition: background 0.4s ease;
+.stage-chip-bar > i {
+  display: block;
+  height: 100%;
+  transition: width 0.4s var(--ease-glass), background 0.4s ease;
 }
 
-.progress-segment.status-complete {
-  background: var(--ibm-green);
-  box-shadow: 0 0 8px rgba(25, 128, 56, 0.28);
-}
-
-.progress-segment.status-in-progress {
-  background: var(--ibm-blue);
+.stage-chip.status-in-progress .stage-chip-bar > i {
+  background: var(--accent);
   box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
-.progress-segment.status-todo {
-  background: var(--bg-tertiary);
+.stage-chip.status-complete .stage-chip-bar > i {
+  background: var(--status-success);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--status-success) 35%, transparent);
 }
 
 
@@ -225,9 +247,11 @@
    ═══════════════════════════════════════════════════════════ */
 
 .stage-rail-inline {
+  position: relative;
+  z-index: 1;
   display: flex;
   gap: 3px;
-  margin-top: 0.55rem;
+  margin-top: 0.45rem;
   flex-wrap: wrap;
   background: var(--control-fill);
   padding: 3px;
@@ -235,9 +259,10 @@
 
 .stage-chip {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 0.4rem;
-  padding: 0.36rem 0.7rem;
+  padding: 0.45rem 0.65rem 0.5rem;
   border: 1px solid transparent;
   background: transparent;
   cursor: pointer;
@@ -245,7 +270,13 @@
   font-size: var(--type-sm);
   color: var(--text-secondary);
   flex: 1 1 0;
-  justify-content: center;
+  min-width: 8.5rem;
+}
+
+.stage-chip-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .stage-chip:hover {
@@ -274,19 +305,13 @@
 }
 
 .stage-chip.status-in-progress .stage-chip-indicator {
-  background: var(--ibm-blue);
+  background: var(--accent);
   box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 50%, transparent);
-  animation: pulseDot 2s ease infinite;
 }
 
 .stage-chip.status-complete .stage-chip-indicator {
-  background: var(--ibm-green);
-  box-shadow: 0 0 8px rgba(36, 161, 72, 0.5);
-}
-
-@keyframes pulseDot {
-  0%, 100% { box-shadow: 0 0 4px color-mix(in srgb, var(--accent) 30%, transparent); }
-  50% { box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent); }
+  background: var(--status-success);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--status-success) 50%, transparent);
 }
 
 .stage-chip-label {
@@ -297,48 +322,45 @@
 }
 
 .stage-chip-count {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
   font-size: var(--type-2xs);
   font-weight: 700;
   color: var(--text-tertiary);
-  margin-left: 0.1rem;
-  opacity: 0.7;
 }
 
 .stage-chip.status-complete .stage-chip-count {
-  color: var(--ibm-green);
+  color: var(--status-success);
 }
 
 /* Stage chip: incomplete override warning */
 .stage-chip.has-warning .stage-chip-indicator {
-  background: var(--status-warning, #f1c21b);
-  box-shadow: 0 0 8px rgba(241, 194, 27, 0.45);
+  background: var(--status-warning);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--status-warning) 45%, transparent);
 }
 
 .stage-chip-warn {
-  font-size: var(--type-micro);
-  margin-left: 0.15rem;
-  color: var(--status-warning, #f1c21b);
-  line-height: 1;
   flex-shrink: 0;
+  color: var(--status-warning);
 }
 
 /* Transient warning banner below stage rail */
 .stage-warning-banner {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  margin-top: 0.4rem;
+  margin-top: 0.45rem;
   padding: 0.35rem 0.75rem;
   font-size: var(--type-xs);
-  color: var(--status-warning, #f1c21b);
-  background: rgba(241, 194, 27, 0.06);
-  border: 1px solid rgba(241, 194, 27, 0.18);
-  border-radius: var(--radius-sm);
+  color: var(--status-warning);
+  background: color-mix(in srgb, var(--status-warning) 8%, transparent);
   animation: warningFadeInOut 4s ease both;
 }
 
 .stage-warning-icon {
-  font-size: var(--type-sm);
   flex-shrink: 0;
 }
 
@@ -353,7 +375,7 @@
 .category-warn-icon {
   margin-left: 0.4rem;
   font-size: var(--type-xs);
-  color: var(--status-warning, #f1c21b);
+  color: var(--status-warning);
   vertical-align: middle;
 }
 
@@ -362,8 +384,6 @@
   margin-top: 0.5rem;
   padding: 1rem;
   background: var(--glass-bg-light);
-  backdrop-filter: blur(var(--glass-blur-light)) saturate(1.3);
-  -webkit-backdrop-filter: blur(var(--glass-blur-light)) saturate(1.3);
   box-shadow: var(--shadow-glass);
   animation: revealDown 0.2s var(--ease-out);
   position: relative;
@@ -403,28 +423,21 @@
 .stage-check {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.35rem;
   font-size: var(--type-sm);
   padding: 0.25rem 0.6rem;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur-light));
-  -webkit-backdrop-filter: blur(var(--glass-blur-light));
-  border: 1px solid var(--glass-border);
+  background: var(--control-fill);
   color: var(--text-secondary);
-  border-radius: var(--radius-full);
   transition: var(--transition-liquid);
 }
 
 .stage-check.done {
-  background: rgba(36, 161, 72, 0.07);
-  border-color: rgba(36, 161, 72, 0.3);
-  color: var(--ibm-green);
-  box-shadow: 0 0 12px rgba(36, 161, 72, 0.06);
+  background: color-mix(in srgb, var(--status-success) 10%, transparent);
+  color: var(--status-success);
 }
 
 .stage-check-icon {
-  font-weight: 700;
-  font-size: var(--type-xs);
+  flex-shrink: 0;
 }
 
 
@@ -594,7 +607,8 @@
     border-right: none;
     border-bottom: 1px solid var(--border-color);
   }
-  .opportunity-drawer-header { display: none; }
+  .opportunity-drawer-header,
+  .opportunity-drawer-divider--nav { display: none; }
   .opportunity-drawer-nav {
     display: flex;
     flex-direction: row;
@@ -625,7 +639,8 @@
   .breadcrumb-name { max-width: 200px; }
 
   .deal-hero-top { flex-direction: column; align-items: flex-start; }
-  .deal-hero-stats { flex-wrap: wrap; }
+  .deal-hero-side,
+  .deal-hero-tcv { align-items: flex-start; }
   .stage-rail { grid-template-columns: repeat(2, 1fr); }
 
   .stage-detail-header {
@@ -646,7 +661,6 @@
   .resource-section { overflow-x: auto; }
   .resources-table { min-width: 400px; }
 
-  .approver-form-grid { grid-template-columns: 1fr; }
   .add-contact-form .form-grid { grid-template-columns: 1fr; }
   .format-options { grid-template-columns: 1fr; }
   .search-wrapper { max-width: 100%; }
@@ -1020,10 +1034,19 @@
   transition: var(--transition-liquid);
 }
 
-a.approval-mail:hover {
+a.approval-mail:hover,
+button.approval-mail:hover:not(:disabled) {
   background: var(--hover-wash);
   border-color: var(--hover-border);
   box-shadow: var(--hover-ring);
+}
+
+/* In the Outlook app the email icon is a button that opens a real draft */
+button.approval-mail {
+  padding: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
 }
 
 .approval-mail.is-missing {
@@ -1267,7 +1290,17 @@ a.approval-mail:hover {
    FINANCIALS TAB — fin-* classes
    ═══════════════════════════════════════════════════════════ */
 
-.fin-container { width: 100%; }
+.fin-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 1rem;
+}
+
+.fin-container > .chip { align-self: flex-start; }
+.fin-container > .fin-hero,
+.fin-container > .fin-grid { margin-bottom: 0; }
 
 /* Hero strip */
 .fin-hero {
@@ -1356,12 +1389,37 @@ a.approval-mail:hover {
   gap: 0.18rem;
 }
 
-.fin-field span {
-  font-size: var(--type-xs);
+.fin-field > span:first-child {
+  font-size: var(--type-micro);
   font-weight: 600;
   color: var(--text-tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.07em;
+}
+
+.fin-target {
+  max-width: 14rem;
+}
+
+.fin-target-input {
+  position: relative;
+  display: block;
+}
+
+.fin-target-input input {
+  width: 100%;
+  padding-right: 2rem;
+}
+
+.fin-target-input i {
+  position: absolute;
+  right: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-style: normal;
+  font-size: var(--type-sm);
+  color: var(--text-tertiary);
+  pointer-events: none;
 }
 
 .fin-field input,
@@ -1722,9 +1780,24 @@ a.approval-mail:hover {
 .cal-empty {
   text-align: center;
   color: var(--text-tertiary);
-  font-style: italic;
   font-size: var(--type-body);
   padding: 2rem 0;
+}
+
+.cal-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--accent);
+  cursor: pointer;
+}
+.cal-link:hover { text-decoration: underline; }
+
+/* This deal / Everything */
+.cal-scope {
+  display: flex;
+  gap: 0.25rem;
 }
 
 /* Event list */
@@ -1739,14 +1812,14 @@ a.approval-mail:hover {
   overflow: hidden;
   background: var(--glass-bg-light);
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
   transition: var(--transition-liquid);
 }
 .cal-ev:hover {
-  border-color: var(--hover-border);
-  box-shadow: var(--hover-ring), var(--hover-glow);
-  transform: var(--lift-sm);
+  background: var(--hover-wash);
+  box-shadow: var(--hover-ring);
 }
+.cal-ev.cancelled { opacity: 0.55; }
+.cal-ev.cancelled .cal-ev-title { text-decoration: line-through; }
 .cal-ev-bar {
   width: 3px;
   flex-shrink: 0;
@@ -1796,9 +1869,9 @@ a.approval-mail:hover {
   border-radius: var(--radius-full);
   flex-shrink: 0;
 }
-.cal-ev-type.activity { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--ibm-blue); }
-.cal-ev-type.milestone { background: rgba(36, 161, 72, 0.1); color: #198038; }
-.cal-ev-type.deadline  { background: rgba(218, 30, 40, 0.1); color: #da1e28; }
+.cal-ev-type.activity { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); }
+.cal-ev-type.milestone { background: color-mix(in srgb, var(--status-success) 10%, transparent); color: var(--status-success); }
+.cal-ev-type.deadline  { background: color-mix(in srgb, var(--status-error) 10%, transparent); color: var(--status-error); }
 .cal-ev-date {
   font-size: var(--type-2xs);
   font-weight: 600;
@@ -1818,34 +1891,37 @@ a.approval-mail:hover {
   margin: 0;
   font-size: var(--type-sm);
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 .cal-ev-detail.muted {
   color: var(--text-tertiary);
   font-style: italic;
 }
+.cal-ev-join {
+  margin-left: 0.6rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--accent);
+  text-decoration: none;
+}
+.cal-ev-join:hover { text-decoration: underline; }
 
 /* Outlook event styling */
-.cal-ev-type.outlook { background: rgba(0, 120, 212, 0.1); color: #0078d4; }
+.cal-ev-type.outlook { background: color-mix(in srgb, var(--accent-2) 12%, transparent); color: var(--accent-2); }
 .cal-outlook-badge {
   font-size: var(--type-micro);
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: #0078d4;
+  color: var(--text-secondary);
   padding: 0.18rem 0.55rem;
-  border: 1px solid rgba(0, 120, 212, 0.25);
-  border-radius: var(--radius-full);
-  background: rgba(0, 120, 212, 0.06);
+  background: var(--control-fill);
   text-align: center;
 }
 .cal-outlook-badge.error {
   color: var(--text-tertiary);
-  border-color: var(--border-color);
-  background: transparent;
 }
 .cal-outlook-badge.stale {
-  color: #f1c21b;
-  border-color: rgba(241, 194, 27, 0.3);
-  background: rgba(241, 194, 27, 0.06);
+  color: var(--status-warning);
+  background: color-mix(in srgb, var(--status-warning) 8%, transparent);
 }
 
 
@@ -1948,18 +2024,15 @@ a.approval-mail:hover {
   display: flex;
   flex-direction: column;
   background: var(--glass-bg-light);
-  border: 1px solid var(--glass-border);
-  border-top-color: var(--glass-border-top);
   box-shadow: var(--shadow-glass);
   padding: 0.9rem;
   transition: var(--transition-liquid);
-  border-radius: var(--radius-lg);
 }
 
+/* Highlight, never lift: the card holds its own actions */
 .ct-card:hover {
-  border-color: var(--hover-border);
-  box-shadow: var(--shadow-raise);
-  transform: var(--lift);
+  background: color-mix(in srgb, var(--accent) 4%, var(--glass-bg-light));
+  box-shadow: var(--shadow-glass), var(--hover-ring);
 }
 
 .ct-card-top {
@@ -1983,17 +2056,16 @@ a.approval-mail:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--ibm-blue-light), var(--ibm-blue));
-  color: var(--on-accent);
-  font-size: var(--type-body);
-  font-weight: 800;
-  border-radius: var(--radius-full);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--ibm-blue) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  font-size: var(--type-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
 }
 
 .ct-name {
   font-size: var(--type-body-lg);
-  font-weight: 700;
+  font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
 }
 
@@ -2010,20 +2082,30 @@ a.approval-mail:hover {
   font-size: var(--type-xl);
   color: var(--text-tertiary);
   padding: 0 0.3rem;
-  border-radius: var(--radius-full);
+  opacity: 0;
   transition: var(--transition-liquid);
 }
 
+.ct-card:hover .ct-del,
+.ct-del:focus-visible,
+.ct-del.confirm {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .ct-del { opacity: 1; }
+}
+
 .ct-del:hover {
-  color: var(--ibm-red);
-  background: color-mix(in srgb, var(--ibm-red) 8%, transparent);
+  color: var(--status-error);
+  background: color-mix(in srgb, var(--status-error) 8%, transparent);
 }
 
 .ct-del.confirm {
   font-size: var(--type-xs);
   font-weight: 700;
-  color: var(--ibm-red);
-  background: color-mix(in srgb, var(--ibm-red) 8%, transparent);
+  color: var(--status-error);
+  background: color-mix(in srgb, var(--status-error) 8%, transparent);
   padding: 0.18rem 0.55rem;
 }
 
@@ -2249,6 +2331,20 @@ a.ct-detail:hover {
   flex-wrap: wrap;
   gap: 0.35rem;
   margin-bottom: 0.5rem;
+}
+
+/* Deal documents to attach to the Outlook invite (app only) */
+.mc-attach {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.mc-attach .chip {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mc-person {
@@ -2895,22 +2991,613 @@ a.ct-detail:hover {
   text-align: center;
 }
 
-/* ── Empty state ── */
-.htl-empty {
+.htl-root .ws-empty .btn {
+  margin-top: 0.6rem;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   WORKSPACE BLOCKS — ws-* panels, KPI tiles, facts, people, bars
+   and empty states shared by every in-deal module (Home, Metrics,
+   Admin, Greenstar, Documents). They sit inside the workspace glass,
+   so they are translucent but never re-blur.
+   ═══════════════════════════════════════════════════════════ */
+
+.ws-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 1rem 1.25rem 1.5rem;
+}
+
+/* Page head — what this module is about, for modules without the deal hero */
+.ws-page-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+  padding: 0.15rem 0 0.1rem;
+}
+
+.ws-page-title {
+  margin: 0;
+  font-size: var(--type-lg);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+}
+
+.ws-page-note {
+  font-size: var(--type-sm);
+  color: var(--text-tertiary);
+}
+
+.ws-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+/* Data table — the list view's header bar, compact rows, hover wash */
+.ws-table-wrap {
+  overflow-x: auto;
+}
+
+.ws-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--type-sm);
+}
+
+.ws-table th {
+  padding: 0.55rem 0.75rem;
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: left;
+  white-space: nowrap;
+  color: var(--text-tertiary);
+  background: var(--table-head-bg);
+}
+
+.ws-table td {
+  max-width: 16rem;
+  padding: 0.55rem 0.75rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ws-table .is-num {
+  text-align: right;
+}
+
+.ws-table td.is-strong {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.ws-table tbody tr {
+  transition: background-color var(--duration-hover) var(--ease-liquid);
+}
+
+.ws-table tbody tr.is-link {
+  cursor: pointer;
+}
+
+.ws-table tbody tr:hover,
+.ws-table tbody tr:focus-visible {
+  background: var(--hover-wash);
+}
+
+.ws-table tbody tr:hover td {
+  color: var(--text-primary);
+}
+
+.ws-table .deal-status-dot {
+  display: inline-block;
+  margin-right: 0.45rem;
+  vertical-align: middle;
+}
+
+.ws-tag {
+  display: inline-block;
+  padding: 0.08rem 0.45rem;
+  margin-right: 0.3rem;
+  font-size: var(--type-micro);
+  color: var(--text-secondary);
+  background: var(--control-fill);
+}
+
+.ws-more {
+  margin-top: 0.6rem;
+}
+
+.ws-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ws-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.ws-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(18rem, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.ws-panel {
+  position: relative;
+  min-width: 0;
+  padding: 0.9rem 1rem 1rem;
+  background: var(--glass-bg-light);
+  box-shadow: var(--shadow-glass);
+}
+
+.ws-panel-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.ws-panel-title {
+  margin: 0;
+  font-size: var(--type-body);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.ws-panel-note {
+  font-size: var(--type-2xs);
+  color: var(--text-tertiary);
+}
+
+.ws-panel-action {
+  margin-left: auto;
+}
+
+.ws-panel-action.cmd-btn {
+  padding: 0.28rem 0.7rem;
+  font-size: var(--type-2xs);
+}
+
+/* KPI tiles — the TT Exec treatment, one size down */
+.ws-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 12px;
+}
+
+.ws-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.8rem 1rem 0.85rem;
+  background: var(--glass-bg-light);
+  box-shadow: var(--shadow-glass);
+}
+
+.ws-kpi-label {
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.ws-kpi-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  font-size: var(--type-xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ws-kpi-value.is-empty {
+  color: var(--text-tertiary);
+  font-weight: var(--font-weight-regular);
+}
+
+.ws-kpi-value .deal-status-dot {
+  width: 9px;
+  height: 9px;
+}
+
+.ws-kpi-sub {
+  font-size: var(--type-2xs);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Facts — label over value; values read, labels whisper */
+.ws-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.85rem 1.25rem;
+  margin: 0;
+}
+
+.ws-fact {
+  min-width: 0;
+  margin: 0;
+}
+
+.ws-fact dt {
+  margin: 0 0 0.15rem;
+  font-size: var(--type-micro);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-tertiary);
+}
+
+.ws-fact dd {
+  margin: 0;
+  font-size: var(--type-body);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.ws-fact dd.is-empty {
+  color: var(--text-tertiary);
+}
+
+.ws-mono {
+  font-family: var(--font-family-mono);
+  font-size: var(--type-sm);
+}
+
+/* Rows — label · value lines (dates, sources, counts) */
+.ws-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ws-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  font-size: var(--type-sm);
+}
+
+.ws-row + .ws-row {
+  box-shadow: inset 0 1px 0 var(--border-subtle);
+}
+
+.ws-row-label {
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.ws-row-value {
+  min-width: 0;
+  text-align: right;
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+.ws-row-value.is-empty {
+  color: var(--text-tertiary);
+  font-weight: var(--font-weight-regular);
+}
+
+.ws-row-sub {
+  display: block;
+  font-size: var(--type-2xs);
+  font-weight: var(--font-weight-regular);
+  color: var(--text-tertiary);
+}
+
+.ws-row-value.is-warning,
+.ws-row-sub.is-warning {
+  color: var(--status-warning);
+}
+
+/* People — initials block, name, role */
+.ws-people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.ws-person {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0 -0.4rem;
+  padding: 0.35rem 0.4rem;
+  transition: var(--transition-liquid);
+}
+
+.ws-person:hover {
+  background: var(--hover-wash);
+}
+
+.ws-initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  font-size: var(--type-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.ws-person.is-open .ws-initials {
+  color: var(--text-tertiary);
+  background: var(--control-fill);
+}
+
+.ws-person-name {
+  display: block;
+  font-size: var(--type-body);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ws-person.is-open .ws-person-name {
+  color: var(--text-tertiary);
+}
+
+.ws-person-role {
+  display: block;
+  font-size: var(--type-2xs);
+  color: var(--text-tertiary);
+}
+
+/* Bars — a thin meter; the fill takes --bar-c */
+.ws-bar {
+  height: 4px;
+  background: var(--control-fill);
+  overflow: hidden;
+}
+
+.ws-bar > i {
+  display: block;
+  height: 100%;
+  background: var(--bar-c, var(--accent));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--bar-c, var(--accent)) 45%, transparent);
+  transition: width var(--duration-slow) var(--ease-glass);
+}
+
+/* Meter rows — name · bar · count */
+.ws-meters {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.ws-meter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(4rem, 7rem) 3.25rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.32rem 0;
+  font-size: var(--type-sm);
+}
+
+.ws-meter-name {
+  min-width: 0;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ws-meter-name .deal-status-dot {
+  display: inline-block;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.ws-meter-count {
+  text-align: right;
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Empty state — what's missing, why it matters, where to go */
+.ws-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 1.1rem 1.15rem;
+  background: color-mix(in srgb, var(--accent) 5%, var(--glass-bg-light));
+  box-shadow: var(--shadow-glass);
+}
+
+.ws-empty--center {
+  align-items: center;
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 2.75rem 1.5rem;
+}
+
+.ws-empty-icon {
+  display: inline-flex;
+  color: var(--accent);
+  margin-bottom: 0.2rem;
+}
+
+.ws-empty-title {
+  margin: 0;
+  font-size: var(--type-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.ws-empty-text {
+  margin: 0;
+  max-width: 46rem;
+  font-size: var(--type-body);
+  line-height: 1.55;
   color: var(--text-secondary);
 }
 
-.htl-empty p {
-  margin: 0.25rem 0;
+.ws-empty-hint {
+  margin: 0.15rem 0 0;
+  font-size: var(--type-2xs);
+  color: var(--text-tertiary);
 }
 
-.htl-empty-hint {
-  font-size: var(--type-xs);
-  opacity: 0.7;
+/* Long text kept as written (Solutioning POV) */
+.ws-prose {
+  margin: 0;
+  max-height: 20rem;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font-size: var(--type-body);
+  line-height: 1.6;
+  color: var(--text-secondary);
 }
 
-.htl-empty .btn {
-  margin-top: 1rem;
+/* Hand-off links — open the user's browser; s0L itself fetches nothing */
+.ws-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.ws-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  font-size: var(--type-sm);
+  color: var(--text-secondary);
+  background: var(--control-fill);
+  text-decoration: none;
+  transition: var(--transition-liquid);
+}
+
+.ws-link:hover {
+  color: var(--text-primary);
+  background: var(--hover-wash);
+  box-shadow: var(--hover-ring);
+  transform: var(--lift-sm);
+}
+
+.ws-link svg {
+  color: var(--accent);
+}
+
+/* Summary → Review forms: the Open hand-off beside how the review works */
+.ov-form-open {
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  font-size: var(--type-2xs);
+  vertical-align: middle;
+}
+
+@media (max-width: 1100px) {
+  .ws-split { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-link:hover { transform: none; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   OVERVIEW TAB — the deal at a glance, from the deal record
+   ═══════════════════════════════════════════════════════════ */
+
+.ov {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 1rem;
+}
+
+.ov-approvals-total {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: var(--type-sm);
+  color: var(--text-secondary);
+}
+
+.ov-approvals-total strong {
+  font-size: var(--type-xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.ov-approvals .ws-bar {
+  margin-bottom: 0.65rem;
+}
+
+.ov-also {
+  margin: 0.6rem 0 0;
+  font-size: var(--type-2xs);
+  color: var(--text-tertiary);
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   MODULE MARKS — the Office app a module works in (Excel,
+   PowerPoint, a folder), in full colour, in the rail and heads
+   ════════════════════════════════════════════════════════════ */
+
+.module-logo {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+  user-select: none;
+}
+
+.module-logo--head {
+  display: inline-block;
+  margin-right: 0.55rem;
+  vertical-align: -0.2em;
+}
+
+.isbd-topbar-left > .module-logo--head {
+  margin-right: 0.2rem;
 }

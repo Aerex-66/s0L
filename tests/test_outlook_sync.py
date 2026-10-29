@@ -1,9 +1,12 @@
-"""Outlook calendar read from Python: same events, fields and filter as outlook_calendar.ps1."""
+"""Outlook calendar read from Python: the events, fields and filter the calendar tab expects."""
 import json
 from datetime import datetime
 from types import SimpleNamespace
 
+import pytest
+
 from core.features.calendar import outlook_sync
+from core.shared import outlook_app, state
 
 
 class FakeItem:
@@ -92,11 +95,62 @@ def test_write_cache_is_atomic_json(tmp_path):
     assert [p.name for p in target.parent.iterdir()] == ['outlook_calendar_cache.json']
 
 
-def test_calendar_reads_cache_written_by_windows_powershell(tmp_path, monkeypatch):
-    from core.shared import state
-    from core.app_factory import create_app
+@pytest.fixture
+def outlook_here(monkeypatch):
+    """This computer's Outlook as the test sets it; starting Outlook fails the test."""
+    facts = {'usable': True, 'running': None}
+    monkeypatch.setattr(outlook_app, 'usable', lambda: facts['usable'])
+    monkeypatch.setattr(outlook_app, 'running_app', lambda: facts['running'])
+    monkeypatch.setattr(outlook_app, '_create', lambda: pytest.fail('the calendar reader must never start Outlook'))
+    return facts
+
+
+def _preferences(monkeypatch, preferences):
+    monkeypatch.setattr(outlook_sync, '_preferences', lambda: preferences)
+
+
+def test_sync_skips_in_browser_mode(tmp_path, outlook_here, monkeypatch):
+    _preferences(monkeypatch, {'outlook_mode': 'web'})
+    outlook_here['running'] = FakeOutlook([FakeItem('SRR prep', NOW, NOW)])
+    assert outlook_sync.sync_once(str(tmp_path / 'cache.json')) == 'web'
+    assert not (tmp_path / 'cache.json').exists()
+
+
+def test_sync_never_launches_outlook(tmp_path, outlook_here, monkeypatch):
+    _preferences(monkeypatch, {})
+    assert outlook_sync.sync_once(str(tmp_path / 'cache.json')) == 'closed'
+    assert not (tmp_path / 'cache.json').exists()
+
+
+def test_sync_writes_the_open_outlooks_calendar(tmp_path, outlook_here, monkeypatch):
+    _preferences(monkeypatch, {'outlook_mode': 'app'})
+    outlook_here['running'] = FakeOutlook([FakeItem('SRR prep', NOW, NOW)])
+    assert outlook_sync.sync_once(str(tmp_path / 'cache.json')) == 'ok'
+    assert json.loads((tmp_path / 'cache.json').read_text(encoding='utf-8'))[0]['subject'] == 'SRR prep'
+
+
+def _calendar(tmp_store, tmp_path, monkeypatch, preferences, usable):
     monkeypatch.setattr(state, 'DATA_ROOT', str(tmp_path))
+    monkeypatch.setattr(outlook_app, 'usable', lambda: usable)
+    data = state.load_data()
+    data['preferences'] = preferences
+    state.save_data(data)
+    return tmp_store.get('/api/calendar/outlook').get_json()
+
+
+@pytest.mark.parametrize('preferences,usable,status', [
+    ({}, False, 'web'),
+    ({'outlook_mode': 'web'}, True, 'web'),
+    ({'outlook_mode': 'app'}, False, 'no_app'),
+    ({}, True, 'waiting'),
+])
+def test_calendar_route_follows_the_outlook_choice(tmp_store, tmp_path, monkeypatch, preferences, usable, status):
+    body = _calendar(tmp_store, tmp_path, monkeypatch, preferences, usable)
+    assert body['status'] == status and body['events'] == [] and body['message']
+
+
+def test_calendar_reads_cache_written_by_windows_powershell(tmp_store, tmp_path, monkeypatch):
     # Windows PowerShell 5.1's Set-Content -Encoding utf8 starts the file with a BOM.
     (tmp_path / 'outlook_calendar_cache.json').write_bytes(b'\xef\xbb\xbf[{"subject": "Test"}]')
-    response = create_app().test_client().get('/api/calendar/outlook')
-    assert response.status_code == 200 and response.get_json()['events'] == [{'subject': 'Test'}]
+    body = _calendar(tmp_store, tmp_path, monkeypatch, {'outlook_mode': 'app'}, True)
+    assert body['status'] == 'ok' and body['events'] == [{'subject': 'Test'}]

@@ -42,6 +42,7 @@ import GssmLanding from './shell/GssmLanding'
 
 // Shared deal-data layer (sync status surface)
 import useDealStore from '../../shared/dealStore'
+import { ExcelLogo } from '../../shared/ui/Icons'
 
 // AG Grid styles
 import 'ag-grid-community/styles/ag-grid.css'
@@ -417,7 +418,7 @@ function GssmModule({ deal, onUpdate }) {
       <header className="gssm-topbar">
         <div className="gssm-topbar-main">
           <div className="gssm-topbar-left">
-            <span className="gssm-topbar-wordmark">GSSM</span>
+            <span className="gssm-topbar-wordmark"><ExcelLogo size={18} className="module-logo--head" />GSSM</span>
             {activeSheet && opportunityNumber && (
               <span className="gssm-topbar-opp" title="Opportunity number">{opportunityNumber}</span>
             )}

@@ -6,6 +6,7 @@ import re
 from datetime import datetime
 
 from core.shared import field_index as fi
+from core.shared.directory import migrate_directory
 
 _DROPPED_FINANCIAL_KEYS = ('_gssm_source',)
 _CURRENCY = re.compile(r'^\$?\s*(-?[\d,]*\.?\d+)\s*([kmb])?$', re.IGNORECASE)
@@ -119,7 +120,7 @@ def migrate_deal(deal):
 
 
 def migrate_store(data):
-    changed = False
+    changed = migrate_directory(data)
     for deal in data.get('deals', []):
         changed = migrate_deal(deal) or changed
     return changed

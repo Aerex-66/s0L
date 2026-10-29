@@ -20,4 +20,6 @@ export const mondayService = {
   people:     ()                => get('/api/monday/people'),
   /** Changes the deal's board row (a name the column already has); resolves to the updated deal. */
   assign:     (dealId, key, name) => post('/api/monday/assign', { deal_id: dealId, key, name }),
+  /** A TT Exec puts Salesforce's value for this field on the deal's board row; resolves to the updated deal. */
+  fix:        (dealId, key)       => post('/api/monday/fix', { deal_id: dealId, key }),
 }

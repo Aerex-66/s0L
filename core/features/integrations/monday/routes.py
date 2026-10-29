@@ -1,9 +1,8 @@
 """
-monday blueprint: sign-in, status, syncing the deal board into s0L, and changing
-the people columns s0L may write. Localhost-only; no response ever contains a
-token or the app secret.
+monday blueprint: sign-in, status, syncing the deal board into s0L, changing
+the people columns s0L may write, and fixing a cell where Salesforce shows the
+board is wrong. Localhost-only; no response ever contains a token or the app secret.
 """
-import threading
 import webbrowser
 from datetime import datetime, timezone
 from urllib.parse import urlencode
@@ -11,8 +10,9 @@ from urllib.parse import urlencode
 from flask import Blueprint, jsonify, redirect, request
 
 from core.shared import field_index as fi
+from core.shared import reconcile
 from core.shared.security import is_local_host, parse_frontend_origins
-from core.shared.state import get_deal_by_id, load_data, next_string_id, save_data
+from core.shared.state import SYNC_LOCK, get_deal_by_id, load_data, next_string_id, save_data
 from core.features.deals.services import build_new_deal
 from core.features.deals.writes import prepare_deal_write
 from core.features.integrations.monday import client, config, identity, mapping, newdeal, oauth, sync
@@ -22,7 +22,7 @@ monday_blueprint = Blueprint('monday', __name__)
 
 _ERROR_STATUS = {'not_connected': 401, 'rate_limited': 429}
 _NEEDS_WRITE = 'This monday sign-in may not change the board. Click the monday icon at the top to connect again.'
-_sync_lock = threading.Lock()
+_sync_lock = SYNC_LOCK
 
 
 @monday_blueprint.before_request
@@ -210,6 +210,44 @@ def assign():
             if label_id is None:
                 return jsonify({'error': f'{name} is not one of the names in that board column.'}), 400
             text = client.set_status_label(deal['monday_item_id'], column_id, label_id)
+        except client.MondayError as error:
+            return _monday_failed(error)
+        write_monday_fields(deal, {key: text})
+        save_data(data)
+    return jsonify(deal)
+
+
+@monday_blueprint.route('/api/monday/fix', methods=['POST'])
+def fix_from_salesforce():
+    """A TT Exec approves a Salesforce difference: the board takes the value, then s0L stores what the board shows."""
+    refused = _json_only() or _unless_board_writable()
+    if refused:
+        return refused
+    body = request.get_json(silent=True) or {}
+    key = str(body.get('key') or '')
+    with _sync_lock:
+        data = load_data()
+        deal = get_deal_by_id(data, body.get('deal_id'))
+        if deal is None:
+            return jsonify({'error': 'Deal not found'}), 404
+        if not deal.get('monday_item_id'):
+            return jsonify({'error': 'This deal is not on the monday board.'}), 409
+        value = reconcile.board_fix(deal, key)
+        if value is None:
+            return jsonify({'error': "s0L can't fix this one from Salesforce. Look into it on the board."}), 409
+        column_id = fi.FIELDS[key]['monday']['column_id']
+        try:
+            email = identity.signed_in_email()
+            by_key, _ = _name_labels()
+            if not identity.who(data.get('preferences'), email, by_key)['is_exec']:
+                return jsonify({'error': 'Only TT Execs can change the board from Salesforce.', 'kind': 'not_exec'}), 403
+            if column_id == 'name':
+                text = client.set_cell(deal['monday_item_id'], 'name', value)
+            else:
+                column = client.board_schema([column_id])['columns'].get(column_id) or {}
+                if column.get('type') in ('status', 'dropdown') and value not in column.get('labels', []):
+                    return jsonify({'error': f'The board has no “{value}” option in that column. Look into it on the board.'}), 409
+                text = client.set_cell(deal['monday_item_id'], column_id, mapping.column_value(column.get('type'), value))
         except client.MondayError as error:
             return _monday_failed(error)
         write_monday_fields(deal, {key: text})

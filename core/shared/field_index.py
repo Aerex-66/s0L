@@ -91,6 +91,30 @@ def _build_monday_bindings():
 
 _MONDAY_BINDINGS = _build_monday_bindings()
 
+
+def _build_salesforce(fields):
+    """((key, block) for every Salesforce field read, compare pairs) from a fields mapping."""
+    bindings, pairs, seen = [], [], {}
+    for key, entry in fields.items():
+        block = entry.get('salesforce') or {}
+        name = block.get('field')
+        if not name:
+            continue
+        if name in seen:
+            raise ValueError(f'Salesforce field {name} bound to both {seen[name]} and {key}')
+        seen[name] = key
+        bindings.append((key, block))
+        compare = block.get('compare')
+        if compare:
+            target = fields.get(compare.get('with')) or {}
+            if target.get('owner') != 'monday' or not (target.get('monday') or {}).get('column_id'):
+                raise ValueError(f'{key} must be compared with a monday board column, not {compare.get("with")!r}')
+            pairs.append({'key': key, 'with': compare['with'], 'labels': compare.get('labels')})
+    return tuple(bindings), tuple(pairs)
+
+
+_SALESFORCE_BINDINGS, _COMPARE_PAIRS = _build_salesforce(FIELDS)
+
 # Top-level containers whose children are declared individually (financials, isbd_data, external_links).
 SECTIONS = frozenset(e['path'].split('.', 1)[0] for e in FIELDS.values() if '.' in e.get('path', ''))
 
@@ -135,22 +159,39 @@ def is_linked(deal, owner):
         return bool(deal.get('gssm_workbook_id') or deal.get('gssm_synced_at'))
     if owner == 'monday':
         return bool(deal.get('monday_item_id'))
+    if owner == 'salesforce':
+        return bool(deal.get('salesforce_id'))
     return False
 
 
 def deal_editable(key, deal):
-    """Whether s0L screens may write a field: deal-owned, or editable until the deal is linked to its owner."""
+    """Whether s0L screens may write a field: deal-owned, or editable until its owner takes it over."""
     entry = FIELDS.get(key)
     if not entry:
         return False
     if entry['owner'] == 'deal':
         return True
-    return bool(entry.get('editable_until_linked')) and not is_linked(deal or {}, entry['owner'])
+    if not entry.get('editable_until_linked'):
+        return False
+    if entry['owner'] == 'salesforce':
+        # Salesforce takes a field over only once it supplies a value for it.
+        return key not in ((deal or {}).get('salesforce_supplied') or ())
+    return not is_linked(deal or {}, entry['owner'])
 
 
 def monday_bindings():
     """(key, monday block) for every field the board fills, in index order."""
     return _MONDAY_BINDINGS
+
+
+def salesforce_bindings():
+    """(key, salesforce block) for every Opportunity field the Salesforce check reads, in index order."""
+    return _SALESFORCE_BINDINGS
+
+
+def compare_pairs():
+    """{'key', 'with', 'labels'} for each Salesforce value compared with a board column."""
+    return _COMPARE_PAIRS
 
 
 def isbd_key_for(label, slide_type=None):

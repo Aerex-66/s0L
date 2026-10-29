@@ -6,7 +6,7 @@ import pytest
 from core.shared import field_index as fi
 
 ROOT = Path(__file__).resolve().parents[1]
-OWNERS = {'deal', 'gssm', 'monday', 'isbd', 'derived', 'system'}
+OWNERS = {'deal', 'gssm', 'monday', 'salesforce', 'isbd', 'derived', 'system'}
 
 
 def test_keys_and_aliases_are_unique():
@@ -82,12 +82,65 @@ def test_gssm_cells_are_zero_based():
 
 
 @pytest.mark.parametrize('key', [
-    'opportunity_owner', 'service_line', 'decision_date', 'client_type',
+    'service_line', 'decision_date', 'client_type',
     'engagement_type', 'engagement_source', 'review_status',
 ])
 def test_previously_dropped_fields_are_deal_owned(key):
     assert fi.owner_of(key) == 'deal'
     assert fi.path_of(key) == key
+
+
+def test_opportunity_owner_fills_from_salesforce():
+    assert fi.owner_of('opportunity_owner') == 'salesforce' and fi.path_of('opportunity_owner') == 'opportunity_owner'
+    assert dict(fi.salesforce_bindings())['opportunity_owner'] == {'field': 'Owner.Name'}
+    assert fi.isbd_key_for('Opportunity Owner') == 'opportunity_owner'
+
+
+def test_salesforce_fill_fields_editable_until_supplied():
+    assert fi.deal_editable('opportunity_owner', {})
+    assert fi.deal_editable('opportunity_owner', {'salesforce_id': '006A0000006Vm9rIAC'})
+    assert not fi.deal_editable('opportunity_owner', {'salesforce_supplied': ['opportunity_owner']})
+
+
+def test_salesforce_values_and_link_are_never_deal_editable():
+    for key in ('sf_stage', 'sf_amount', 'salesforce_id', 'salesforce_lookup', 'salesforce_checked_at', 'salesforce_supplied'):
+        assert fi.owner_of(key) == 'salesforce'
+        assert not fi.deal_editable(key, {})
+
+
+def test_salesforce_link_is_the_matched_id():
+    assert fi.is_linked({'salesforce_id': '006A0000006Vm9rIAC'}, 'salesforce')
+    assert not fi.is_linked({'monday_item_id': '1'}, 'salesforce')
+
+
+def test_bindings_name_each_salesforce_field_once():
+    fields = {
+        'a': {'owner': 'salesforce', 'salesforce': {'field': 'StageName'}},
+        'b': {'owner': 'salesforce', 'salesforce': {'field': 'StageName'}},
+    }
+    with pytest.raises(ValueError):
+        fi._build_salesforce(fields)
+
+
+def test_a_compare_pair_must_name_a_board_column():
+    fields = {
+        'sf_x': {'owner': 'salesforce', 'salesforce': {'field': 'X', 'compare': {'with': 'price_to_win'}}},
+        'price_to_win': {'owner': 'deal'},
+    }
+    with pytest.raises(ValueError):
+        fi._build_salesforce(fields)
+
+
+def test_compare_pairs_carry_their_translation_table():
+    fields = {
+        'sf_stage': {'owner': 'salesforce',
+                     'salesforce': {'field': 'StageName', 'compare': {'with': 'sales_stage', 'labels': {'Won': 'Closed Won'}}}},
+        'sales_stage': {'owner': 'monday', 'monday': {'column_id': 'dropdown_x'}},
+        'salesforce_id': {'owner': 'salesforce', 'salesforce': {'source': 'id'}},
+    }
+    bindings, pairs = fi._build_salesforce(fields)
+    assert [key for key, _ in bindings] == ['sf_stage']
+    assert pairs == ({'key': 'sf_stage', 'with': 'sales_stage', 'labels': {'Won': 'Closed Won'}},)
 
 
 def test_label_normalization_matches_shared_fixture():

@@ -14,9 +14,16 @@ import {
   FileDropIcon,
   TrashIcon,
   CloudUploadIcon,
+  MailIcon,
   ChevronRightIcon,
+  EditIcon,
+  CloseIcon,
+  ExternalLinkIcon,
+  FolderLogo,
 } from '../../shared/ui/Icons'
 import { cx } from '../../shared/utils/cx'
+import { webLink } from '../../shared/utils/webLink'
+import useOutlookStore, { effectiveMode } from '../../shared/outlookStore'
 
 /* ── Format helpers ────────────────────────── */
 const FMT = { pptx: 'PPTX', xlsx: 'XLSX', xlsm: 'XLSM', pdf: 'PDF', docx: 'DOCX', csv: 'CSV' }
@@ -44,7 +51,7 @@ function fmtSize(b) {
    RequiredSlot — single required document row
    ════════════════════════════════════════════ */
 
-const RequiredSlot = memo(function RequiredSlot({ slot, matchedDoc, onUpload, onDownload, onDelete, onSendToCloud }) {
+const RequiredSlot = memo(function RequiredSlot({ slot, matchedDoc, onUpload, onDownload, onDelete, onSendToCloud, onEmail }) {
   const filled = Boolean(matchedDoc)
   // Use actual file format when uploaded, fall back to slot's expected format
   const actualFmt = filled ? (matchedDoc.format || '').toLowerCase() : ''
@@ -72,6 +79,9 @@ const RequiredSlot = memo(function RequiredSlot({ slot, matchedDoc, onUpload, on
           {filled && (
             <>
               <button className="docs-slot-action" onClick={() => onDownload(matchedDoc)} title="Download"><DownloadIcon /></button>
+              {onEmail && (
+                <button className="docs-slot-action" onClick={() => onEmail(matchedDoc)} title="Email in Outlook"><MailIcon /></button>
+              )}
               {onSendToCloud && (
                 <button className="docs-slot-action docs-cloud-action" onClick={() => onSendToCloud(matchedDoc)} title="Send to OneDrive"><CloudUploadIcon /></button>
               )}
@@ -90,7 +100,7 @@ const RequiredSlot = memo(function RequiredSlot({ slot, matchedDoc, onUpload, on
 /* ════════════════════════════════════════════
    LibraryCard — uploaded doc in the library grid
    ════════════════════════════════════════════ */
-const LibraryCard = memo(function LibraryCard({ doc, selected, onClick, onDownload, onDelete, onSendToCloud }) {
+const LibraryCard = memo(function LibraryCard({ doc, selected, onClick, onDownload, onDelete, onSendToCloud, onEmail }) {
   const fmt = (doc.format || '').toLowerCase()
   const hasPptxThumb = fmt === 'pptx' && doc.id
 
@@ -113,6 +123,11 @@ const LibraryCard = memo(function LibraryCard({ doc, selected, onClick, onDownlo
         <button className="docs-lib-action-btn" onClick={e => { e.stopPropagation(); onDownload(doc) }} title="Download">
           <DownloadIcon /> Download
         </button>
+        {onEmail && (
+          <button className="docs-lib-action-btn" onClick={e => { e.stopPropagation(); onEmail(doc) }} title="Email in Outlook">
+            <MailIcon /> Email
+          </button>
+        )}
         {onSendToCloud && (
           <button className="docs-lib-action-btn docs-cloud-action" onClick={e => { e.stopPropagation(); onSendToCloud(doc) }} title="Send to OneDrive">
             <CloudUploadIcon /> OneDrive
@@ -129,7 +144,7 @@ const LibraryCard = memo(function LibraryCard({ doc, selected, onClick, onDownlo
 /* ════════════════════════════════════════════
    DocumentPreview — right-side detail panel
    ════════════════════════════════════════════ */
-function DocumentPreview({ doc, onClose, onDownload, onDelete }) {
+function DocumentPreview({ doc, onClose, onDownload, onDelete, onEmail }) {
   if (!doc) return null
   const fmt = (doc.format || '').toLowerCase()
   const isPptx = fmt === 'pptx'
@@ -185,6 +200,7 @@ function DocumentPreview({ doc, onClose, onDownload, onDelete }) {
         )}
         <div className="docs-preview-actions">
           <button className="docs-preview-action-btn primary" onClick={() => onDownload(doc)}>Download</button>
+          {onEmail && <button className="docs-preview-action-btn" onClick={() => onEmail(doc)}>Email in Outlook</button>}
           <button className="docs-preview-action-btn docs-delete-action" onClick={() => { onDelete(doc); onClose() }}>Remove</button>
         </div>
       </div>
@@ -321,22 +337,15 @@ const ExternalLinks = memo(function ExternalLinks({ deal, onUpdate }) {
     const ext = deal.external_links || deal.financials || {}
     return Object.fromEntries(LINK_DEFS.map(d => [d.key, ext[d.key] || '']))
   })
-  // Track which links are saved (have a persisted value)
-  const [saved, setSaved] = useState(() => {
-    const ext = deal.external_links || deal.financials || {}
-    return Object.fromEntries(LINK_DEFS.map(d => [d.key, Boolean(ext[d.key])]))
-  })
   const [editing, setEditing] = useState({})
   const [drafts, setDrafts] = useState({})
 
   // Sync when deal changes
-  const dealId = deal.id
-  const extRef = useRef(dealId)
-  if (extRef.current !== dealId) {
-    extRef.current = dealId
+  const [linkedDealId, setLinkedDealId] = useState(deal.id)
+  if (linkedDealId !== deal.id) {
+    setLinkedDealId(deal.id)
     const ext = deal.external_links || deal.financials || {}
     setLinks(Object.fromEntries(LINK_DEFS.map(d => [d.key, ext[d.key] || ''])))
-    setSaved(Object.fromEntries(LINK_DEFS.map(d => [d.key, Boolean(ext[d.key])])))
     setEditing({})
     setDrafts({})
   }
@@ -344,7 +353,6 @@ const ExternalLinks = memo(function ExternalLinks({ deal, onUpdate }) {
   const saveLink = useCallback(async (key, value) => {
     const next = { ...links, [key]: value }
     setLinks(next)
-    setSaved(prev => ({ ...prev, [key]: Boolean(value) }))
     setEditing(prev => ({ ...prev, [key]: false }))
     try {
       await dealService.update(deal.id, { external_links: next })
@@ -355,7 +363,6 @@ const ExternalLinks = memo(function ExternalLinks({ deal, onUpdate }) {
   const clearLink = useCallback(async (key) => {
     const next = { ...links, [key]: '' }
     setLinks(next)
-    setSaved(prev => ({ ...prev, [key]: false }))
     setEditing(prev => ({ ...prev, [key]: false }))
     try {
       await dealService.update(deal.id, { external_links: next })
@@ -375,15 +382,18 @@ const ExternalLinks = memo(function ExternalLinks({ deal, onUpdate }) {
   return (
     <div className="docs-section docs-links-section">
       <div className="docs-section-header">
-        <span className="docs-section-title">External Links</span>
+        <span className="docs-section-title">Links</span>
+        <span className="docs-section-note">Hand-off links to this deal&apos;s other tools. They open in your browser.</span>
       </div>
       <div className="docs-links">
         {LINK_DEFS.map(({ key, label }) => {
-          const isEditing = editing[key] || !saved[key]
           const url = links[key]
+          const href = webLink(url)
+          const isEditing = Boolean(editing[key])
+          const draft = (drafts[key] ?? url ?? '').trim()
 
           return (
-            <div key={key} className="docs-link-row">
+            <div key={key} className={cx('docs-link-row', !url && !isEditing && 'is-empty')}>
               <span className="docs-link-label">{label}</span>
               {isEditing ? (
                 <>
@@ -392,20 +402,31 @@ const ExternalLinks = memo(function ExternalLinks({ deal, onUpdate }) {
                     className="docs-link-input"
                     value={drafts[key] ?? url}
                     onChange={e => setDrafts(prev => ({ ...prev, [key]: e.target.value }))}
-                    onKeyDown={e => { if (e.key === 'Enter') saveLink(key, drafts[key] ?? url) }}
-                    placeholder="https://..."
-                    autoFocus={saved[key]}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') saveLink(key, draft)
+                      if (e.key === 'Escape') {
+                        // Escape cancels the edit; it must not reach the shell, which leaves the deal on Escape.
+                        e.stopPropagation()
+                        cancelEdit(key)
+                      }
+                    }}
+                    placeholder="https://…"
+                    aria-label={`${label} link`}
+                    autoFocus
                   />
-                  <button className="docs-link-btn docs-link-save" onClick={() => saveLink(key, drafts[key] ?? url)} title="Save">&#10003;</button>
-                  {url && <a className="docs-link-btn docs-link-go" href={url} target="_blank" rel="noopener noreferrer" title="Open">&#8599;</a>}
-                  {saved[key] && <button className="docs-link-btn docs-link-cancel" onClick={() => cancelEdit(key)} title="Cancel">&times;</button>}
+                  <button className="docs-link-btn docs-link-save" onClick={() => saveLink(key, draft)} title="Save" aria-label={`Save the ${label} link`}><CheckIcon /></button>
+                  <button className="docs-link-btn docs-link-cancel" onClick={() => cancelEdit(key)} title="Cancel" aria-label="Cancel"><CloseIcon /></button>
+                </>
+              ) : url ? (
+                <>
+                  {href
+                    ? <a className="docs-link-href" href={href} target="_blank" rel="noopener noreferrer" title={href}><ExternalLinkIcon /> <span>{url}</span></a>
+                    : <span className="docs-link-href is-invalid" title="Not a web address (http or https), so s0L won't open it">{url}</span>}
+                  <button className="docs-link-btn docs-link-edit" onClick={() => startEdit(key)} title="Edit" aria-label={`Edit the ${label} link`}><EditIcon size={12} /></button>
+                  <button className="docs-link-btn docs-link-remove" onClick={() => clearLink(key)} title="Remove" aria-label={`Remove the ${label} link`}><CloseIcon /></button>
                 </>
               ) : (
-                <>
-                  <a className="docs-link-href" href={url} target="_blank" rel="noopener noreferrer" title={url}>{url}</a>
-                  <button className="docs-link-btn docs-link-edit" onClick={() => startEdit(key)} title="Edit">&#9998;</button>
-                  <button className="docs-link-btn docs-link-remove" onClick={() => clearLink(key)} title="Remove">&times;</button>
-                </>
+                <button className="docs-link-add" onClick={() => startEdit(key)}><PlusIcon /> Add link</button>
               )}
             </div>
           )
@@ -564,22 +585,23 @@ const CloudSyncSection = memo(function CloudSyncSection({ deal, onUpdate }) {
           </div>
           <span className="docs-cloud-sync-path" title={syncPath}>{shortPath}</span>
           <div className="docs-cloud-sync-right">
-            <button className="docs-link-btn docs-link-edit" onClick={() => setShowPicker(true)} title="Change folder">&#9998;</button>
-            <button className="docs-link-btn docs-link-remove" onClick={clearPath} title="Disconnect">&times;</button>
+            <button className="docs-link-btn docs-link-edit" onClick={() => setShowPicker(true)} title="Change folder" aria-label="Change the OneDrive folder"><EditIcon size={12} /></button>
+            <button className="docs-link-btn docs-link-remove" onClick={clearPath} title="Disconnect" aria-label="Disconnect the OneDrive folder"><CloseIcon /></button>
           </div>
         </div>
       ) : (
         /* ── Not connected ── */
         <>
           <div className="docs-section-header">
-            <span className="docs-section-title"><CloudUploadIcon /> OneDrive Sync</span>
+            <span className="docs-section-title">OneDrive</span>
+            <span className="docs-section-note">Send this deal&apos;s documents to the deal team&apos;s OneDrive folder</span>
           </div>
           <div className="docs-cloud-sync-body">
             <div className="docs-cloud-sync-empty">
               {loading ? (
-                <span className="docs-cloud-sync-status">Discovering OneDrive folders...</span>
+                <span className="docs-cloud-sync-status">Looking for OneDrive folders…</span>
               ) : discovered && folderOptions.length === 0 ? (
-                <span className="docs-cloud-sync-status error">No OneDrive sync folders found on this machine.</span>
+                <span className="docs-cloud-sync-status">No OneDrive folder is synced on this computer yet.</span>
               ) : (
                 <button className="docs-cloud-connect-btn" onClick={() => setShowPicker(true)}>
                   <FolderOpenIcon /> Connect OneDrive Folder
@@ -755,6 +777,23 @@ export default function DocumentsModule({ deal, onUpdate }) {
 
   const onSendToCloud = syncPath ? handleSendToCloud : null
 
+  // ── Email in Outlook (the Outlook app only: a browser can't attach the file) ──
+  const outlookMode = useOutlookStore((s) => effectiveMode(s.status))
+  const openEmail = useOutlookStore((s) => s.openEmail)
+  const emailing = useRef(false)
+  const handleEmail = useCallback(async (doc) => {
+    // Starting Outlook takes a few seconds; a second click must not open a second draft.
+    if (emailing.current) return
+    emailing.current = true
+    try {
+      const label = [deal.client_name, deal.project_name].filter(Boolean).join(' – ') || 'Deal'
+      await openEmail({ to: [], subject: `${label}: ${doc.name}`, body: '' }, { dealId: deal.id, attachments: [doc.id] })
+    } finally {
+      emailing.current = false
+    }
+  }, [deal.client_name, deal.project_name, deal.id, openEmail])
+  const onEmail = outlookMode === 'app' ? handleEmail : null
+
   // ── Loading ──────────────────────────────
   if (loading && allDocuments.length === 0) {
     return (
@@ -772,12 +811,12 @@ export default function DocumentsModule({ deal, onUpdate }) {
       {/* ── Toolbar ─────────────────────────── */}
       <div className="docs-toolbar">
         <div className="docs-toolbar-left">
-          <span className="docs-toolbar-title">Documents</span>
-          <div className="docs-readiness">
+          <h2 className="docs-toolbar-title"><FolderLogo size={20} className="module-logo--head" />Documents</h2>
+          <div className="docs-readiness" title={`${readiness.filled} of ${readiness.total} required documents uploaded`}>
             <div className="docs-readiness-bar">
               <div className={`docs-readiness-fill ${readinessClass}`} style={{ width: `${readiness.pct}%` }} />
             </div>
-            <span className="docs-readiness-label">{readiness.filled}/{readiness.total}</span>
+            <span className="docs-readiness-label">{readiness.filled}/{readiness.total} required</span>
           </div>
         </div>
         <div className="docs-toolbar-center">
@@ -786,7 +825,8 @@ export default function DocumentsModule({ deal, onUpdate }) {
             <input
               className="docs-search-input"
               type="text"
-              placeholder="Search documents..."
+              placeholder="Search documents…"
+              aria-label="Search documents"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -799,19 +839,13 @@ export default function DocumentsModule({ deal, onUpdate }) {
         </div>
       </div>
 
-      {/* ── External Links ────────────────── */}
-      <ExternalLinks deal={deal} onUpdate={onUpdate} />
-
-      {/* ── OneDrive Sync ─────────────────── */}
-      <CloudSyncSection deal={deal} onUpdate={onUpdate} />
-
       {/* ── Body ────────────────────────────── */}
       <div className={selectedDoc ? 'docs-preview-split' : ''} style={selectedDoc ? {} : { display: 'flex', flex: 1, minHeight: 0, flexDirection: 'column' }}>
         <div className="docs-body">
           {/* Required Documents */}
           <div className="docs-section">
             <div className="docs-section-header">
-              <span className="docs-section-title">Required Documents</span>
+              <span className="docs-section-title">Required documents</span>
               <span className={`docs-section-badge ${readiness.pct === 100 ? 'complete' : readiness.filled > 0 ? 'partial' : 'empty'}`}>
                 {readiness.pct === 100 ? 'Complete' : `${readiness.filled} of ${readiness.total}`}
               </span>
@@ -826,6 +860,7 @@ export default function DocumentsModule({ deal, onUpdate }) {
                   onDownload={handleDownload}
                   onDelete={handleDelete}
                   onSendToCloud={onSendToCloud}
+                  onEmail={onEmail}
                 />
               ))}
             </div>
@@ -835,8 +870,8 @@ export default function DocumentsModule({ deal, onUpdate }) {
           <div className="docs-section">
             <div className="docs-section-header docs-section-collapsible" onClick={() => setShowLibrary(v => !v)}>
               <span className="docs-section-title">
-                <span className={`docs-collapse-arrow${showLibrary ? ' open' : ''}`}>&#9654;</span>
-                All Documents
+                <ChevronRightIcon className={`docs-collapse-arrow${showLibrary ? ' open' : ''}`} />
+                All documents
               </span>
               {libraryDocs.length > 0 && (
                 <span className="docs-section-badge empty">{libraryDocs.length}</span>
@@ -866,11 +901,17 @@ export default function DocumentsModule({ deal, onUpdate }) {
                       onDownload={handleDownload}
                       onDelete={handleDelete}
                       onSendToCloud={onSendToCloud}
+                      onEmail={onEmail}
                     />
                   ))}
                 </div>
               )
             )}
+          </div>
+
+          <div className="docs-extras">
+            <ExternalLinks deal={deal} onUpdate={onUpdate} />
+            <CloudSyncSection deal={deal} onUpdate={onUpdate} />
           </div>
         </div>
 
@@ -881,6 +922,7 @@ export default function DocumentsModule({ deal, onUpdate }) {
             onClose={() => setSelectedDocId(null)}
             onDownload={handleDownload}
             onDelete={handleDelete}
+            onEmail={onEmail}
           />
         )}
       </div>

@@ -1,34 +1,25 @@
 """
-Outlook calendar sync for the packaged app: reads the default calendar through classic
-Outlook's COM interface every minute and writes the cache the calendar route reads.
-Same events, fields and filter as outlook_calendar.ps1, without a PowerShell window.
+Outlook calendar sync, in development and the packaged app alike: every minute it
+reads the default calendar of the classic Outlook app that's already open (never
+starting Outlook) and writes the cache the calendar route reads. Nothing is read
+in browser mode.
 """
 import json
 import logging
 import os
-import sys
 import tempfile
 import threading
 import time
 from datetime import datetime, timedelta
+
+from core.shared import outlook_app
+from core.shared.state import load_data
 
 _logger = logging.getLogger(__name__)
 
 _OL_FOLDER_CALENDAR = 9
 _MAX_EVENTS = 5000
 _TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
-
-
-def outlook_available():
-    if sys.platform != 'win32':
-        return False
-    try:
-        import comtypes.client  # noqa: F401
-        import winreg
-        winreg.CloseKey(winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, r'Outlook.Application\CLSID'))
-    except (ImportError, OSError):
-        return False
-    return True
 
 
 def _restrict_filter(now, days_before, days_after):
@@ -85,22 +76,30 @@ def start_outlook_sync(cache_file, interval=60):
     return thread
 
 
+def _preferences():
+    return load_data().get('preferences') or {}
+
+
+def sync_once(cache_file):
+    """One read: 'web' (the person uses Outlook in the browser), 'closed' (Outlook isn't open) or 'ok'."""
+    if outlook_app.effective_mode(_preferences()) != 'app':
+        return 'web'
+    outlook = outlook_app.running_app()
+    if outlook is None:
+        return 'closed'
+    write_cache(read_outlook_events(outlook, datetime.now()), cache_file)
+    return 'ok'
+
+
 def _sync_forever(cache_file, interval):
-    import comtypes
-    import comtypes.client
-    comtypes.CoInitialize()
-    failing = False
-    try:
+    with outlook_app.com_thread():
+        failing = False
         while True:
             try:
-                outlook = comtypes.client.CreateObject('Outlook.Application', dynamic=True)
-                write_cache(read_outlook_events(outlook, datetime.now()), cache_file)
+                sync_once(cache_file)
                 failing = False
             except Exception as exc:
                 if not failing:
                     _logger.warning('Outlook calendar read failed: %s', exc)
                 failing = True
-            outlook = None
             time.sleep(interval)
-    finally:
-        comtypes.CoUninitialize()
